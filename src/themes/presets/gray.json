@@ -7,7 +7,7 @@
     "secondary": "#9AA5B5"
   },
   "wallpaper": {
-    "light": "gradient:linear-gradient(180deg, #EDEFF2 0%, #DCE0E6 60%, #CDD2DA 100%)",
+    "light": "gradient:linear-gradient(180deg, #F7F8FA 0%, #F1F3F6 60%, #E8EBEF 100%)",
     "dark": "gradient:linear-gradient(180deg, #17191E 0%, #121419 55%, #0D0F13 100%)"
   },
   "palette": {
@@ -26,7 +26,7 @@
       "accent": "#9AA5B5",
       "accent-soft": "#F0F2F6",
       "accent-fg": "#2B2E35",
-      "wallpaper-overlay": "rgba(244, 245, 247, 0.72)",
+      "wallpaper-overlay": "rgba(250, 251, 252, 0.82)",
       "shadow": "0 8px 24px rgba(43, 46, 53, 0.08)"
     },
     "dark": {

@@ -33,7 +33,7 @@ const next = idx >= 0 && idx < related.length - 1 ? related[idx + 1] : undefined
   type="article"
   image={post.data.cover ? `/assets/blog/${post.slug}/${post.data.cover}` : undefined}
 >
-  <article class="post page-enter">
+  <article class="post page-enter container">
     <header class="post-head">
       <div class="post-meta">
         <Chip href={`/categories/${encodeURIComponent(post.data.category)}`}>{post.data.category}</Chip>

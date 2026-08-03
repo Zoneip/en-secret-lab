@@ -9,7 +9,7 @@ const posts = published(await getCollection('posts'))
 ---
 
 <BaseLayout title="标签" description="全站标签总览">
-  <div class="page-enter">
+  <div class="page-enter container">
     <header class="page-head">
       <h1>标签</h1>
       <p>共 {posts.reduce((n, p) => n + p.tags.length, 0)} 枚标签</p>

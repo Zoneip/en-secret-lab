@@ -10,7 +10,7 @@ const [about] = await getCollection('about')
 ---
 
 <BaseLayout title="关于" description="关于这个站点和它的主人">
-  <div class="page-enter">
+  <div class="page-enter container">
     {!about && <EmptyState title="关于页还没写" description="主人还没想好怎么自我介绍" />}
     {about && (
       <>

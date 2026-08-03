@@ -23,7 +23,7 @@ const { category, posts } = Astro.props
 ---
 
 <BaseLayout title={category} description={`分类 ${category} 的文章`}>
-  <div class="page-enter">
+  <div class="page-enter container">
     <header class="page-head">
       <h1>{category}</h1>
       <p>{posts.length} 篇文章</p>

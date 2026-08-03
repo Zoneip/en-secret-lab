@@ -22,7 +22,7 @@ const heroTheme = config.defaultTheme
 ---
 
 <BaseLayout title={config.title} description={config.description}>
-  <div class="page-enter">
+  <div class="page-enter container">
     <section class="hero">
       <div class="hero-text">
         <p class="hero-greet">这里的主人回来啦</p>
@@ -94,8 +94,8 @@ const heroTheme = config.defaultTheme
   .hero {
     display: flex;
     align-items: center;
-    gap: 40px;
-    padding: 64px 0 48px;
+    gap: 48px;
+    padding: 88px 0 56px;
     flex-wrap: wrap;
   }
   .hero-text {
@@ -209,7 +209,7 @@ const heroTheme = config.defaultTheme
 
   @media (max-width: 640px) {
     .hero {
-      padding: 40px 0 24px;
+      padding: 48px 0 24px;
       justify-content: center;
       text-align: center;
     }
@@ -221,6 +221,19 @@ const heroTheme = config.defaultTheme
     }
     .hero h1 {
       font-size: 2rem;
+    }
+    .hero-mascot {
+      transform: scale(0.85);
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .hero {
+      padding: 64px 0 36px;
+      gap: 32px;
+    }
+    .hero-mascot {
+      transform: scale(0.92);
     }
   }
 </style>
