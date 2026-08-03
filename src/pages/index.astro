@@ -18,7 +18,7 @@ const visible = published(posts)
 const featuredPosts = featured(visible)
 const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
 const categories = aggregateByKey(visible, 'category')
-const heroTheme = config.defaultTheme
+const themeIds = ['gray', 'yellow', 'purple', 'white']
 ---
 
 <BaseLayout title={config.title} description={config.description}>
@@ -34,8 +34,14 @@ const heroTheme = config.defaultTheme
         </div>
       </div>
       <div class="hero-mascot">
-        <Mascot role="furry" theme={heroTheme} pixel={10} />
-        <Mascot role="boy" theme={heroTheme} pixel={8} />
+        {
+          themeIds.map((t) => (
+            <div class="mascot-group" data-mascot-group={t}>
+              <Mascot role="furry" theme={t} pixel={10} />
+              <Mascot role="boy" theme={t} pixel={8} />
+            </div>
+          ))
+        }
       </div>
     </section>
 
@@ -128,6 +134,16 @@ const heroTheme = config.defaultTheme
     background: var(--surface);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+  }
+  .mascot-group {
+    display: none;
+  }
+  :root[data-theme='gray'] .hero-mascot [data-mascot-group='gray'],
+  :root[data-theme='yellow'] .hero-mascot [data-mascot-group='yellow'],
+  :root[data-theme='purple'] .hero-mascot [data-mascot-group='purple'],
+  :root[data-theme='white'] .hero-mascot [data-mascot-group='white'] {
+    display: flex;
+    gap: 4px;
   }
   .hero-mascot :global(.pixel-sprite) {
     animation: bob 3.5s ease-in-out infinite;

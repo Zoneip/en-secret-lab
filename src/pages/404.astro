@@ -3,17 +3,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
 
+const themes = ['gray', 'yellow', 'purple', 'white']
+const today = new Date()
+const dayIndex = (today.getFullYear() * 12 + today.getMonth() * 31 + today.getDate()) % themes.length
 const quote = [
   '这片雪地上没有脚印…',
   '被爪子藏起来了吗?',
   '迷路的页面,正在被找回来',
-][new Date().getDate() % 3]
+][today.getDate() % 3]
 ---
 
 <BaseLayout title="页面走丢了" description="404 页面走丢了">
   <div class="nf">
     <div class="nf-mascot">
-      <Mascot role="furry" pixel={12} />
+      <Mascot role="furry" theme={themes[dayIndex]} pixel={12} />
     </div>
     <p class="nf-code" aria-hidden="true">404</p>
     <h1>页面走丢了</h1>
