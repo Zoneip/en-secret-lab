@@ -1,0 +1,51 @@
+{
+  "id": "gray",
+  "name": "灰糖",
+  "description": "冷静、软糯的灰色调,像雨后云层一样温柔",
+  "mascot": {
+    "primary": "#5C677D",
+    "secondary": "#9AA5B5"
+  },
+  "wallpaper": {
+    "light": "gradient:linear-gradient(180deg, #EDEFF2 0%, #DCE0E6 60%, #CDD2DA 100%)",
+    "dark": "gradient:linear-gradient(180deg, #17191E 0%, #121419 55%, #0D0F13 100%)"
+  },
+  "palette": {
+    "light": {
+      "bg": "#F4F5F7",
+      "surface": "#FFFFFF",
+      "elevated": "#FCFCFD",
+      "fg": "#2B2E35",
+      "fg-muted": "#5C6170",
+      "fg-subtle": "#8A8F9E",
+      "border": "#E3E5EA",
+      "border-strong": "#C9CDD6",
+      "primary": "#5C677D",
+      "primary-soft": "#EAEDF2",
+      "primary-fg": "#FFFFFF",
+      "accent": "#9AA5B5",
+      "accent-soft": "#F0F2F6",
+      "accent-fg": "#2B2E35",
+      "wallpaper-overlay": "rgba(244, 245, 247, 0.72)",
+      "shadow": "0 8px 24px rgba(43, 46, 53, 0.08)"
+    },
+    "dark": {
+      "bg": "#15171C",
+      "surface": "#1E2128",
+      "elevated": "#262A33",
+      "fg": "#E2E4EA",
+      "fg-muted": "#A2A7B3",
+      "fg-subtle": "#6E7380",
+      "border": "#2C303A",
+      "border-strong": "#3D424E",
+      "primary": "#93A3BC",
+      "primary-soft": "#2A3140",
+      "primary-fg": "#15171C",
+      "accent": "#7C8CA3",
+      "accent-soft": "#242B38",
+      "accent-fg": "#E2E4EA",
+      "wallpaper-overlay": "rgba(21, 23, 28, 0.78)",
+      "shadow": "0 8px 24px rgba(0, 0, 0, 0.35)"
+    }
+  }
+}

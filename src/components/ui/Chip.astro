@@ -1,0 +1,18 @@
+---
+/** 标签胶囊 */
+interface Props {
+  href?: string
+}
+
+const { href } = Astro.props
+---
+
+{href ? (
+  <a class="chip" href={href}>
+    <slot />
+  </a>
+) : (
+  <span class="chip">
+    <slot />
+  </span>
+)}

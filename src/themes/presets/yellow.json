@@ -1,0 +1,51 @@
+{
+  "id": "yellow",
+  "name": "蜜糖",
+  "description": "温暖、元气的蜂蜜色,晒过太阳的甜味",
+  "mascot": {
+    "primary": "#E59B2E",
+    "secondary": "#C97B2D"
+  },
+  "wallpaper": {
+    "light": "gradient:linear-gradient(180deg, #FFF3D6 0%, #FFE9BB 55%, #F7DCA4 100%)",
+    "dark": "gradient:linear-gradient(180deg, #221A10 0%, #1B140C 55%, #140E08 100%)"
+  },
+  "palette": {
+    "light": {
+      "bg": "#FFF9EC",
+      "surface": "#FFFFFF",
+      "elevated": "#FFFEF9",
+      "fg": "#3A2E1C",
+      "fg-muted": "#7A6A4D",
+      "fg-subtle": "#A8977A",
+      "border": "#F0E5CE",
+      "border-strong": "#DCCBA8",
+      "primary": "#E59B2E",
+      "primary-soft": "#FCF0DC",
+      "primary-fg": "#3A2E1C",
+      "accent": "#C97B2D",
+      "accent-soft": "#F8E9D8",
+      "accent-fg": "#3A2E1C",
+      "wallpaper-overlay": "rgba(255, 249, 236, 0.72)",
+      "shadow": "0 8px 24px rgba(122, 106, 77, 0.10)"
+    },
+    "dark": {
+      "bg": "#1B1510",
+      "surface": "#261E14",
+      "elevated": "#312718",
+      "fg": "#F2E6CE",
+      "fg-muted": "#C2B194",
+      "fg-subtle": "#8A7C63",
+      "border": "#3A2E1E",
+      "border-strong": "#52422B",
+      "primary": "#F0B65A",
+      "primary-soft": "#3A2C18",
+      "primary-fg": "#1B1510",
+      "accent": "#D99A52",
+      "accent-soft": "#35281A",
+      "accent-fg": "#F2E6CE",
+      "wallpaper-overlay": "rgba(27, 21, 16, 0.78)",
+      "shadow": "0 8px 24px rgba(0, 0, 0, 0.4)"
+    }
+  }
+}

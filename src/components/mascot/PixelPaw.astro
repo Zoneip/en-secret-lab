@@ -1,0 +1,17 @@
+---
+/** 像素爪印:用于角标、装饰 */
+import { getTheme } from '../../lib/theme/presets'
+import { PAW, paletteFor } from './art'
+import PixelSprite from './PixelSprite.astro'
+
+interface Props {
+  theme?: string
+  pixel?: number
+}
+
+const { theme = 'gray', pixel = 3 } = Astro.props
+const preset = getTheme(theme)
+const palette = paletteFor(preset.mascot)
+---
+
+<PixelSprite art={PAW} palette={palette} pixel={pixel} role="paw-print" />

@@ -1,0 +1,290 @@
+/* ============ 基础变量与兜底主题(无 JS 时默认灰糖浅色) ============ */
+:root {
+  /* 字体 */
+  --font-display: 'ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', ui-rounded, sans-serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* 圆角体系:全局禁用尖锐角 */
+  --radius-card: 18px;
+  --radius-pill: 9999px;
+  --radius-input: 12px;
+
+  /* 状态色(跨主题) */
+  --success: #3fae6a;
+  --success-wash: #e8f7ee;
+  --warning: #d9a514;
+  --warning-wash: #fdf4de;
+  --error: #d9534f;
+  --error-wash: #fce8e7;
+  --info: #4a90d9;
+  --info-wash: #e7f1fb;
+
+  /* 布局 */
+  --container: 1080px;
+  --header-h: 64px;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 兜底:gray light */
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --elevated: #fcfcfd;
+  --fg: #2b2e35;
+  --fg-muted: #5c6170;
+  --fg-subtle: #8a8f9e;
+  --border: #e3e5ea;
+  --border-strong: #c9cdd6;
+  --primary: #5c677d;
+  --primary-soft: #eaedf2;
+  --primary-fg: #ffffff;
+  --accent: #9aa5b5;
+  --accent-soft: #f0f2f6;
+  --accent-fg: #2b2e35;
+  --wallpaper-overlay: rgba(244, 245, 247, 0.72);
+  --shadow: 0 8px 24px rgba(43, 46, 53, 0.08);
+  --wallpaper-light-src: linear-gradient(180deg, #edeff2 0%, #dce0e6 60%, #cdd2da 100%);
+  --wallpaper-dark-src: linear-gradient(180deg, #17191e 0%, #121419 55%, #0d0f13 100%);
+  --mascot-primary: #5c677d;
+  --mascot-secondary: #9aa5b5;
+}
+
+:root[data-mode='light'] {
+  color-scheme: light;
+}
+
+:root[data-mode='dark'] {
+  color-scheme: dark;
+}
+
+/* ============ 重置 ============ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  transition: background-color 0.35s var(--ease-soft), color 0.35s var(--ease-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.25rem;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s var(--ease-soft);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* 尾巴状下划线 hover */
+.underline-tail {
+  position: relative;
+  padding-bottom: 2px;
+}
+.underline-tail::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease-soft);
+}
+.underline-tail:hover::after {
+  transform: scaleX(1);
+}
+
+::selection {
+  background: var(--primary-soft);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 圆润滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+  border: 2px solid var(--bg);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-subtle);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ============ 布局 ============ */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+main {
+  padding-bottom: 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============ 通用组件 ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  background: var(--primary);
+  color: var(--primary-fg);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-soft),
+    background 0.2s var(--ease-soft), opacity 0.2s;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 40%, transparent);
+  color: var(--primary-fg);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: none;
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  background: var(--primary-soft);
+  color: var(--primary);
+  transition: background 0.2s, color 0.2s;
+}
+a.chip:hover {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-soft),
+    border-color 0.25s var(--ease-soft);
+}
+
+/* 页面淡入 */
+.page-enter {
+  animation: page-in 0.5s var(--ease-soft) both;
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 页面切换时 html 上的过渡类(由 ThemeProvider 注入) */
+html.anim-theme * {
+  transition-property: background-color, color, border-color, box-shadow, opacity;
+  transition-duration: 0.35s;
+  transition-timing-function: var(--ease-soft);
+}

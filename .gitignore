@@ -1,0 +1,34 @@
+# 依赖与构建
+node_modules/
+dist/
+.astro/
+*.tsbuildinfo
+
+# 运行时数据(动态版)
+data/*.db
+data/*.db-*
+
+# 环境变量(敏感)
+.env
+.env.local
+.env.*.local
+
+# 站长本地上传资产(不入库,走控制台)
+public/assets/fonts/uploaded/
+public/assets/themes/*/wallpaper-*.png
+public/assets/themes/*/wallpaper-*.jpg
+public/assets/themes/*/wallpaper-*.jpeg
+public/assets/themes/*/wallpaper-*.webp
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# 测试与日志
+coverage/
+playwright-report/
+test-results/
+*.log
+npm-debug.log*

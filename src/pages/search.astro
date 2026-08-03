@@ -1,0 +1,61 @@
+---
+/**
+ * 全站搜索:Pagefind 静态索引
+ * 构建后需运行 pagefind --site dist(postbuild 已配置)
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getSiteConfig } from '../lib/config'
+
+const config = getSiteConfig()
+---
+
+<BaseLayout title="搜索" description="搜索全站内容">
+  <div class="page-enter">
+    <header class="page-head">
+      <h1>搜索</h1>
+      <p>在 {config.title} 里找点什么</p>
+    </header>
+
+    <div class="search-wrap card">
+      <div id="search"></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { PagefindUI } from '@pagefind/default-ui'
+  import '@pagefind/default-ui/css/ui.css'
+
+  const container = document.getElementById('search')
+  if (container) {
+    new PagefindUI({ element: '#search', showSubResults: true, showImages: false })
+  }
+</script>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    text-align: center;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+  .page-head p {
+    color: var(--fg-subtle);
+    font-size: 0.85rem;
+  }
+  .search-wrap {
+    padding: 28px;
+  }
+  .search-wrap :global(.pagefind-ui__search-input) {
+    border-radius: var(--radius-pill) !important;
+    border: 1.5px solid var(--border) !important;
+    background: var(--surface) !important;
+    font-family: var(--font-body);
+  }
+  .search-wrap :global(.pagefind-ui__result-link) {
+    color: var(--primary);
+    font-family: var(--font-display);
+  }
+</style>

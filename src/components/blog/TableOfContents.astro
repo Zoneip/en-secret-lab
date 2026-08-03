@@ -1,0 +1,69 @@
+---
+/** 文章目录:滚动高亮当前标题 */
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+}
+
+const { headings } = Astro.props
+const visible = headings.filter((h) => h.depth <= 3)
+---
+
+{
+  visible.length > 0 && (
+    <nav class="toc" aria-label="文章目录">
+      <p class="toc-title">目录</p>
+      <ul>
+        {visible.map((h) => (
+          <li class={`depth-${h.depth}`}>
+            <a href={`#${h.slug}`} class="toc-link underline-tail">
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: sticky;
+    top: calc(var(--header-h) + 20px);
+    max-height: calc(100vh - var(--header-h) - 40px);
+    overflow-y: auto;
+    padding: 14px 8px;
+    border-left: 3px solid var(--border);
+  }
+  .toc-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--fg);
+    margin-bottom: 10px;
+  }
+  .toc ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toc-link {
+    display: block;
+    font-size: 0.84rem;
+    color: var(--fg-muted);
+    line-height: 1.45;
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+  .toc-link:hover {
+    color: var(--primary);
+  }
+  .depth-2 .toc-link {
+    padding-left: 14px;
+  }
+  .depth-3 .toc-link {
+    padding-left: 24px;
+    font-size: 0.78rem;
+  }
+</style>

@@ -1,0 +1,19 @@
+services:
+  enlab:
+    image: ${REGISTRY}/enlab:latest
+    container_name: enlab
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:4321:4321'
+    environment:
+      ASTRO_MODE: server
+      SITE_URL: ${SITE_URL}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+      DATABASE_PATH: /app/data/enlab.db
+    volumes:
+      - enlab-data:/app/data
+
+volumes:
+  enlab-data:

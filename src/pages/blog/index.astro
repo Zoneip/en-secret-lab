@@ -1,0 +1,72 @@
+---
+/**
+ * 文章列表:分页卡片流(/blog, /blog/page/2 …)
+ */
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { published } from '../../lib/content/posts'
+import { getSiteConfig } from '../../lib/config'
+import PostCard from '../../components/blog/PostCard.astro'
+import Pagination from '../../components/blog/Pagination.astro'
+import EmptyState from '../../components/ui/EmptyState.astro'
+
+export const PAGE_SIZE = 9
+
+const config = getSiteConfig()
+const all = published(await getCollection('posts'))
+const page = 1
+const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
+const posts = all.slice(0, PAGE_SIZE)
+---
+
+<BaseLayout title="文章" description={`${config.title} 的文章列表`}>
+  <div class="page-enter">
+    <header class="page-head">
+      <h1>文章</h1>
+      <p>第 {page} 页 · 共 {totalPages} 页</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="grid">
+        {posts.map((p) => (
+          <PostCard
+            slug={p.slug}
+            title={p.title}
+            description={p.description}
+            pubDate={p.pubDate}
+            category={p.category}
+            tags={p.tags}
+            cover={p.cover}
+          />
+        ))}
+      </div>
+    ) : (
+      <EmptyState />
+    )}
+
+    <Pagination page={page} totalPages={totalPages} base="/blog" />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+  }
+  .page-head p {
+    color: var(--fg-subtle);
+    font-size: 0.85rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+</style>

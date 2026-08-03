@@ -1,0 +1,123 @@
+---
+/** 文章卡片:卡片流单元 */
+import { formatDate } from '../../lib/utils'
+import PixelPaw from '../mascot/PixelPaw.astro'
+
+interface Props {
+  slug: string
+  title: string
+  description?: string
+  pubDate: Date
+  category?: string
+  tags?: string[]
+  cover?: string
+}
+
+const { slug, title, description, pubDate, category, tags = [], cover } = Astro.props
+const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
+---
+
+<article class="post-card card">
+  <a href={`/blog/${slug}`} class="post-link" aria-label={title}>
+    {coverUrl ? (
+      <div class="cover">
+        <img src={coverUrl} alt="" loading="lazy" decoding="async" />
+      </div>
+    ) : (
+      <div class="cover cover-placeholder">
+        <PixelPaw pixel={4} />
+      </div>
+    )}
+    <div class="body">
+      <div class="meta">
+        {category && <span class="chip">{category}</span>}
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      </div>
+      <h2 class="title">{title}</h2>
+      {description && <p class="desc">{description}</p>}
+      <div class="tags">
+        {tags.map((tag) => (
+          <span class="tag">
+            #{tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .post-card {
+    overflow: hidden;
+    display: flex;
+  }
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--fg) 14%, transparent);
+    border-color: var(--border-strong);
+  }
+  .post-link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    color: inherit;
+  }
+  .cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--elevated);
+  }
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease-soft);
+  }
+  .post-card:hover .cover img {
+    transform: scale(1.04);
+  }
+  .cover-placeholder {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+    opacity: 0.8;
+  }
+  .body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--fg-subtle);
+  }
+  .title {
+    font-size: 1.25rem;
+    color: var(--fg);
+    line-height: 1.4;
+  }
+  .desc {
+    font-size: 0.9rem;
+    color: var(--fg-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+  }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
+  }
+</style>

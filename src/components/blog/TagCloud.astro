@@ -1,0 +1,60 @@
+---
+/** 标签云:标签大小随数量映射 */
+import { aggregateByKey } from '../../lib/content/taxonomy'
+
+interface Props {
+  posts: Array<{ tags?: string[] }>
+  /** 标签相对文字大小上限(rem) */
+  maxSize?: number
+}
+
+const { posts, maxSize = 1.6 } = Astro.props
+const tags = aggregateByKey(posts, 'tags')
+const max = Math.max(1, ...tags.map((t) => t.count))
+---
+
+<div class="tag-cloud">
+  {tags.length === 0 && <p class="empty">还没有标签</p>}
+  {tags.map((tag) => {
+    const size = 0.85 + (tag.count / max) * (maxSize - 0.85)
+    return (
+      <a
+        href={`/tags/${encodeURIComponent(tag.name)}`}
+        class="tag-link underline-tail"
+        style={`font-size:${size.toFixed(2)}rem`}
+       
+      >
+        {tag.name}
+        <span class="count">{tag.count}</span>
+      </a>
+    )
+  })}
+</div>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 18px;
+    padding: 12px 0;
+  }
+  .tag-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--font-display);
+    color: var(--primary);
+    line-height: 1.4;
+  }
+  .count {
+    font-size: 0.7rem;
+    font-family: var(--font-body);
+    color: var(--fg-subtle);
+  }
+  .empty {
+    color: var(--fg-subtle);
+    font-size: 0.9rem;
+  }
+</style>

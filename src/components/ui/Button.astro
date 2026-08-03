@@ -1,0 +1,25 @@
+---
+/** 按钮:primary / ghost 两种风格 */
+interface Props {
+  href?: string
+  variant?: 'primary' | 'ghost'
+  type?: 'button' | 'submit'
+  disabled?: boolean
+  ariaLabel?: string
+}
+
+const { href, variant = 'primary', type = 'button', disabled = false, ariaLabel } = Astro.props
+const cls = `btn ${variant === 'ghost' ? 'btn-ghost' : ''}`
+---
+
+{
+  href ? (
+    <a href={href} class={cls} aria-label={ariaLabel}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={cls} disabled={disabled} aria-label={ariaLabel}>
+      <slot />
+    </button>
+  )
+}

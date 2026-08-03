@@ -1,0 +1,67 @@
+---
+/** 固定背景壁纸层:渐变兜底 + 站长图片,遮罩保证可读性 */
+import { getTheme } from '../../lib/theme/presets'
+import { wallpaperCss } from '../../lib/theme/engine'
+
+interface Props {
+  theme: string
+  /** 站长关闭壁纸时只保留纯背景色 */
+  enabled?: boolean
+}
+
+const { theme, enabled = true } = Astro.props
+const preset = getTheme(theme)
+---
+
+<div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true">
+  <div
+    class="wallpaper-base"
+    data-wallpaper-light
+    style={`background-image:${wallpaperCss(preset.wallpaper.light)}`}
+  ></div>
+  <div
+    class="wallpaper-base"
+    data-wallpaper-dark
+    style={`background-image:${wallpaperCss(preset.wallpaper.dark)}`}
+  ></div>
+  <div class="wallpaper-overlay"></div>
+</div>
+
+<style>
+  .wallpaper {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    transition: opacity 0.4s var(--ease-soft);
+  }
+  .wallpaper-hidden {
+    opacity: 0;
+  }
+  .wallpaper-base {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.4s var(--ease-soft);
+  }
+  [data-mode='light'] .wallpaper-base[data-wallpaper-light] {
+    opacity: 1;
+  }
+  [data-mode='light'] .wallpaper-base[data-wallpaper-dark] {
+    opacity: 0;
+  }
+  [data-mode='dark'] .wallpaper-base[data-wallpaper-light] {
+    opacity: 0;
+  }
+  [data-mode='dark'] .wallpaper-base[data-wallpaper-dark] {
+    opacity: 1;
+  }
+  .wallpaper-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--wallpaper-overlay);
+    backdrop-filter: blur(0px);
+    transition: background 0.4s var(--ease-soft);
+  }
+</style>

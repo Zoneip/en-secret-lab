@@ -1,0 +1,42 @@
+---
+/**
+ * 站长控制台(M5 实装)
+ * 静态构建:getStaticPaths 返回空 → 路由不产出,访客 404
+ * 动态构建:服务端守卫 + 登录流程
+ */
+import { isServer } from '../../lib/utils'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+export const prerender = !isServer
+---
+
+{
+  isServer && (
+    <BaseLayout title="控制台" description="站长控制台">
+      <div class="page-enter">
+        <header class="page-head">
+          <h1>控制台</h1>
+          <p>站长专属 · M5 建设中</p>
+        </header>
+        <div class="card placeholder">
+          <p>主题编辑器 · 字体导入 · 壁纸上传 · 站点设置</p>
+        </div>
+      </div>
+    </BaseLayout>
+  )
+}
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    text-align: center;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+  }
+  .placeholder {
+    padding: 48px;
+    text-align: center;
+    color: var(--fg-subtle);
+  }
+</style>

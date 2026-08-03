@@ -1,0 +1,22 @@
+---
+/**
+ * 吉祥物:像素风双角色(小男孩 / furry)× 主题配色
+ * theme: 主题 id,取对应 mascot 配色
+ */
+import { getTheme } from '../../lib/theme/presets'
+import { BOY, FURRY, paletteFor } from './art'
+import PixelSprite from './PixelSprite.astro'
+
+interface Props {
+  role: 'boy' | 'furry'
+  theme?: string
+  pixel?: number
+}
+
+const { role, theme = 'gray', pixel = 8 } = Astro.props
+const preset = getTheme(theme)
+const palette = paletteFor(preset.mascot)
+const art = role === 'boy' ? BOY : FURRY
+---
+
+<PixelSprite art={art} palette={palette} pixel={pixel} role={role} />

@@ -1,0 +1,181 @@
+/* 文章正文排版:prose 容器内生效 */
+.prose {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: var(--fg);
+}
+
+.prose > * + * {
+  margin-top: 1.15em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--fg);
+  scroll-margin-top: calc(var(--header-h) + 16px);
+  margin-top: 1.9em;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--border);
+}
+
+.prose h3 {
+  font-size: 1.22rem;
+}
+
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  text-underline-offset: 3px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+.prose a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+.prose strong {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--primary);
+  background: var(--primary-soft);
+  border-radius: 0 12px 12px 0;
+  padding: 12px 18px;
+  color: var(--fg-muted);
+}
+.prose blockquote p {
+  margin: 0;
+}
+
+.prose code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.12em 0.42em;
+  color: var(--primary);
+}
+
+.prose pre {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+.prose pre code {
+  font-family: var(--font-mono);
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--fg);
+}
+
+/* 代码高亮跟随主题 token */
+.prose pre :is(.astro-code, code) {
+  background: transparent !important;
+  color: var(--fg);
+}
+.prose pre .shiki {
+  background: transparent;
+}
+.prose pre span {
+  color: inherit;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+}
+.prose ul {
+  list-style: none;
+}
+.prose ul li {
+  position: relative;
+  padding-left: 0.5em;
+}
+.prose ul li::before {
+  content: '';
+  position: absolute;
+  left: -1.05em;
+  top: 0.72em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--accent);
+  opacity: 0.85;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.35em;
+}
+
+.prose img {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  margin-inline: auto;
+}
+
+.prose hr {
+  border: none;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 2.2em 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+.prose th {
+  background: var(--elevated);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+.prose tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--elevated) 55%, transparent);
+}
+
+.prose .task-list-item {
+  list-style: none;
+  margin-left: -1.5em;
+}
+.prose input[type='checkbox'] {
+  accent-color: var(--primary);
+  margin-right: 0.5em;
+}
+
+.prose details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  padding: 10px 16px;
+  background: var(--surface);
+}
+.prose summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--fg);
+}

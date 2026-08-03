@@ -1,0 +1,51 @@
+{
+  "id": "purple",
+  "name": "葡萄",
+  "description": "梦幻、神秘的薰衣草紫,像星空下的葡萄园",
+  "mascot": {
+    "primary": "#8B5CF6",
+    "secondary": "#C084FC"
+  },
+  "wallpaper": {
+    "light": "gradient:linear-gradient(180deg, #F0E6FB 0%, #E3D2F7 55%, #D6C2F2 100%)",
+    "dark": "gradient:linear-gradient(180deg, #1A1526 0%, #151120 55%, #100C19 100%)"
+  },
+  "palette": {
+    "light": {
+      "bg": "#F7F2FC",
+      "surface": "#FFFFFF",
+      "elevated": "#FCFAFE",
+      "fg": "#332B42",
+      "fg-muted": "#6E6284",
+      "fg-subtle": "#9A8FB0",
+      "border": "#E9E0F3",
+      "border-strong": "#D2C2E5",
+      "primary": "#8B5CF6",
+      "primary-soft": "#F0E8FD",
+      "primary-fg": "#FFFFFF",
+      "accent": "#C084FC",
+      "accent-soft": "#F7EFFE",
+      "accent-fg": "#332B42",
+      "wallpaper-overlay": "rgba(247, 242, 252, 0.74)",
+      "shadow": "0 8px 24px rgba(110, 98, 132, 0.12)"
+    },
+    "dark": {
+      "bg": "#171320",
+      "surface": "#211A2E",
+      "elevated": "#2A2139",
+      "fg": "#E8E1F5",
+      "fg-muted": "#B4A8CA",
+      "fg-subtle": "#7E7393",
+      "border": "#332A44",
+      "border-strong": "#463A5C",
+      "primary": "#A78BFA",
+      "primary-soft": "#2D2147",
+      "primary-fg": "#171320",
+      "accent": "#8B5CF6",
+      "accent-soft": "#2A1E3E",
+      "accent-fg": "#E8E1F5",
+      "wallpaper-overlay": "rgba(23, 19, 32, 0.8)",
+      "shadow": "0 8px 24px rgba(0, 0, 0, 0.42)"
+    }
+  }
+}

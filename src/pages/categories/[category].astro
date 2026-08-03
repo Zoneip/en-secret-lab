@@ -1,0 +1,71 @@
+---
+/** 分类归档页 */
+import { getCollection } from 'astro:content'
+import type { GetStaticPaths } from 'astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { published } from '../../lib/content/posts'
+import { aggregateByKey } from '../../lib/content/taxonomy'
+import PostCard from '../../components/blog/PostCard.astro'
+import EmptyState from '../../components/ui/EmptyState.astro'
+
+export const getStaticPaths = (async () => {
+  const posts = published(await getCollection('posts'))
+  return aggregateByKey(posts, 'category').map((cat) => ({
+    params: { category: cat.name },
+    props: {
+      category: cat.name,
+      posts: posts.filter((p) => p.category === cat.name),
+    },
+  }))
+}) satisfies GetStaticPaths
+
+const { category, posts } = Astro.props
+---
+
+<BaseLayout title={category} description={`分类 ${category} 的文章`}>
+  <div class="page-enter">
+    <header class="page-head">
+      <h1>{category}</h1>
+      <p>{posts.length} 篇文章</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="grid">
+        {posts.map((p) => (
+          <PostCard
+            slug={p.slug}
+            title={p.title}
+            description={p.description}
+            pubDate={p.pubDate}
+            category={p.category}
+            tags={p.tags}
+            cover={p.cover}
+           
+          />
+        ))}
+      </div>
+    ) : (
+      <EmptyState />
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .page-head p {
+    color: var(--fg-subtle);
+    font-size: 0.85rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+</style>

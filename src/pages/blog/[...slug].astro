@@ -1,0 +1,175 @@
+---
+/**
+ * 文章详情页:标题区 + 排版正文 + 目录 + 上下篇
+ */
+import { getCollection, render } from 'astro:content'
+import type { GetStaticPaths } from 'astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { formatDate, readingTime } from '../../lib/utils'
+import { published } from '../../lib/content/posts'
+import PixelDivider from '../../components/mascot/PixelDivider.astro'
+import TableOfContents from '../../components/blog/TableOfContents.astro'
+import Chip from '../../components/ui/Chip.astro'
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('posts')
+  return posts
+    .filter((p) => !p.data.draft)
+    .map((post) => ({ params: { slug: post.slug }, props: { post } }))
+}) satisfies GetStaticPaths
+
+const { post } = Astro.props
+const { Content, headings } = await render(post)
+const words = post.body ?? ''
+const related = published(await getCollection('posts'))
+const idx = related.findIndex((p) => p.slug === post.slug)
+const prev = idx > 0 ? related[idx - 1] : undefined
+const next = idx >= 0 && idx < related.length - 1 ? related[idx + 1] : undefined
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  image={post.data.cover ? `/assets/blog/${post.slug}/${post.data.cover}` : undefined}
+>
+  <article class="post page-enter">
+    <header class="post-head">
+      <div class="post-meta">
+        <Chip href={`/categories/${encodeURIComponent(post.data.category)}`}>{post.data.category}</Chip>
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+        {post.data.updatedDate && (
+          <span class="updated">更新于 {formatDate(post.data.updatedDate)}</span>
+        )}
+        <span class="reading">{readingTime(words)} 分钟阅读</span>
+      </div>
+      <h1>{post.data.title}</h1>
+      {post.data.description && <p class="subtitle">{post.data.description}</p>}
+      <div class="tags">
+        {post.data.tags.map((tag) => (
+          <a class="chip" href={`/tags/${encodeURIComponent(tag)}`}>
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </header>
+
+    <PixelDivider />
+
+    <div class="post-body">
+      <div class="toc-wrap">
+        <TableOfContents headings={headings} />
+      </div>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <nav class="adjacent" aria-label="上下篇文章">
+    {prev ? (
+      <a class="adj card" href={`/blog/${prev.slug}`}>
+        <span class="adj-label">上一篇</span>
+        <span class="adj-title">{prev.title}</span>
+      </a>
+    ) : (
+      <span />
+    )}
+    {next ? (
+      <a class="adj card adj-next" href={`/blog/${next.slug}`}>
+        <span class="adj-label">下一篇</span>
+        <span class="adj-title">{next.title}</span>
+      </a>
+    ) : (
+      <span />
+    )}
+  </nav>
+</BaseLayout>
+
+<style>
+  .post-head {
+    padding: 44px 0 24px;
+    text-align: center;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: var(--fg-subtle);
+    margin-bottom: 16px;
+  }
+  .post-head h1 {
+    font-size: 2.2rem;
+    max-width: 24em;
+    margin: 0 auto;
+  }
+  .subtitle {
+    color: var(--fg-muted);
+    margin-top: 12px;
+    font-size: 1.02rem;
+  }
+  .tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .post-body {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 32px;
+    margin-top: 12px;
+    align-items: start;
+  }
+  .prose {
+    min-width: 0;
+  }
+  .adjacent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 44px;
+  }
+  .adj {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    color: var(--fg);
+  }
+  .adj:hover {
+    transform: translateY(-2px);
+  }
+  .adj-next {
+    text-align: right;
+  }
+  .adj-label {
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
+  }
+  .adj-title {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+  }
+
+  @media (max-width: 900px) {
+    .post-body {
+      grid-template-columns: 1fr;
+    }
+    .toc-wrap {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .adjacent {
+      grid-template-columns: 1fr;
+    }
+    .post-head h1 {
+      font-size: 1.7rem;
+    }
+  }
+</style>

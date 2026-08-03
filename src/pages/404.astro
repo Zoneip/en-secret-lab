@@ -1,0 +1,69 @@
+---
+/** 像素风 404:找不到页面啦 */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Mascot from '../components/mascot/Mascot.astro'
+
+const quote = [
+  '这片雪地上没有脚印…',
+  '被爪子藏起来了吗?',
+  '迷路的页面,正在被找回来',
+][new Date().getDate() % 3]
+---
+
+<BaseLayout title="页面走丢了" description="404 页面走丢了">
+  <div class="nf">
+    <div class="nf-mascot">
+      <Mascot role="furry" pixel={12} />
+    </div>
+    <p class="nf-code" aria-hidden="true">404</p>
+    <h1>页面走丢了</h1>
+    <p class="nf-quote">{quote}</p>
+    <div class="nf-actions">
+      <a class="btn" href="/">回首页</a>
+      <a class="btn btn-ghost" href="/blog">看文章</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 96px 0 40px;
+    text-align: center;
+  }
+  .nf-mascot :global(.pixel-sprite) {
+    animation: wobble 2.6s ease-in-out infinite;
+  }
+  @keyframes wobble {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+  .nf-code {
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    line-height: 1;
+    color: var(--primary);
+    opacity: 0.35;
+    margin-top: 8px;
+  }
+  .nf h1 {
+    font-size: 1.7rem;
+  }
+  .nf-quote {
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+  }
+  .nf-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+  }
+</style>

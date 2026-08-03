@@ -1,0 +1,39 @@
+---
+/** 标签总览:标签云 */
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { published } from '../../lib/content/posts'
+import TagCloud from '../../components/blog/TagCloud.astro'
+
+const posts = published(await getCollection('posts'))
+---
+
+<BaseLayout title="标签" description="全站标签总览">
+  <div class="page-enter">
+    <header class="page-head">
+      <h1>标签</h1>
+      <p>共 {posts.reduce((n, p) => n + p.tags.length, 0)} 枚标签</p>
+    </header>
+    <div class="card cloud-card">
+      <TagCloud posts={posts} maxSize={1.9} />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    text-align: center;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+  .page-head p {
+    color: var(--fg-subtle);
+    font-size: 0.85rem;
+  }
+  .cloud-card {
+    padding: 32px 24px;
+  }
+</style>

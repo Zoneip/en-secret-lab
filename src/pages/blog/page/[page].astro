@@ -1,0 +1,80 @@
+---
+/**
+ * 分页路由:第 2 页起(/blog/page/2 …),第 1 页由 /blog 承担
+ */
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import { published } from '../../../lib/content/posts'
+import { getSiteConfig } from '../../../lib/config'
+import PostCard from '../../../components/blog/PostCard.astro'
+import Pagination from '../../../components/blog/Pagination.astro'
+import EmptyState from '../../../components/ui/EmptyState.astro'
+import { PAGE_SIZE } from '../index.astro'
+
+export async function getStaticPaths() {
+  const all = published(await getCollection('posts'))
+  const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2
+    return {
+      params: { page: String(page) },
+      props: { page, totalPages, posts: all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) },
+    }
+  })
+}
+
+const config = getSiteConfig()
+const { page, totalPages, posts } = Astro.props
+---
+
+<BaseLayout title={`文章 · 第 ${page} 页`} description={`${config.title} 的文章列表`}>
+  <div class="page-enter">
+    <header class="page-head">
+      <h1>文章</h1>
+      <p>第 {page} 页 · 共 {totalPages} 页</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="grid">
+        {posts.map((p) => (
+          <PostCard
+            slug={p.slug}
+            title={p.title}
+            description={p.description}
+            pubDate={p.pubDate}
+            category={p.category}
+            tags={p.tags}
+            cover={p.cover}
+          />
+        ))}
+      </div>
+    ) : (
+      <EmptyState />
+    )}
+
+    <Pagination page={page} totalPages={totalPages} base="/blog" />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+  }
+  .page-head p {
+    color: var(--fg-subtle);
+    font-size: 0.85rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+</style>

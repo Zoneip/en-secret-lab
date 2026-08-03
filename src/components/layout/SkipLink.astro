@@ -1,0 +1,27 @@
+---
+/** 无障碍跳转链接:键盘用户直达正文 */
+interface Props {
+  href?: string
+}
+
+const { href = '#main' } = Astro.props
+---
+
+<a class="skip-link" href={href}>跳到正文</a>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: -48px;
+    left: 16px;
+    z-index: 100;
+    padding: 8px 20px;
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+    color: var(--primary-fg);
+    transition: top 0.2s var(--ease-soft);
+  }
+  .skip-link:focus {
+    top: 16px;
+  }
+</style>

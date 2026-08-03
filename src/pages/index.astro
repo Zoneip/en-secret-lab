@@ -1,0 +1,226 @@
+---
+/**
+ * 首页:hero 问候 + 最新文章卡片流 + 分类速览
+ */
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { published, featured } from '../lib/content/posts'
+import { aggregateByKey } from '../lib/content/taxonomy'
+import { getSiteConfig } from '../lib/config'
+import { formatDate } from '../lib/utils'
+import Mascot from '../components/mascot/Mascot.astro'
+import PostCard from '../components/blog/PostCard.astro'
+import TagCloud from '../components/blog/TagCloud.astro'
+
+const config = getSiteConfig()
+const posts = await getCollection('posts')
+const visible = published(posts)
+const featuredPosts = featured(visible)
+const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
+const categories = aggregateByKey(visible, 'category')
+const heroTheme = config.defaultTheme
+---
+
+<BaseLayout title={config.title} description={config.description}>
+  <div class="page-enter">
+    <section class="hero">
+      <div class="hero-text">
+        <p class="hero-greet">这里的主人回来啦</p>
+        <h1>{config.title}</h1>
+        <p class="hero-desc">{config.description}</p>
+        <div class="hero-actions">
+          <a class="btn" href="/blog">看文章</a>
+          <a class="btn btn-ghost" href="/about">认识一下</a>
+        </div>
+      </div>
+      <div class="hero-mascot">
+        <Mascot role="furry" theme={heroTheme} pixel={10} />
+        <Mascot role="boy" theme={heroTheme} pixel={8} />
+      </div>
+    </section>
+
+    {
+      featuredPosts.length > 0 && (
+        <section class="featured card">
+          <h2 class="section-title">精选</h2>
+          <div class="featured-list">
+            {featuredPosts.map((p) => (
+              <a href={`/blog/${p.slug}`} class="featured-item underline-tail">
+                <span class="featured-title">{p.title}</span>
+                <time datetime={p.pubDate.toISOString()}>{formatDate(p.pubDate)}</time>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="recent">
+      <h2 class="section-title">
+        最新文章
+        <a class="more underline-tail" href="/blog">全部文章</a>
+      </h2>
+      <div class="grid">
+        {recent.map((p) => (
+          <PostCard
+            slug={p.slug}
+            title={p.title}
+            description={p.description}
+            pubDate={p.pubDate}
+            category={p.category}
+            tags={p.tags}
+            cover={p.cover}
+           
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="taxonomy card">
+      <h2 class="section-title">逛逛</h2>
+      <div class="cats">
+        {categories.map((c) => (
+          <a class="chip" href={`/categories/${encodeURIComponent(c.name)}`}>
+            {c.name} · {c.count}
+          </a>
+        ))}
+      </div>
+      <TagCloud posts={visible} />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 64px 0 48px;
+    flex-wrap: wrap;
+  }
+  .hero-text {
+    flex: 1;
+    min-width: 260px;
+  }
+  .hero-greet {
+    font-family: var(--font-display);
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    margin-bottom: 12px;
+  }
+  .hero-desc {
+    color: var(--fg-muted);
+    max-width: 46ch;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .hero-mascot {
+    display: flex;
+    gap: 4px;
+    padding: 12px;
+    border-radius: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .hero-mascot :global(.pixel-sprite) {
+    animation: bob 3.5s ease-in-out infinite;
+  }
+  .hero-mascot :global(.pixel-sprite:last-child) {
+    animation-delay: -1.7s;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 1.4rem;
+    margin: 40px 0 18px;
+    color: var(--fg);
+  }
+  .more {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+
+  .featured {
+    padding: 20px 24px;
+  }
+  .featured .section-title {
+    margin-top: 0;
+  }
+  .featured-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .featured-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+    color: var(--fg);
+  }
+  .featured-item:last-child {
+    border-bottom: none;
+  }
+  .featured-item time {
+    font-size: 0.8rem;
+    color: var(--fg-subtle);
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+
+  .taxonomy {
+    margin-top: 40px;
+    padding: 20px 24px 28px;
+  }
+  .taxonomy .section-title {
+    margin-top: 0;
+  }
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 40px 0 24px;
+      justify-content: center;
+      text-align: center;
+    }
+    .hero-desc {
+      margin-inline: auto;
+    }
+    .hero-actions {
+      justify-content: center;
+    }
+    .hero h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

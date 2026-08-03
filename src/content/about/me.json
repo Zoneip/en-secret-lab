@@ -1,0 +1,14 @@
+{
+  "nickname": "EN",
+  "tagline": "秘密实验室的主人,喜欢像素、furry 和一切圆润的东西",
+  "intro": [
+    "这里是 EN,一位正在学习如何把生活做成好产品的人",
+    "会写一点代码,画一点像素,养一只(虚拟)大尾巴",
+    "本站的四套配色:灰糖 / 蜜糖 / 葡萄 / 棉花糖,分别对应我的四种心情",
+    "有什么想说的,欢迎在文章下面留言"
+  ],
+  "links": [
+    { "label": "GitHub", "url": "https://github.com" },
+    { "label": "Bilibili", "url": "https://bilibili.com" }
+  ]
+}

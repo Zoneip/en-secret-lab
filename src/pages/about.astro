@@ -1,0 +1,122 @@
+---
+/** 关于页:自我介绍 + 吉祥物 + 外部链接 */
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Mascot from '../components/mascot/Mascot.astro'
+import PixelDivider from '../components/mascot/PixelDivider.astro'
+import EmptyState from '../components/ui/EmptyState.astro'
+
+const [about] = await getCollection('about')
+---
+
+<BaseLayout title="关于" description="关于这个站点和它的主人">
+  <div class="page-enter">
+    {!about && <EmptyState title="关于页还没写" description="主人还没想好怎么自我介绍" />}
+    {about && (
+      <>
+        <header class="page-head">
+          <h1>关于</h1>
+        </header>
+
+        <div class="card profile">
+          <div class="mascots" aria-hidden="true">
+            <Mascot role="furry" pixel={9} />
+            <Mascot role="boy" pixel={7} />
+          </div>
+          <div class="profile-text">
+            <p class="nickname">{about.data.nickname}</p>
+            <p class="tagline">{about.data.tagline}</p>
+            <ul class="intro">
+              {about.data.intro.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+            {about.data.links.length > 0 && (
+              <div class="links">
+                {about.data.links.map((link) => (
+                  <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div class="card story">
+          <PixelDivider />
+          <slot />
+        </div>
+      </>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding: 40px 0 24px;
+    text-align: center;
+  }
+  .page-head h1 {
+    font-size: 2rem;
+  }
+  .profile {
+    display: flex;
+    gap: 32px;
+    padding: 36px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .mascots {
+    display: flex;
+    gap: 2px;
+  }
+  .profile-text {
+    min-width: 260px;
+    max-width: 480px;
+  }
+  .nickname {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    color: var(--primary);
+  }
+  .tagline {
+    color: var(--fg-muted);
+    margin: 6px 0 14px;
+  }
+  .intro {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--fg);
+    font-size: 0.95rem;
+  }
+  .intro li {
+    position: relative;
+    padding-left: 18px;
+  }
+  .intro li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 9px;
+    height: 9px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: var(--accent);
+    opacity: 0.8;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .story {
+    margin-top: 24px;
+    padding: 28px 32px 36px;
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+/** 分页器 */
+import Button from '../ui/Button.astro'
+
+interface Props {
+  page: number
+  totalPages: number
+  /** 基础路径,不含页码,如 /blog */
+  base: string
+}
+
+const { page, totalPages, base } = Astro.props
+
+function hrefFor(p: number): string {
+  return p <= 1 ? base : `${base}/page/${p}`
+}
+---
+
+<nav class="pagination" aria-label="分页">
+  <Button href={page > 1 ? hrefFor(page - 1) : undefined} variant="ghost" disabled={page <= 1}>
+    上一页
+  </Button>
+  <span class="info">
+    第 {page} / {totalPages} 页
+  </span>
+  <Button href={page < totalPages ? hrefFor(page + 1) : undefined} variant="ghost" disabled={page >= totalPages}>
+    下一页
+  </Button>
+</nav>
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .info {
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+</style>

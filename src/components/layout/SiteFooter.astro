@@ -1,0 +1,51 @@
+---
+/** 站尾:爪印分隔 + 版权 + 社交链接 */
+import { getSiteConfig } from '../../lib/config'
+import PixelDivider from '../mascot/PixelDivider.astro'
+
+const config = getSiteConfig()
+const year = new Date().getFullYear()
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <PixelDivider />
+    <div class="footer-row">
+      <p class="copyright">
+        © {year} {config.author} · {config.title}
+      </p>
+      <p class="meta">
+        <a href="/rss.xml" class="underline-tail">RSS</a>
+        <span aria-hidden="true">·</span>
+        <span>用爱和像素搭的</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0 40px;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+  }
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+  .meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .copyright {
+    font-family: var(--font-display);
+    letter-spacing: 0.03em;
+    color: var(--fg-muted);
+  }
+</style>

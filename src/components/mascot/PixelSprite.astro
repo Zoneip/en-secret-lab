@@ -1,0 +1,60 @@
+---
+/**
+ * 像素画渲染器:把字符画稿渲染为 SVG
+ * pixel = 每个像素格的大小(px);crisp 渲染保证边缘锐利
+ */
+import type { PixelArt, PixelPalette } from './art'
+
+interface Props {
+  art: PixelArt
+  palette: PixelPalette
+  pixel?: number
+  role?: string
+}
+
+const { art, palette, pixel = 8, role } = Astro.props
+
+const colorMap: Record<string, string> = {
+  '1': palette.primary,
+  '2': palette.secondary,
+  '3': palette.blush,
+  '4': palette.eye,
+  f: palette.face,
+}
+
+let cells = ''
+for (let y = 0; y < art.height; y++) {
+  const row = art.rows[y]
+  for (let x = 0; x < row.length; x++) {
+    const ch = row[x]
+    const fill = colorMap[ch]
+    if (!fill) continue
+    cells += `<rect x="${x * pixel}" y="${y * pixel}" width="${pixel}" height="${pixel}" fill="${fill}"/>`
+  }
+}
+const viewBox = `0 0 ${art.width * pixel} ${art.height * pixel}`
+const label = role ? role : 'pixel-art'
+---
+
+<svg
+  class="pixel-sprite"
+  width={art.width * pixel}
+  height={art.height * pixel}
+  viewBox={viewBox}
+  shape-rendering="crispEdges"
+  role="img"
+  aria-label={label}
+  aria-hidden="true"
+>
+  <title>{label}</title>
+  <g set:html={cells} />
+</svg>
+
+<style>
+  .pixel-sprite {
+    image-rendering: pixelated;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+  }
+</style>

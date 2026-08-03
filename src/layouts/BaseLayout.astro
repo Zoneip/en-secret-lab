@@ -1,0 +1,80 @@
+---
+/**
+ * 全局布局:主题引导(防 FOUC)、SEO、头部/底部/壁纸/主题切换器
+ */
+import '@fontsource/zcool-kuaile/400.css'
+import '@fontsource/zcool-qingke-huangyou/400.css'
+import '@fontsource/noto-sans-sc/400.css'
+import '@fontsource/noto-sans-sc/500.css'
+import '@fontsource/noto-sans-sc/700.css'
+import '@fontsource/jetbrains-mono/400.css'
+
+import '../styles/global.css'
+import '../styles/prose.css'
+import '../styles/theme-tokens.generated.css'
+
+import { getSiteConfig } from '../lib/config'
+import { buildMeta } from '../lib/seo'
+import { absoluteUrl } from '../lib/utils'
+import { bootScript } from '../lib/theme/prefs'
+import SkipLink from '../components/layout/SkipLink.astro'
+import SiteHeader from '../components/layout/SiteHeader.astro'
+import SiteFooter from '../components/layout/SiteFooter.astro'
+import WallpaperLayer from '../components/layout/WallpaperLayer.astro'
+import ThemeSwitcher from '../components/theme/ThemeSwitcher.astro'
+
+interface Props {
+  title: string
+  description?: string
+  image?: string
+  type?: 'website' | 'article'
+}
+
+const config = getSiteConfig()
+const { title, description, image, type } = Astro.props
+const siteUrl = Astro.site?.toString() ?? 'http://localhost:4321'
+const pageUrl = absoluteUrl(siteUrl, Astro.url.pathname)
+const meta = buildMeta({
+  title,
+  description: description ?? config.description,
+  type,
+  url: pageUrl,
+  image,
+  siteTitle: config.title,
+  siteUrl,
+})
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme={config.defaultTheme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{meta.find((m) => 'title' in m)?.title ?? title}</title>
+    {meta
+      .filter((m) => !('title' in m))
+      .map((m) => <meta {...m} />)}
+    <script set:html={bootScript()} />
+    <script>
+      // 主题切换时附加过渡动画类(由 ThemeSwitcher 触发)
+      window.addEventListener('enlab:theme-change', () => {
+        document.documentElement.classList.add('anim-theme')
+        window.setTimeout(
+          () => document.documentElement.classList.remove('anim-theme'),
+          400,
+        )
+      })
+    </script>
+  </head>
+  <body>
+    <SkipLink />
+    <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+    <ThemeSwitcher />
+  </body>
+</html>

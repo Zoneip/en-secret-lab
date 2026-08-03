@@ -1,0 +1,40 @@
+name: Deploy Server (动态版)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ${{ vars.REGISTRY }}/${{ vars.IMAGE_NAME }}:latest
+            ${{ vars.REGISTRY }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          build-args: |
+            SITE_URL=${{ vars.SITE_URL }}
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull ${{ vars.REGISTRY }}/${{ vars.IMAGE_NAME }}:latest
+            docker compose -f /opt/enlab/docker-compose.yml up -d --force-recreate enlab
+            docker image prune -f
