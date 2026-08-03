@@ -11,6 +11,8 @@ export default defineConfig({
   output: mode === 'server' ? 'server' : 'static',
   adapter: mode === 'server' ? node({ mode: 'standalone' }) : undefined,
   integrations: [mdx(), sitemap()],
+  // 内置 origin 检查在本地直连时因端口丢失误判跨域(见 middleware 自实现校验)
+  security: { checkOrigin: false },
   markdown: {
     shikiConfig: {
       theme: 'github-light',

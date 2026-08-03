@@ -23,3 +23,7 @@ declare module '@pagefind/default-ui' {
     triggerSearch(term?: string): void
   }
 }
+
+interface Window {
+  toast: (msg: string, isError?: boolean) => void
+}

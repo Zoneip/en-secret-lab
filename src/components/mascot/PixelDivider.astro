@@ -17,7 +17,16 @@ for (let y = 0; y < PAW.height; y++) {
   const row = PAW.rows[y]
   for (let x = 0; x < row.length; x++) {
     const ch = row[x]
-    const fill = { '1': palette.primary, '2': palette.secondary, '3': palette.blush, '4': palette.eye, f: palette.face }[ch]
+    const fill = {
+      '1': palette.primary,
+      '2': palette.secondary,
+      '3': palette.light,
+      '4': palette.dark,
+      '5': palette.eye,
+      f: palette.skin,
+      F: palette.skinShadow,
+      w: palette.white,
+    }[ch]
     if (!fill) continue
     cells += `<rect x="${x * pixel}" y="${y * pixel}" width="${pixel}" height="${pixel}" fill="${fill}"/>`
   }

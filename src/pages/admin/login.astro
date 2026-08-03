@@ -1,0 +1,136 @@
+---
+/**
+ * 控制台登录页
+ */
+import { isServer } from '../../lib/utils'
+import { ensureAdminPassword } from '../../lib/admin/auth'
+
+export const prerender = !isServer
+
+if (isServer) ensureAdminPassword()
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>登录 · 控制台</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style is:global>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Noto Sans SC', system-ui, sans-serif;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(160deg, #eef0f4, #dde1e8);
+      }
+      .login-card {
+        width: min(360px, calc(100vw - 32px));
+        background: #fff;
+        border-radius: 18px;
+        padding: 36px 32px 28px;
+        box-shadow: 0 18px 50px rgba(40, 48, 68, 0.14);
+      }
+      .login-title {
+        font-size: 19px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .login-sub {
+        font-size: 12px;
+        color: #8a8f9e;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      .field input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid #e3e5ea;
+        border-radius: 12px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .field input:focus {
+        outline: 2px solid #5c677d;
+        outline-offset: -1px;
+      }
+      .submit {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 999px;
+        background: #5c677d;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+      .submit:hover {
+        opacity: 0.9;
+      }
+      .error {
+        color: #d9534f;
+        font-size: 12px;
+        text-align: center;
+        margin-top: 12px;
+        min-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="login-card" data-login-form>
+      <p class="login-title">EN 的秘密实验室</p>
+      <p class="login-sub">站长控制台</p>
+      <div class="field">
+        <input type="text" name="username" placeholder="用户名" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <input
+          type="password"
+          name="password"
+          placeholder="密码"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+      <button class="submit" type="submit">登 录</button>
+      <p class="error" data-error></p>
+    </form>
+
+    <script>
+      const form = document.querySelector<HTMLFormElement>('[data-login-form]')!
+      const error = document.querySelector<HTMLElement>('[data-error]')!
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        error.textContent = ''
+        const data = new FormData(form)
+        const res = await fetch('/admin/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: data.get('username'),
+            password: data.get('password'),
+          }),
+        })
+        if (res.ok) {
+          location.href = '/admin'
+        } else {
+          const body = await res.json().catch(() => null)
+          error.textContent = body?.error ?? '登录失败'
+        }
+      })
+    </script>
+  </body>
+</html>

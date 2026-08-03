@@ -1,42 +1,117 @@
 ---
 /**
- * 站长控制台(M5 实装)
- * 静态构建:getStaticPaths 返回空 → 路由不产出,访客 404
- * 动态构建:服务端守卫 + 登录流程
+ * 控制台仪表盘:站点概览
  */
 import { isServer } from '../../lib/utils'
-import BaseLayout from '../../layouts/BaseLayout.astro'
+import AdminLayout from '../../layouts/AdminLayout.astro'
 
 export const prerender = !isServer
 ---
 
-{
-  isServer && (
-    <BaseLayout title="控制台" description="站长控制台">
-      <div class="page-enter container">
-        <header class="page-head">
-          <h1>控制台</h1>
-          <p>站长专属 · M5 建设中</p>
-        </header>
-        <div class="card placeholder">
-          <p>主题编辑器 · 字体导入 · 壁纸上传 · 站点设置</p>
-        </div>
-      </div>
-    </BaseLayout>
+<AdminLayout title="仪表盘" active="dashboard">
+  <div class="stat-grid">
+    <div class="stat card">
+      <p class="stat-num" data-stat-posts>–</p>
+      <p class="stat-label">全部文章</p>
+    </div>
+    <div class="stat card">
+      <p class="stat-num" data-stat-published>–</p>
+      <p class="stat-label">已发布</p>
+    </div>
+    <div class="stat card">
+      <p class="stat-num" data-stat-friends>–</p>
+      <p class="stat-label">友链</p>
+    </div>
+    <div class="stat card">
+      <p class="stat-num" data-stat-themes>4</p>
+      <p class="stat-label">配色主题</p>
+    </div>
+  </div>
+
+  <div class="card site-overview">
+    <h2>站点信息</h2>
+    <dl>
+      <dt>标题</dt>
+      <dd data-site-title>–</dd>
+      <dt>描述</dt>
+      <dd data-site-desc>–</dd>
+      <dt>默认主题</dt>
+      <dd data-site-theme>–</dd>
+    </dl>
+  </div>
+
+  <div class="card quick">
+    <h2>快捷操作</h2>
+    <div class="quick-links">
+      <a class="btn" href="/admin/themes">编辑主题</a>
+      <a class="btn" href="/admin/site">站点设置</a>
+      <a class="btn" href="/admin/assets">资产库</a>
+      <a class="btn" href="/" target="_blank">查看前台</a>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  const state = await fetch('/admin/api/state').then((r) => r.json())
+  const set = (sel: string, val: string) => {
+    const el = document.querySelector(sel)
+    if (el) el.textContent = val
+  }
+  set('[data-stat-posts]', String(state.stats.posts))
+  set('[data-stat-published]', String(state.stats.published))
+  set('[data-stat-friends]', String(state.stats.friends))
+  set('[data-site-title]', state.site.title)
+  set('[data-site-desc]', state.site.description)
+  set(
+    '[data-site-theme]',
+    state.presets.find((p: { id: string }) => p.id === state.site.defaultTheme)?.name ?? state.site.defaultTheme
   )
-}
+</script>
 
 <style>
-  .page-head {
-    padding: 40px 0 24px;
-    text-align: center;
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
   }
-  .page-head h1 {
-    font-size: 2rem;
-  }
-  .placeholder {
-    padding: 48px;
+  .stat {
     text-align: center;
-    color: var(--fg-subtle);
+    padding: 18px 12px;
+  }
+  .stat-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--a-primary);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--a-fg-subtle);
+    margin-top: 2px;
+  }
+  .site-overview {
+    margin-bottom: 18px;
+  }
+  .site-overview h2,
+  .quick h2 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .site-overview dl {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+  }
+  .site-overview dt {
+    color: var(--a-fg-subtle);
+  }
+  .site-overview dd {
+    color: var(--a-fg);
+  }
+  .quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 </style>

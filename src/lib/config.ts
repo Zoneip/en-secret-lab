@@ -1,9 +1,13 @@
-/** 站点配置(L2)读取:静态版读 public/site-config.json,动态版走控制台存储 */
-import { readFileSync } from 'node:fs'
+/** 站点配置(L2)读取:静态版读 public/site-config.json,动态版走 SQLite(控制台写入) */
+import { readFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+import { createRequire } from 'node:module'
 import { z } from 'zod'
 import { isServer } from './utils'
 import type { ThemeOverride } from './theme/engine'
+
+const require = createRequire(import.meta.url)
 
 export const siteConfigSchema = z.object({
   title: z.string().default('EN 的秘密实验室'),
@@ -63,11 +67,39 @@ function resolveConfigPath(): string {
 
 let cached: SiteConfig | null = null
 
+/**
+ * 动态版:从 SQLite settings 表读取配置
+ * 用 createRequire 加载 better-sqlite3(打包产物中 node_modules 可解析),
+ * 避免跨 chunk 的相对模块引用在 SSR bundle 中失效
+ */
+function readDbConfig(): SiteConfig {
+  const Database = require('better-sqlite3') as new (path: string) => {
+    pragma(s: string): void
+    exec(s: string): void
+    close(): void
+    prepare(s: string): { get(...args: unknown[]): { value?: string } | undefined }
+  }
+  const dbPath = process.env.DATABASE_PATH ?? './data/enlab.db'
+  mkdirSync(dirname(dbPath), { recursive: true })
+  const db = new Database(dbPath)
+  db.pragma('journal_mode = WAL')
+  db.exec('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+  const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('site_config')
+  db.close()
+  if (!row?.value) return DEFAULT_SITE_CONFIG
+  try {
+    return siteConfigSchema.parse(JSON.parse(row.value))
+  } catch (e) {
+    console.warn('[config] DB 配置解析失败,使用默认:', (e as Error).message)
+    return DEFAULT_SITE_CONFIG
+  }
+}
+
 /** 读取 L2 配置;读取失败(缺文件/格式错)回退默认,不阻断构建 */
 export function getSiteConfig(): SiteConfig {
   if (cached) return cached
   if (isServer) {
-    cached = DEFAULT_SITE_CONFIG
+    cached = readDbConfig()
     return cached
   }
   const path = resolveConfigPath()
@@ -83,6 +115,11 @@ export function getSiteConfig(): SiteConfig {
     cached = DEFAULT_SITE_CONFIG
   }
   return cached
+}
+
+/** 保存配置后使缓存失效(控制台调用) */
+export function invalidateSiteConfig(): void {
+  cached = null
 }
 
 export function getThemeOverrides(): Record<string, ThemeOverride> {

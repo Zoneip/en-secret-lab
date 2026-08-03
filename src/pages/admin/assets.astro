@@ -1,0 +1,180 @@
+---
+/**
+ * 资产库:已上传资产一览 + 上传入口(壁纸/字体/其他)
+ */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="资产库" active="assets">
+  <div class="card upload-box">
+    <h2>上传资产</h2>
+    <form data-upload-form>
+      <div class="row">
+        <div class="field">
+          <label for="u-kind">类型</label>
+          <select id="u-kind" name="kind">
+            <option value="wallpaper">壁纸</option>
+            <option value="font">字体(woff2/ttf/otf)</option>
+            <option value="misc">其他</option>
+          </select>
+        </div>
+        <div class="field" data-theme-field>
+          <label for="u-theme">关联主题</label>
+          <select id="u-theme" name="themeId">
+            <option value="">不关联</option>
+            <option value="gray">灰糖</option>
+            <option value="yellow">蜜糖</option>
+            <option value="purple">葡萄</option>
+            <option value="white">棉花糖</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="u-file">文件</label>
+          <input type="file" id="u-file" name="file" required />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary">上传</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="card list-box">
+    <h2>已上传(<span data-asset-count>0</span>)</h2>
+    <div class="asset-grid" data-asset-grid></div>
+  </div>
+</AdminLayout>
+
+<script>
+  const state = await fetch('/admin/api/state').then((r) => r.json())
+  const assets: Array<{
+    id: string
+    kind: string
+    themeId: string | null
+    fileName: string
+    path: string
+    size: number
+  }> = state.assets
+
+  const grid = document.querySelector('[data-asset-grid]')!
+  document.querySelector('[data-asset-count]')!.textContent = String(assets.length)
+
+  if (assets.length === 0) {
+    grid.innerHTML = '<p class="empty">还没有上传过资产</p>'
+  } else {
+    grid.innerHTML = assets
+      .map(
+        (a) => `
+        <div class="asset">
+          <a href="${a.path}" target="_blank" class="asset-thumb">
+            ${a.kind === 'wallpaper' ? `<img src="${a.path}" alt="" loading="lazy" />` : '<span class="file-icon">F</span>'}
+          </a>
+          <div class="asset-info">
+            <p class="asset-name" title="${a.fileName}">${a.fileName}</p>
+            <p class="asset-meta">${a.kind} · ${Math.round(a.size / 1024)}KB${a.themeId ? ` · ${a.themeId}` : ''}</p>
+          </div>
+        </div>`
+      )
+      .join('')
+  }
+
+  // 类型切换:壁纸才显示主题选择
+  document.querySelector('[data-upload-form] select[name="kind"]')!.addEventListener('change', (e) => {
+    const isWp = (e.target as HTMLSelectElement).value === 'wallpaper'
+    document.querySelector<HTMLElement>('[data-theme-field]')!.style.display = isWp ? '' : 'none'
+  })
+
+  document.querySelector('[data-upload-form]')!.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const form = e.target as HTMLFormElement
+    const fd = new FormData(form)
+    const file = fd.get('file') as File
+    if (!file) return
+    if (file.size > 20 * 1024 * 1024) {
+      window.toast('文件超过 20MB', true)
+      return
+    }
+    const res = await fetch('/admin/api/assets', { method: 'POST', body: fd })
+    if (res.ok) {
+      window.toast('上传成功')
+      form.reset()
+      setTimeout(() => location.reload(), 600)
+    } else {
+      window.toast((await res.json()).error ?? '上传失败', true)
+    }
+  })
+</script>
+
+<style>
+  .upload-box,
+  .list-box {
+    margin-bottom: 16px;
+  }
+  .upload-box h2,
+  .list-box h2 {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .asset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .asset {
+    border: 1px solid var(--a-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--a-surface);
+  }
+  .asset-thumb {
+    display: block;
+    height: 100px;
+    background: var(--a-primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .asset-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .file-icon {
+    font-weight: 700;
+    color: var(--a-primary);
+  }
+  .asset-info {
+    padding: 8px 10px;
+  }
+  .asset-name {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .asset-meta {
+    font-size: 11px;
+    color: var(--a-fg-subtle);
+  }
+  .empty {
+    color: var(--a-fg-subtle);
+    font-size: 13px;
+  }
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

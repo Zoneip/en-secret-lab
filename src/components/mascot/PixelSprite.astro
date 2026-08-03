@@ -17,9 +17,12 @@ const { art, palette, pixel = 8, role } = Astro.props
 const colorMap: Record<string, string> = {
   '1': palette.primary,
   '2': palette.secondary,
-  '3': palette.blush,
-  '4': palette.eye,
-  f: palette.face,
+  '3': palette.light,
+  '4': palette.dark,
+  '5': palette.eye,
+  f: palette.skin,
+  F: palette.skinShadow,
+  w: palette.white,
 }
 
 let cells = ''
