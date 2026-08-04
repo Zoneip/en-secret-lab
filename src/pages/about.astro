@@ -20,6 +20,7 @@ const siteAuthor = siteConfig.author
 // 每屏独立配色是未来的大改动方向,当前各屏暂时统一拷贝)
 const pgTheme = getTheme(siteConfig.defaultTheme)
 const pgTokens = pgTheme.palette.light
+const pgTokensDark = pgTheme.palette.dark
 const ocs = (await getSiteOcs()).sort(
   (a, b) =>
     ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
@@ -37,7 +38,7 @@ const themeNames: Record<string, string> = {
 <BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
   <div
     class="snap-wrap"
-    style={`--pg-bg:${pgTokens.bg}; --pg-surface:${pgTokens.surface}; --pg-elevated:${pgTokens.elevated}; --pg-fg:${pgTokens.fg}; --pg-fg-muted:${pgTokens['fg-muted']}; --pg-fg-subtle:${pgTokens['fg-subtle']}; --pg-primary:${pgTokens.primary}; --pg-primary-soft:${pgTokens['primary-soft']}; --pg-primary-fg:${pgTokens['primary-fg']}; --pg-accent:${pgTokens.accent}; --pg-accent-soft:${pgTokens['accent-soft']}; --pg-border:${pgTokens.border}; --pg-border-strong:${pgTokens['border-strong']}; --pg-overlay:${pgTokens['wallpaper-overlay']}; --pg-shadow:${pgTokens.shadow}`}
+    style={`--pg-bg:${pgTokens.bg}; --pg-surface:${pgTokens.surface}; --pg-elevated:${pgTokens.elevated}; --pg-fg:${pgTokens.fg}; --pg-fg-muted:${pgTokens['fg-muted']}; --pg-fg-subtle:${pgTokens['fg-subtle']}; --pg-primary:${pgTokens.primary}; --pg-primary-soft:${pgTokens['primary-soft']}; --pg-primary-fg:${pgTokens['primary-fg']}; --pg-accent:${pgTokens.accent}; --pg-accent-soft:${pgTokens['accent-soft']}; --pg-border:${pgTokens.border}; --pg-border-strong:${pgTokens['border-strong']}; --pg-overlay:${pgTokens['wallpaper-overlay']}; --pg-shadow:${pgTokens.shadow}; --pg-bg-dark:${pgTokensDark.bg}; --pg-overlay-dark:${pgTokensDark['wallpaper-overlay']}`}
   >
     <!-- hero 屏背景(独立快照,不随用户主题) -->
     <div class="hero-bg" aria-hidden="true"></div>
@@ -191,8 +192,12 @@ const themeNames: Record<string, string> = {
     position: fixed;
     inset: 0;
     top: var(--header-h);
-    background: var(--pg-bg);
+    background: var(--pg-bg-dark, var(--pg-bg));
     z-index: -2;
+    transition: background 0.3s;
+  }
+  :root[data-mode='light'] .hero-bg {
+    background: var(--pg-bg);
   }
   .hero-inner {
     max-width: 640px;

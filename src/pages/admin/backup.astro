@@ -1,0 +1,12 @@
+---
+/** 备份与导出 */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import BackupPage from '../../components/admin/pages/backup'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="备份与导出" active="backup">
+  <BackupPage client:only="react" />
+</AdminLayout>

@@ -6,6 +6,7 @@ import { isServer } from '../../../lib/utils'
 import { SESSION_COOKIE, isAuthed } from '../../../lib/admin/auth'
 import { listAssets } from '../../../lib/admin/assets'
 import { listPosts } from '../../../lib/admin/posts-store'
+import { autoBackupIfDue } from '../../../lib/admin/backup'
 import { themes } from '../../../lib/theme/presets'
 import { getSiteConfig } from '../../../lib/config'
 import { getCollection } from 'astro:content'
@@ -15,6 +16,7 @@ export const prerender = !isServer
 export const GET: APIRoute = async ({ cookies }) => {
   if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const authed = isAuthed(cookies.get(SESSION_COOKIE)?.value)
+  if (authed) autoBackupIfDue()
   const siteConfig = getSiteConfig()
   const [posts, friends] = await Promise.all([
     getCollection('posts').catch(() => []),

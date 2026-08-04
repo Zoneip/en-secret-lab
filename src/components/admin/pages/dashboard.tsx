@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import {
   Activity,
+  Archive,
   BookOpen,
   CheckCircle2,
   Clock3,
@@ -423,7 +424,8 @@ export default function Dashboard() {
               {[
                 { href: '/admin/posts/new', title: '写文章', icon: FilePlus2 },
                 { href: '/admin/themes', title: '主题', icon: Palette },
-                { href: '/admin/site', title: '设置', icon: Settings },
+                { href: '/admin/settings', title: '设置', icon: Settings },
+                { href: '/admin/backup', title: '备份', icon: Archive },
                 { href: '/admin/assets', title: '资产', icon: ImageIcon },
                 { href: '/', title: '前台', icon: Eye },
               ].map((qa) => (
