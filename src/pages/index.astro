@@ -74,8 +74,8 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
     <!-- 公告 -->
     {
       hp.showAnnouncement && hp.announcement && (
-        <section class="announcement" data-motion-group="ambient">
-          <span class="ann-badge motion-pulse-soft">公告</span>
+        <section class="announcement">
+          <span class="ann-badge">公告</span>
           <p class="ann-text">{hp.announcement}</p>
         </section>
       )
