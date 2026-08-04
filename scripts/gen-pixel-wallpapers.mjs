@@ -797,19 +797,56 @@ function seaDark() {
   return { css, body: `${sky}${moonG}${tw}${sea}${path}${foam}${boatFar}${light}${jelly(258, 96, 0)}${jelly(272, 116, 1)}${jelly(38, 92, 2)}${reef}` }
 }
 
-// ---------- 9/10. 友链 · 巫女孤岛樱花树 ----------
+// ---------- 9/10. 友链 · 巫女孤岛樱花树(v2 精细化:弯曲巨樱遮日/孤岛岩层/细化巫女/满天花雨) ----------
+// 花团生成:沿位置排布,深浅三色
+function blossom(x, y, w, h, mid) {
+  let s = ''
+  for (let yy = y; yy < y + h; yy += 2)
+    for (let xx = x; xx < x + w; xx += 2) {
+      const c = (xx + yy) % 7 === 0 ? '#F7C8DE' : (xx + yy) % 5 === 0 ? '#EEA8C6' : mid
+      s += R(xx, yy, 2, 2, c)
+    }
+  return s
+}
+// 弯枝:从 (x,y) 到 (x2,y2) 的 2px 像素弧线
+function branch(x, y, x2, y2, color) {
+  let s = ''
+  const steps = Math.max(Math.abs(x2 - x), Math.abs(y2 - y))
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps
+    const px = Math.round(x + (x2 - x) * t)
+    const py = Math.round(y + (y2 - y) * t)
+    s += R(px, py, 2, 2, color)
+  }
+  return s
+}
+// 花瓣雨:多片,轨迹组错开
+function petalRain(count, sizes, colors, clsBase, spread) {
+  let s = ''
+  for (let i = 0; i < count; i++) {
+    const size = sizes[i % sizes.length]
+    const x = 30 + ((i * spread) % 260)
+    const y = ((i * 13) % 80)
+    s += R(x, y, size, size, colors[i % colors.length], `${clsBase}${i % 4}`)
+  }
+  return s
+}
+
 function friendsShrineDay() {
-  const sky = ['#FDEFF7', '#FBE8F1', '#F8DFEB', '#F3D5E3'].map((c, i) => R(0, i * 18, 320, 18, c)).join('')
-  const sun = G() + R(262, 22, 32, 32, '#FFD9A0') + R(270, 30, 16, 16, '#FFF0D0') + '</g>'
-  const clouds = G() + cloud(20, 34, 1, '#FFFFFF', '#F0CFE0') + cloud(150, 46, 1, '#FFF7FB', '#F0CFE0') + '</g>'
-  // 海面
+  const sky = ['#FDF2F7', '#FCEBF2', '#FAE3EC', '#F8DAE6', '#F5D0DF', '#F2C6D8'].map((c, i) => R(0, i * 10, 320, 10, c)).join('')
+  // 太阳(被樱花树遮住,只透光晕)
+  const sun = G('halo') +
+    R(120, 34, 50, 50, '#FFF3D0') + R(130, 44, 30, 30, '#FFF9E8') +
+    R(118, 52, 3, 8, '#FFE9B0') + R(169, 52, 3, 8, '#FFE9B0') + R(142, 30, 8, 3, '#FFE9B0') + R(142, 85, 8, 3, '#FFE9B0') +
+    '</g>'
+  const clouds = G() + cloud(14, 40, 1, '#FFFFFF', '#F0CFE0') + cloud(238, 34, 1, '#FFF3F9', '#F0CFE0') + cloud(250, 56, 1, '#FFFFFF', '#F0CFE0') + '</g>'
   const sea = [
-    ['#8FD4E8', 62, 18, 's1'], ['#7AC8E0', 80, 16, 's2'], ['#65BAD6', 96, 15, 's1'], ['#53ABCC', 111, 13, 's2'],
+    ['#8FD4E8', 62, 16, 's1'], ['#7AC8E0', 78, 14, 's2'], ['#65BAD6', 92, 13, 's1'], ['#53ABCC', 105, 12, 's2'], ['#469EC0', 117, 11, 's1'],
   ].map(([c, y, h, a]) => R(0, y, 320, h, c, a)).join('')
-  const gloss = R(0, 64, 320, 1, '#D9F4FF', 's1') + R(0, 82, 320, 1, '#C9EEFD', 's2') + R(0, 98, 320, 1, '#C9EEFD', 's1')
+  const gloss = R(0, 64, 320, 1, '#D9F4FF', 's1') + R(0, 80, 320, 1, '#C9EEFD', 's2') + R(0, 94, 320, 1, '#C9EEFD', 's1') + R(0, 107, 320, 1, '#B8E6FA', 's2')
   const foam = (() => {
     let s = ''
-    for (const [y, a] of [[62, 'f1'], [80, 'f2'], [96, 'f1'], [111, 'f2']]) {
+    for (const [y, a] of [[62, 'f1'], [78, 'f2'], [92, 'f1'], [105, 'f2'], [117, 'f1']]) {
       let x = 0
       while (x < 316) {
         s += R(x, y, 3 + (x % 5), 2, '#FFFFFF', a)
@@ -818,44 +855,90 @@ function friendsShrineDay() {
     }
     return s
   })()
-  // 孤岛(中央,海包围)
+  // 孤岛(精细化:岩岸/沙滩/草地/小径/岩石/草丛)
   const isle = G() +
-    R(104, 152, 112, 28, '#8A6A48') + R(96, 156, 128, 24, '#7A5C3E') +
-    R(108, 146, 104, 8, '#4C9B52') + R(112, 142, 96, 5, '#5FAE66') + R(120, 139, 80, 4, '#6FBE72') +
-    R(110, 150, 100, 3, '#4C9B52') +
-    R(92, 158, 10, 22, '#6B5236') + R(218, 158, 10, 22, '#6B5236') +
+    // 岛体
+    R(104, 152, 118, 28, '#8A6A48') + R(96, 156, 134, 24, '#7A5C3E') + R(90, 160, 146, 20, '#6B4E34') +
+    // 岩岸(左/右)
+    R(88, 158, 10, 20, '#5C4630') + R(84, 162, 8, 16, '#4E3A28') + R(224, 158, 12, 20, '#5C4630') + R(230, 162, 8, 16, '#4E3A28') +
+    R(92, 156, 6, 4, '#7A6A5A') + R(226, 156, 6, 4, '#7A6A5A') +
+    // 沙滩(左前)
+    R(104, 160, 26, 10, '#D9C39A') + R(108, 158, 18, 3, '#E4D2AE') +
+    // 草地(顶,两层)
+    R(110, 144, 110, 8, '#4C9B52') + R(116, 140, 98, 5, '#5FAE66') + R(124, 137, 82, 4, '#6FBE72') +
+    R(112, 148, 104, 3, '#448C48') +
+    // 小径(岛底到树根)
+    R(160, 150, 6, 30, '#A98A5E') + R(162, 146, 4, 6, '#B89A6C') + R(158, 170, 8, 8, '#9A7C50') +
+    // 岩石(草地上 2 块)
+    R(126, 142, 6, 5, '#8A8A96') + R(127, 143, 4, 2, '#A8A8B4') + R(196, 144, 5, 4, '#7E7E8C') +
+    // 草丛(竖像素,3 簇)
+    R(118, 138, 2, 5, '#3E8442') + R(121, 139, 2, 4, '#54A658') + R(176, 141, 2, 4, '#54A658') + R(179, 140, 2, 5, '#3E8442') + R(204, 142, 2, 3, '#54A658') +
+    // 岸线浪花拍岸
+    R(90, 158, 6, 2, '#FFFFFF', 'f1') + R(102, 160, 8, 2, '#D9F4FF', 'f2') + R(218, 159, 8, 2, '#FFFFFF', 'f1') + R(230, 161, 6, 2, '#D9F4FF', 'f2') +
     '</g>'
-  // 樱花树(巨大)
-  const tree = G() +
-    R(150, 96, 12, 46, '#7A4A3A') + R(154, 92, 6, 6, '#8A5A48') +
-    R(148, 98, 3, 30, '#6B3E30') + R(161, 100, 3, 28, '#6B3E30') + R(156, 104, 3, 34, '#7A4A3A') +
-    // 树冠:粉,3 层
-    R(116, 62, 80, 18, '#F2B8D0') + R(108, 74, 96, 20, '#EEA8C6') +
-    R(120, 54, 44, 10, '#F7C8DE') + R(128, 50, 30, 6, '#FBD8E8') +
-    R(112, 88, 88, 12, '#E89AB8') + R(118, 96, 76, 8, '#E08CB0') +
-    // 树干光斑
-    R(152, 100, 2, 6, '#96604E') + R(158, 108, 2, 8, '#96604E') +
+  // 樱花巨树(v2:主干弯曲 + 垂枝 + 簇状花团,太阳被树冠遮)
+  const tree = G('sway') +
+    // 主干(分段弯曲:底→右上→左上→顶)
+    R(158, 148, 6, 32, '#5A3626') + R(160, 144, 5, 6, '#6B3E30') +
+    R(162, 132, 4, 12, '#6B3E30') + R(164, 124, 3, 8, '#7A4A3A') +
+    R(162, 116, 3, 8, '#7A4A3A') + R(160, 108, 3, 8, '#7A4A3A') +
+    R(158, 100, 3, 8, '#7A4A3A') + R(156, 94, 3, 6, '#8A5A48') +
+    // 亮面
+    R(163, 130, 1, 10, '#8A5A48') + R(159, 112, 1, 8, '#8A5A48') +
+    // 大弯枝(向右上再垂)
+    branch(164, 120, 178, 104, '#7A4A3A') + branch(176, 106, 186, 122, '#6B3E30') + branch(186, 122, 196, 134, '#6B3E30') +
+    // 大弯枝(向左上再垂)
+    branch(160, 112, 144, 100, '#7A4A3A') + branch(146, 102, 136, 120, '#6B3E30') + branch(136, 120, 128, 134, '#6B3E30') +
+    // 顶枝
+    branch(158, 96, 150, 84, '#7A4A3A') + branch(150, 84, 142, 76, '#8A5A48') + branch(142, 76, 138, 88, '#7A4A3A') +
+    branch(156, 96, 166, 82, '#8A5A48') + branch(166, 82, 174, 94, '#7A4A3A') +
+    // 细垂枝(花枝)
+    branch(148, 108, 152, 126, '#6B3E30') + branch(180, 110, 184, 128, '#6B3E30') + branch(170, 100, 176, 116, '#7A4A3A') +
+    // 花团(簇状,间隙透光,太阳后光晕区留亮)
+    blossom(128, 60, 24, 14, '#F0B4CC') + blossom(156, 52, 26, 12, '#F7C8DE') + blossom(186, 56, 22, 12, '#EEA8C6') +
+    blossom(112, 74, 26, 14, '#EEA8C6') + blossom(144, 66, 34, 16, '#F5C0D4') + blossom(182, 68, 28, 14, '#E89AB8') +
+    blossom(104, 92, 24, 12, '#E89AB8') + blossom(134, 84, 36, 14, '#F0B4CC') + blossom(176, 86, 28, 12, '#E89AB8') +
+    blossom(126, 100, 26, 12, '#F0B4CC') + blossom(158, 98, 30, 12, '#E89AB8') + blossom(194, 100, 20, 10, '#E08CB0') +
+    blossom(148, 112, 26, 12, '#EEA8C6') + blossom(118, 114, 18, 10, '#E89AB8') + blossom(178, 114, 22, 12, '#E89AB8') +
+    blossom(190, 126, 14, 8, '#E08CB0') + blossom(128, 130, 14, 8, '#E08CB0') +
+    // 高亮花簇(顶光)
+    R(150, 50, 8, 4, '#FBD8E8') + R(140, 58, 10, 4, '#FBD8E8') + R(170, 54, 8, 4, '#F7C8DE') + R(124, 68, 8, 4, '#FBD8E8') +
+    // 太阳透过花隙(树冠内亮斑)
+    R(146, 70, 4, 4, '#FFF6E0') + R(156, 62, 4, 4, '#FFF9E8') + R(164, 72, 4, 4, '#FFF3D0') + R(152, 80, 4, 4, '#FFF6E0') + R(140, 78, 4, 4, '#FFF3D0') +
     '</g>'
-  // 巫女(白衣红裙,守望)
+  // 巫女(细化:长发/发饰/领口/腰带/裙摆/垂袖)
   const miko = G() +
-    // 绯袴(红裙)
-    R(198, 138, 12, 16, '#D9485C') + R(200, 136, 8, 3, '#E85A70') +
-    // 白衣(上)
-    R(200, 124, 8, 12, '#F7F3EE') + R(202, 126, 4, 3, '#EFE9E0') +
-    // 头 + 发
-    R(202, 118, 4, 5, '#3A2C22') + R(204, 120, 2, 2, '#F7E8DC') + R(204, 121, 1, 1, '#3A2C22') +
-    // 红色发绳
-    R(200, 118, 2, 2, '#D9485C') +
-    // 袖子
-    R(196, 124, 4, 10, '#F7F3EE') + R(210, 124, 4, 10, '#F7F3EE') + R(212, 128, 4, 6, '#EFE9E0') +
-    R(192, 134, 4, 3, '#F7F3EE') +
+    // 长发(后披到腰)
+    R(202, 118, 3, 3, '#3A2C22') + R(203, 121, 3, 2, '#33261C') + R(204, 123, 3, 3, '#2E221A') + R(205, 126, 3, 4, '#2E221A') + R(204, 130, 3, 4, '#33261C') +
+    R(201, 120, 2, 2, '#44342A') +
+    // 发饰(红白结)
+    R(198, 116, 3, 2, '#D9485C') + R(199, 118, 2, 2, '#E85A70') + R(198, 114, 2, 2, '#F7F3EE') +
+    // 脸
+    R(201, 119, 4, 4, '#F7E8DC') + R(203, 120, 1, 1, '#3A2C22') + R(201, 122, 2, 1, '#E8C9B0') +
+    // 白衣
+    R(199, 123, 8, 9, '#F7F3EE') + R(200, 123, 2, 2, '#D9485C') + R(205, 123, 2, 2, '#D9485C') +
+    R(200, 126, 1, 3, '#E8E2D8') + R(205, 126, 1, 3, '#E8E2D8') +
+    // 腰带
+    R(198, 132, 10, 2, '#C0392B') + R(199, 134, 8, 1, '#A83024') +
+    // 绯袴(裙摆,两层)
+    R(197, 135, 12, 10, '#D9485C') + R(199, 137, 8, 2, '#E85A70') +
+    R(198, 143, 10, 5, '#C0392B') + R(200, 145, 4, 3, '#B03028') +
+    // 衣纹(竖褶)
+    R(200, 136, 1, 8, '#C0392B') + R(204, 136, 1, 8, '#C0392B') +
+    // 垂袖(左右,摆动)
+    R(194, 124, 5, 9, '#F7F3EE', 'sleeveL') + R(196, 130, 3, 4, '#E8E2D8', 'sleeveL') +
+    R(207, 124, 5, 9, '#F7F3EE', 'sleeveR') + R(209, 130, 3, 4, '#E8E2D8', 'sleeveR') +
+    // 手(身前)
+    R(201, 128, 2, 3, '#F7E8DC') + R(200, 127, 1, 2, '#F7E8DC') +
+    // 赤脚
+    R(199, 148, 3, 2, '#F7E8DC') + R(205, 148, 3, 2, '#F7E8DC') +
     '</g>'
-  // 鸟居(远方小)
-  const torii = G() + R(60, 104, 16, 3, '#C0482F') + R(62, 107, 12, 2, '#A83E28') +
-    R(66, 109, 4, 26, '#B04830') + R(66, 109, 2, 26, '#C45A40') + '</g>'
-  // 花瓣飘落
-  const petals = [0, 1, 2, 3, 4, 5, 6, 7].map((i) =>
-    R(120 + ((i * 23) % 90), 60 + ((i * 11) % 40), 2, 2, '#F7B8D4', `pt${i % 3}`)).join('')
+  // 鸟居(远景)
+  const torii = G() + R(54, 102, 18, 3, '#A83E28') + R(56, 105, 14, 2, '#8E3422') +
+    R(60, 107, 4, 28, '#963A26') + R(60, 107, 2, 28, '#B04830') + '</g>'
+  // 满天花雨(凄美)
+  const petals = petalRain(26, [3, 2, 1], ['#F7B8D4', '#FBD0E0', '#F2A8C4', '#FFE3EE'], 'pt', 11) +
+    petalRain(10, [4, 3], ['#F7C8DE', '#F2B8D0'], 'pf', 27)
   const css = CSS(`
     @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes s2 { from { transform: translateX(-34px) } to { transform: translateX(8px) } }
@@ -863,77 +946,120 @@ function friendsShrineDay() {
     @keyframes f2 { from { transform: translateX(-34px); opacity: .7 } 50% { opacity: 1 } to { transform: translateX(8px); opacity: .7 } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-32px) } to { transform: translateX(12px) } }
-    @keyframes pt0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: 1 } 50% { transform: translate(-8px, 26px) rotate(90deg) } 90% { opacity: 1 } 100% { transform: translate(-16px, 60px) rotate(180deg); opacity: 0 } }
-    @keyframes pt1 { 0% { transform: translate(0, 0); opacity: 0 } 15% { opacity: .9 } 55% { transform: translate(7px, 24px) rotate(-90deg) } 100% { transform: translate(14px, 58px) rotate(-180deg); opacity: 0 } }
-    @keyframes pt2 { 0% { transform: translate(0, 0); opacity: 0 } 20% { opacity: 1 } 60% { transform: translate(-5px, 28px) rotate(120deg) } 100% { transform: translate(-10px, 62px) rotate(240deg); opacity: 0 } }
+    @keyframes halo { 0%, 100% { opacity: .75 } 50% { opacity: 1 } }
+    @keyframes sway { from { transform: rotate(-0.4deg) } 50% { transform: rotate(0.4deg) } to { transform: rotate(-0.4deg) } }
+    @keyframes sleeveL { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(-4deg) translateX(-1px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes sleeveR { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(4deg) translateX(1px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: 1 } 30% { transform: translate(-10px, 22px) rotate(60deg) } 55% { transform: translate(-4px, 44px) rotate(120deg) } 80% { transform: translate(-12px, 70px) rotate(200deg); opacity: .9 } 100% { transform: translate(-6px, 96px) rotate(260deg); opacity: 0 } }
+    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .95 } 35% { transform: translate(9px, 20px) rotate(-70deg) } 60% { transform: translate(3px, 42px) rotate(-140deg) } 85% { transform: translate(10px, 68px) rotate(-210deg); opacity: .8 } 100% { transform: translate(4px, 92px) rotate(-280deg); opacity: 0 } }
+    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .85 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .7 } 100% { transform: translate(0, 100px) rotate(340deg); opacity: 0 } }
+    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .9 } 45% { transform: translate(7px, 24px) rotate(-100deg) } 70% { transform: translate(-4px, 48px) rotate(-200deg) } 100% { transform: translate(6px, 90px) rotate(-300deg); opacity: 0 } }
+    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .9 } 50% { transform: translate(-14px, 40px) rotate(120deg) } 100% { transform: translate(-10px, 110px) rotate(240deg); opacity: 0 } }
+    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .85 } 55% { transform: translate(12px, 44px) rotate(-140deg) } 100% { transform: translate(8px, 112px) rotate(-280deg); opacity: 0 } }
     .s1 { animation: s1 9s linear infinite }
     .s2 { animation: s2 11s linear infinite }
     .f1 { animation: f1 9s linear infinite }
     .f2 { animation: f2 11s linear infinite }
     .cf1 { animation: cf1 28s linear infinite }
     .cf2 { animation: cf2 32s linear infinite }
+    .halo { animation: halo 4s ease-in-out infinite }
+    .sway { animation: sway 8s ease-in-out infinite; transform-origin: 160px 150px; transform-box: fill-box }
+    .sleeveL { animation: sleeveL 4.2s ease-in-out infinite; transform-origin: 195px 124px; transform-box: fill-box }
+    .sleeveR { animation: sleeveR 4.2s ease-in-out infinite .6s; transform-origin: 209px 124px; transform-box: fill-box }
     .pt0 { animation: pt0 7s linear infinite }
     .pt1 { animation: pt1 8.5s linear infinite 1.2s }
     .pt2 { animation: pt2 9.5s linear infinite 2.4s }
+    .pt3 { animation: pt3 10.5s linear infinite .8s }
+    .pf0 { animation: pf0 6.5s linear infinite 1.8s }
+    .pf1 { animation: pf1 7.5s linear infinite 3s }
   `)
   return { css, body: `${sky}${sun}${clouds}${sea}${gloss}${foam}${isle}${torii}${tree}${miko}${petals}` }
 }
 
 function friendsShrineNight() {
-  const sky = ['#1A1230', '#211740', '#271C4E', '#2C2158'].map((c, i) => R(0, i * 18, 320, 18, c)).join('')
-  const moonG = moon(268, 36, 10, '#F5E9FF') + R(265, 33, 2, 2, '#E2D2F7') + R(271, 39, 2, 2, '#E2D2F7') + R(266, 42, 1, 1, '#E2D2F7')
-  const tw = stars([6, 12, 18, 24, 30], '#D9C8F2')
-  const clouds = G() + R(20, 34, 44, 6, '#2E2454') + R(150, 46, 40, 5, '#332968') + '</g>'
+  const sky = ['#171028', '#1C1334', '#221741', '#281C4E', '#2D2158', '#32265F'].map((c, i) => R(0, i * 10, 320, 10, c)).join('')
+  // 月亮(被樱花树遮住,只透光晕)
+  const moonG = G('halo') +
+    R(124, 38, 44, 44, '#EFE4FA') + R(134, 48, 24, 24, '#F6EEFF') +
+    R(132, 42, 3, 6, '#E2D2F7') + R(163, 42, 3, 6, '#E2D2F7') + R(148, 34, 6, 3, '#E2D2F7') + R(148, 83, 6, 3, '#E2D2F7') +
+    '</g>'
+  const tw = stars([6, 12, 18, 24, 30, 36], '#D9C8F2') + R(10, 8, 1, 1, '#FFFFFF', 'shoot') + R(11, 8, 3, 1, '#C9B8F0', 'shoot')
+  const clouds = G() + R(16, 40, 46, 6, '#2E2454') + R(240, 34, 44, 5, '#332968') + R(248, 58, 36, 5, '#2E2454') + '</g>'
   const sea = [
-    ['#123258', 62, 18, 's1'], ['#0F2B4C', 80, 16, 's2'], ['#0C2440', 96, 15, 's1'], ['#0A1E36', 111, 13, 's2'],
+    ['#123258', 62, 16, 's1'], ['#0F2B4C', 78, 14, 's2'], ['#0C2440', 92, 13, 's1'], ['#0A1E36', 105, 12, 's2'], ['#081A30', 117, 11, 's1'],
   ].map(([c, y, h, a]) => R(0, y, 320, h, c, a)).join('')
-  // 月光路径
-  const path = `<g class="mpath">${[0, 1, 2, 3, 4].map((i) => R(140 + i * 2, 64 + i * 12, 12 + (i % 2) * 6, 3, '#DFD8F5', 'mp' + (i % 2))).join('')}</g>`
+  const path = `<g class="mpath">${[0, 1, 2, 3, 4].map((i) => R(138 + i * 2, 64 + i * 12, 14 + (i % 2) * 6, 3, '#DFD8F5', 'mp' + (i % 2))).join('')}</g>`
   const foam = (() => {
     let s = ''
-    for (const [y, a] of [[62, 'f1'], [80, 'f2'], [96, 'f1'], [111, 'f2']]) {
+    for (const [y, a] of [[62, 'f1'], [78, 'f2'], [92, 'f1'], [105, 'f2'], [117, 'f1']]) {
       let x = 0
       while (x < 314) {
-        s += R(x, y, 3 + (x % 5), 2, '#B8C8E8', a)
+        s += R(x, y, 3 + (x % 5), 2, '#9FB4D8', a)
         x += 8 + (x % 3)
       }
     }
     return s
   })()
+  // 孤岛(夜:暗色 + 月光高光)
   const isle = G() +
-    R(104, 152, 112, 28, '#4A3A28') + R(96, 156, 128, 24, '#3E3020') +
-    R(108, 146, 104, 8, '#24402A') + R(112, 142, 96, 5, '#2A4C30') + R(120, 139, 80, 4, '#2E5436') +
-    R(110, 150, 100, 3, '#24402A') +
-    R(92, 158, 10, 22, '#3A2C1C') + R(218, 158, 10, 22, '#3A2C1C') +
+    R(104, 152, 118, 28, '#4A3A28') + R(96, 156, 134, 24, '#3E3020') + R(90, 160, 146, 20, '#332818') +
+    R(88, 158, 10, 20, '#2E2418') + R(84, 162, 8, 16, '#261E14') + R(224, 158, 12, 20, '#2E2418') + R(230, 162, 8, 16, '#261E14') +
+    R(92, 156, 6, 4, '#4E4438') + R(226, 156, 6, 4, '#4E4438') +
+    R(104, 160, 26, 10, '#5E5240') + R(108, 158, 18, 3, '#6E6250') +
+    R(110, 144, 110, 8, '#24402A') + R(116, 140, 98, 5, '#2A4C30') + R(124, 137, 82, 4, '#2E5436') +
+    R(112, 148, 104, 3, '#1E3824') +
+    R(160, 150, 6, 30, '#4E4438') + R(162, 146, 4, 6, '#5C5244') + R(158, 170, 8, 8, '#443C30') +
+    R(126, 142, 6, 5, '#4A4A58') + R(127, 143, 4, 2, '#5E5E6C') + R(196, 144, 5, 4, '#42424E') +
+    R(118, 138, 2, 5, '#1A3020') + R(121, 139, 2, 4, '#2A4630') + R(176, 141, 2, 4, '#2A4630') + R(179, 140, 2, 5, '#1A3020') +
+    R(90, 158, 6, 2, '#7C90B8', 'f1') + R(102, 160, 8, 2, '#6A7CA4', 'f2') + R(218, 159, 8, 2, '#7C90B8', 'f1') + R(230, 161, 6, 2, '#6A7CA4', 'f2') +
     '</g>'
-  const tree = G() +
-    R(150, 96, 12, 46, '#2E1E18') + R(154, 92, 6, 6, '#382620') +
-    R(148, 98, 3, 30, '#261610') + R(161, 100, 3, 28, '#261610') + R(156, 104, 3, 34, '#2E1E18') +
-    // 樱花树冠(暗粉,月光高光)
-    R(116, 62, 80, 18, '#7A4868') + R(108, 74, 96, 20, '#6E3E5E') +
-    R(120, 54, 44, 10, '#8A5476') + R(128, 50, 30, 6, '#966080') +
-    R(112, 88, 88, 12, '#623450') + R(118, 96, 76, 8, '#582C48') +
-    R(116, 64, 30, 4, '#B0789C', 'glow') + R(108, 76, 24, 6, '#A06C90', 'glow') +
-    R(152, 100, 2, 6, '#4A3428') +
+  // 樱花巨树(夜:暗粉 + 月光高光)
+  const tree = G('sway') +
+    R(158, 148, 6, 32, '#241812') + R(160, 144, 5, 6, '#2E1E16') +
+    R(162, 132, 4, 12, '#2E1E16') + R(164, 124, 3, 8, '#36241A') +
+    R(162, 116, 3, 8, '#36241A') + R(160, 108, 3, 8, '#36241A') +
+    R(158, 100, 3, 8, '#36241A') + R(156, 94, 3, 6, '#402C20') +
+    R(163, 130, 1, 10, '#402C20') + R(159, 112, 1, 8, '#402C20') +
+    branch(164, 120, 178, 104, '#36241A') + branch(176, 106, 186, 122, '#2E1E16') + branch(186, 122, 196, 134, '#2E1E16') +
+    branch(160, 112, 144, 100, '#36241A') + branch(146, 102, 136, 120, '#2E1E16') + branch(136, 120, 128, 134, '#2E1E16') +
+    branch(158, 96, 150, 84, '#36241A') + branch(150, 84, 142, 76, '#402C20') + branch(142, 76, 138, 88, '#36241A') +
+    branch(156, 96, 166, 82, '#402C20') + branch(166, 82, 174, 94, '#36241A') +
+    branch(148, 108, 152, 126, '#2E1E16') + branch(180, 110, 184, 128, '#2E1E16') + branch(170, 100, 176, 116, '#36241A') +
+    blossom(128, 60, 24, 14, '#6E3E60') + blossom(156, 52, 26, 12, '#7A4868') + blossom(186, 56, 22, 12, '#66385A') +
+    blossom(112, 74, 26, 14, '#66385A') + blossom(144, 66, 34, 16, '#74406C') + blossom(182, 68, 28, 14, '#5E3260') +
+    blossom(104, 92, 24, 12, '#5E3052') + blossom(134, 84, 36, 14, '#6E3E60') + blossom(176, 86, 28, 12, '#5E3052') +
+    blossom(126, 100, 26, 12, '#6E3E60') + blossom(158, 98, 30, 12, '#5E3052') + blossom(194, 100, 20, 10, '#562A48') +
+    blossom(148, 112, 26, 12, '#74406C') + blossom(118, 114, 18, 10, '#66385A') + blossom(178, 114, 22, 12, '#5E3052') +
+    blossom(190, 126, 14, 8, '#562A48') + blossom(128, 130, 14, 8, '#562A48') +
+    // 月光高光(树冠左侧)
+    R(120, 62, 10, 4, '#8A5878') + R(132, 58, 8, 4, '#966080') + R(146, 56, 10, 4, '#8A5878') + R(114, 76, 10, 4, '#966080') + R(136, 68, 8, 4, '#8A5878') +
+    // 月亮透光(花隙)
+    R(146, 70, 4, 4, '#E8DCF4') + R(156, 62, 4, 4, '#F0E6FA') + R(164, 72, 4, 4, '#E8DCF4') + R(152, 80, 4, 4, '#DED0EE') + R(140, 78, 4, 4, '#E8DCF4') +
     '</g>'
-  // 巫女剪影 + 提灯(暖光)
+  // 巫女(夜:剪影 + 月光描边 + 提灯)
   const miko = G() +
-    R(198, 138, 12, 16, '#5A2440') + R(200, 136, 8, 3, '#6E2E4C') +
-    R(200, 124, 8, 12, '#3A3048') + R(202, 126, 4, 3, '#463A54') +
-    R(202, 118, 4, 5, '#221C30') + R(204, 120, 2, 2, '#6A5E86') + R(204, 121, 1, 1, '#221C30') +
-    R(200, 118, 2, 2, '#D9485C') +
-    R(196, 124, 4, 10, '#3A3048') + R(210, 124, 4, 10, '#3A3048') +
-    // 提灯
-    R(190, 132, 4, 5, '#5A3A1C') + R(190, 133, 4, 3, '#FFE9B0', 'lantern') + R(191, 134, 2, 1, '#FFF6D8') +
-    R(190, 130, 1, 2, '#5A3A1C') +
-    R(186, 128, 3, 3, '#FFD98A', 'lhalo') + R(184, 126, 7, 7, '#FFC96B', 'lhalo') +
+    R(202, 118, 3, 3, '#221C30') + R(203, 121, 3, 2, '#1E1828') + R(204, 123, 3, 3, '#1A1424') + R(205, 126, 3, 4, '#1A1424') + R(204, 130, 3, 4, '#1E1828') +
+    R(201, 120, 2, 2, '#2C2438') +
+    R(198, 116, 3, 2, '#8A3448') + R(199, 118, 2, 2, '#A03C52') + R(198, 114, 2, 2, '#3A3048') +
+    R(201, 119, 4, 4, '#4A3E56') + R(203, 120, 1, 1, '#1A1424') + R(201, 122, 2, 1, '#3E344C') +
+    R(199, 123, 8, 9, '#322A40') + R(200, 123, 2, 2, '#7A3040') + R(205, 123, 2, 2, '#7A3040') +
+    R(198, 132, 10, 2, '#8A3040') + R(199, 134, 8, 1, '#6E2634') +
+    R(197, 135, 12, 10, '#7A2C44') + R(199, 137, 8, 2, '#8E3450') +
+    R(198, 143, 10, 5, '#622438') + R(200, 145, 4, 3, '#54203A') +
+    R(200, 136, 1, 8, '#622438') + R(204, 136, 1, 8, '#622438') +
+    R(194, 124, 5, 9, '#322A40', 'sleeveL') + R(207, 124, 5, 9, '#322A40', 'sleeveR') +
+    // 月光描边(发顶/肩)
+    R(202, 117, 1, 1, '#6A5E86') + R(199, 123, 8, 1, '#463C58') +
+    // 提灯(暖光)
+    R(188, 130, 5, 6, '#4A3018') + R(188, 131, 5, 4, '#FFE9B0', 'lantern') + R(189, 132, 3, 2, '#FFF6D8') +
+    R(188, 128, 1, 2, '#4A3018') + R(186, 127, 4, 2, '#3A2414') +
+    R(182, 124, 3, 3, '#FFD98A', 'lhalo') + R(179, 121, 9, 9, '#FFC96B', 'lhalo') + R(176, 118, 15, 15, '#FFB85C', 'lhalo2') +
     '</g>'
-  const torii = G() + R(60, 104, 16, 3, '#7A2E20') + R(62, 107, 12, 2, '#66281C') +
-    R(66, 109, 4, 26, '#742C1E') + R(66, 109, 2, 26, '#8A3A28') + '</g>'
-  // 萤火/花瓣(微光)
-  const petals = [0, 1, 2, 3, 4, 5].map((i) =>
-    R(120 + ((i * 26) % 90), 60 + ((i * 11) % 40), 2, 2, '#E8A8C8', `pt${i % 3}`)).join('')
-  const fireflies = [0, 1, 2].map((i) => R(150 + i * 40, 90 + ((i * 13) % 20), 2, 2, '#F2E0A0', `bg${i}`)).join('')
+  const torii = G() + R(54, 102, 18, 3, '#5A2418') + R(56, 105, 14, 2, '#4A1E14') +
+    R(60, 107, 4, 28, '#522018') + R(60, 107, 2, 28, '#6E2C20') + '</g>'
+  const petals = petalRain(24, [3, 2, 1], ['#C98AB0', '#D9A0C0', '#B878A0', '#E8B8D0'], 'pt', 12) +
+    petalRain(8, [4, 3], ['#D9A0C0', '#C990B4'], 'pf', 30)
+  const fireflies = [0, 1, 2, 3].map((i) => R(120 + i * 44, 96 + ((i * 15) % 22), 2, 2, '#F2E0A0', `bg${i % 4}`)).join('')
   const css = CSS(`
     @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-36px) } }
     @keyframes s2 { from { transform: translateX(-30px) } to { transform: translateX(8px) } }
@@ -941,36 +1067,54 @@ function friendsShrineNight() {
     @keyframes f2 { from { transform: translateX(-30px); opacity: .7 } 50% { opacity: .35 } to { transform: translateX(8px); opacity: .7 } }
     @keyframes mp0 { 0%, 100% { opacity: .3 } 50% { opacity: .8 } }
     @keyframes mp1 { 0%, 100% { opacity: .7 } 50% { opacity: .25 } }
-    @keyframes glow { 0%, 100% { opacity: .35 } 50% { opacity: .9 } }
-    @keyframes lantern { 0%, 100% { opacity: .5 } 50% { opacity: 1 } }
-    @keyframes lhalo { 0%, 100% { opacity: .12 } 50% { opacity: .45 } }
+    @keyframes halo { 0%, 100% { opacity: .6 } 50% { opacity: .95 } }
+    @keyframes sway { from { transform: rotate(-0.4deg) } 50% { transform: rotate(0.4deg) } to { transform: rotate(-0.4deg) } }
+    @keyframes sleeveL { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(-4deg) translateX(-1px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes sleeveR { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(4deg) translateX(1px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes lantern { 0%, 100% { opacity: .55 } 50% { opacity: 1 } }
+    @keyframes lhalo { 0%, 100% { opacity: .14 } 50% { opacity: .5 } }
+    @keyframes lhalo2 { 0%, 100% { opacity: .08 } 50% { opacity: .3 } }
     @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
     @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
-    @keyframes pt0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .9 } 50% { transform: translate(-8px, 26px) rotate(90deg) } 90% { opacity: .8 } 100% { transform: translate(-16px, 60px) rotate(180deg); opacity: 0 } }
-    @keyframes pt1 { 0% { transform: translate(0, 0); opacity: 0 } 15% { opacity: .8 } 55% { transform: translate(7px, 24px) rotate(-90deg) } 100% { transform: translate(14px, 58px) rotate(-180deg); opacity: 0 } }
-    @keyframes pt2 { 0% { transform: translate(0, 0); opacity: 0 } 20% { opacity: .9 } 60% { transform: translate(-5px, 28px) rotate(120deg) } 100% { transform: translate(-10px, 62px) rotate(240deg); opacity: 0 } }
+    @keyframes shoot { from { transform: translate(0, 0); opacity: 1 } to { transform: translate(-30px, 18px); opacity: 0 } }
+    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: .9 } 30% { transform: translate(-10px, 22px) rotate(60deg) } 55% { transform: translate(-4px, 44px) rotate(120deg) } 80% { transform: translate(-12px, 70px) rotate(200deg); opacity: .8 } 100% { transform: translate(-6px, 96px) rotate(260deg); opacity: 0 } }
+    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .85 } 35% { transform: translate(9px, 20px) rotate(-70deg) } 60% { transform: translate(3px, 42px) rotate(-140deg) } 85% { transform: translate(10px, 68px) rotate(-210deg); opacity: .7 } 100% { transform: translate(4px, 92px) rotate(-280deg); opacity: 0 } }
+    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .8 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .6 } 100% { transform: translate(0, 100px) rotate(340deg); opacity: 0 } }
+    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .85 } 45% { transform: translate(7px, 24px) rotate(-100deg) } 70% { transform: translate(-4px, 48px) rotate(-200deg) } 100% { transform: translate(6px, 90px) rotate(-300deg); opacity: 0 } }
+    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .85 } 50% { transform: translate(-14px, 40px) rotate(120deg) } 100% { transform: translate(-10px, 110px) rotate(240deg); opacity: 0 } }
+    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .8 } 55% { transform: translate(12px, 44px) rotate(-140deg) } 100% { transform: translate(8px, 112px) rotate(-280deg); opacity: 0 } }
     @keyframes bg0 { 0% { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(-6px, -10px); opacity: 1 } 100% { transform: translate(0, 0); opacity: .3 } }
     @keyframes bg1 { 0% { transform: translate(0, 0); opacity: .6 } 50% { transform: translate(5px, -8px); opacity: .25 } 100% { transform: translate(0, 0); opacity: .6 } }
     @keyframes bg2 { 0% { transform: translate(0, 0); opacity: .4 } 50% { transform: translate(-4px, -12px); opacity: .9 } 100% { transform: translate(0, 0); opacity: .4 } }
+    @keyframes bg3 { 0% { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(6px, -9px); opacity: .3 } 100% { transform: translate(0, 0); opacity: .5 } }
     .s1 { animation: s1 10s linear infinite }
     .s2 { animation: s2 12s linear infinite }
     .f1 { animation: f1 10s linear infinite }
     .f2 { animation: f2 12s linear infinite }
     .mp0 { animation: mp0 3.4s ease-in-out infinite }
     .mp1 { animation: mp1 4.2s ease-in-out infinite }
-    .glow { animation: glow 3.6s ease-in-out infinite }
+    .halo { animation: halo 4.5s ease-in-out infinite }
+    .sway { animation: sway 8s ease-in-out infinite; transform-origin: 160px 150px; transform-box: fill-box }
+    .sleeveL { animation: sleeveL 4.2s ease-in-out infinite; transform-origin: 195px 124px; transform-box: fill-box }
+    .sleeveR { animation: sleeveR 4.2s ease-in-out infinite .6s; transform-origin: 209px 124px; transform-box: fill-box }
     .lantern { animation: lantern 1.6s steps(1) infinite }
-    .lhalo { animation: lhalo 2.6s ease-in-out infinite }
+    .lhalo { animation: lhalo 2.8s ease-in-out infinite }
+    .lhalo2 { animation: lhalo2 3.6s ease-in-out infinite 0.8s }
     .tw0 { animation: tw0 2.4s steps(1) infinite }
     .tw1 { animation: tw1 3s steps(1) infinite }
     .tw2 { animation: tw2 2s steps(1) infinite }
-    .pt0 { animation: pt0 8s linear infinite }
-    .pt1 { animation: pt1 9.5s linear infinite 1.4s }
-    .pt2 { animation: pt2 10.5s linear infinite 2.8s }
+    .shoot { animation: shoot 7s linear infinite }
+    .pt0 { animation: pt0 7s linear infinite }
+    .pt1 { animation: pt1 8.5s linear infinite 1.2s }
+    .pt2 { animation: pt2 9.5s linear infinite 2.4s }
+    .pt3 { animation: pt3 10.5s linear infinite .8s }
+    .pf0 { animation: pf0 6.5s linear infinite 1.8s }
+    .pf1 { animation: pf1 7.5s linear infinite 3s }
     .bg0 { animation: bg0 6s ease-in-out infinite }
     .bg1 { animation: bg1 7.5s ease-in-out infinite 1s }
     .bg2 { animation: bg2 6.8s ease-in-out infinite 2s }
+    .bg3 { animation: bg3 8s ease-in-out infinite .5s }
     .moonp { animation: lantern 6s ease-in-out infinite }
   `)
   return { css, body: `${sky}${moonG}${tw}${clouds}${sea}${path}${foam}${isle}${torii}${tree}${miko}${petals}${fireflies}` }
