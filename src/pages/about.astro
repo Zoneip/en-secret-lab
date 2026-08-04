@@ -11,9 +11,15 @@ import { getSiteOcs, getSiteAbout } from '../lib/content/site-content'
 import { getTheme } from '../lib/theme/presets'
 import { wallpaperCss } from '../lib/theme/engine'
 
+
 const about = await getSiteAbout()
 const siteConfig = getSiteConfig()
 const siteAuthor = siteConfig.author
+
+// 关于页主题色 = 当前主题色板快照(内联具体色值,不再引用 CSS 变量;
+// 每屏独立配色是未来的大改动方向,当前各屏暂时统一拷贝)
+const pgTheme = getTheme(siteConfig.defaultTheme)
+const pgTokens = pgTheme.palette.light
 const ocs = (await getSiteOcs()).sort(
   (a, b) =>
     ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
@@ -29,7 +35,12 @@ const themeNames: Record<string, string> = {
 ---
 
 <BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
-  <div class="snap-wrap">
+  <div
+    class="snap-wrap"
+    style={`--pg-bg:${pgTokens.bg}; --pg-surface:${pgTokens.surface}; --pg-elevated:${pgTokens.elevated}; --pg-fg:${pgTokens.fg}; --pg-fg-muted:${pgTokens['fg-muted']}; --pg-fg-subtle:${pgTokens['fg-subtle']}; --pg-primary:${pgTokens.primary}; --pg-primary-soft:${pgTokens['primary-soft']}; --pg-primary-fg:${pgTokens['primary-fg']}; --pg-accent:${pgTokens.accent}; --pg-accent-soft:${pgTokens['accent-soft']}; --pg-border:${pgTokens.border}; --pg-border-strong:${pgTokens['border-strong']}; --pg-overlay:${pgTokens['wallpaper-overlay']}; --pg-shadow:${pgTokens.shadow}`}
+  >
+    <!-- hero 屏背景(独立快照,不随用户主题) -->
+    <div class="hero-bg" aria-hidden="true"></div>
     <div class="snap-scroller" data-snap-scroller>
       <!-- 屏1:hero -->
       <section class="snap-section hero-screen" data-screen>
@@ -176,6 +187,13 @@ const themeNames: Record<string, string> = {
   .hero-screen {
     text-align: center;
   }
+  .hero-bg {
+    position: fixed;
+    inset: 0;
+    top: var(--header-h);
+    background: var(--pg-bg);
+    z-index: -2;
+  }
   .hero-inner {
     max-width: 640px;
     display: flex;
@@ -199,32 +217,32 @@ const themeNames: Record<string, string> = {
     height: 132px;
     border-radius: 36px;
     object-fit: cover;
-    border: 3px solid var(--surface);
-    box-shadow: var(--shadow);
+    border: 3px solid var(--pg-surface);
+    box-shadow: var(--pg-shadow);
   }
   .hero-mascots {
     display: flex;
     gap: 2px;
     padding: 10px;
     border-radius: 22px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
+    background: var(--pg-surface);
+    border: 1px solid var(--pg-border);
+    box-shadow: var(--pg-shadow);
   }
   .hero-nickname {
     font-family: var(--font-display);
     font-size: 2.6rem;
-    color: var(--primary);
+    color: var(--pg-primary);
   }
   .hero-tagline {
-    color: var(--fg-muted);
+    color: var(--pg-fg-muted);
   }
   .hero-intro {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    color: var(--fg);
+    color: var(--pg-fg);
     font-size: 0.92rem;
   }
   .hero-links {
@@ -237,7 +255,7 @@ const themeNames: Record<string, string> = {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: var(--fg-subtle);
+    color: var(--pg-fg-subtle);
     font-size: 0.8rem;
     margin-top: 24px;
     animation: hint-bob 2s ease-in-out infinite;
@@ -260,12 +278,12 @@ const themeNames: Record<string, string> = {
   .oc-bg {
     position: absolute;
     inset: 0;
-    background: var(--oc-bg-dark, var(--bg));
+    background: var(--oc-bg-dark, var(--pg-bg));
     transition: background 0.2s;
     z-index: -1;
   }
   :root[data-mode='light'] .oc-bg {
-    background: var(--oc-bg-light, var(--bg));
+    background: var(--oc-bg-light, var(--pg-bg));
   }
   .oc-bg::after {
     content: '';
@@ -296,9 +314,9 @@ const themeNames: Record<string, string> = {
     flex-shrink: 0;
     padding: 18px;
     border-radius: 28px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
+    background: var(--pg-surface);
+    border: 1px solid var(--pg-border);
+    box-shadow: var(--pg-shadow);
     animation: bob 4s ease-in-out infinite;
   }
   .oc-art-img {
@@ -324,23 +342,23 @@ const themeNames: Record<string, string> = {
     font-size: 0.78rem;
     padding: 2px 12px;
     border-radius: 999px;
-    background: var(--primary-soft);
-    color: var(--primary);
+    background: var(--pg-primary-soft);
+    color: var(--pg-primary);
     margin-bottom: 12px;
   }
   .oc-name {
     font-size: 3rem;
-    color: var(--primary);
+    color: var(--pg-primary);
     line-height: 1.1;
   }
   .oc-subtitle {
     font-family: var(--font-display);
     font-size: 1.25rem;
-    color: var(--fg);
+    color: var(--pg-fg);
     margin: 6px 0 14px;
   }
   .oc-desc {
-    color: var(--fg-muted);
+    color: var(--pg-fg-muted);
     max-width: 46ch;
     line-height: 1.9;
   }
@@ -354,14 +372,14 @@ const themeNames: Record<string, string> = {
     font-size: 0.82rem;
     padding: 3px 14px;
     border-radius: 999px;
-    border: 1.5px solid var(--border-strong);
-    color: var(--fg-muted);
+    border: 1.5px solid var(--pg-border-strong);
+    color: var(--pg-fg-muted);
   }
   .oc-quote {
     margin-top: 18px;
     font-family: var(--font-display);
     font-size: 1.05rem;
-    color: var(--primary);
+    color: var(--pg-primary);
   }
   /* ===== 名言动效 ===== */
   .quote-caret {
@@ -436,17 +454,17 @@ const themeNames: Record<string, string> = {
     justify-content: center;
     gap: 12px;
     font-size: 0.72rem;
-    color: var(--fg-subtle);
+    color: var(--pg-fg-subtle);
     z-index: 5;
     pointer-events: none;
   }
   .screen-footer a {
     pointer-events: auto;
-    color: var(--fg-subtle);
+    color: var(--pg-fg-subtle);
     text-decoration: none;
   }
   .screen-footer a:hover {
-    color: var(--primary);
+    color: var(--pg-primary);
   }
 
   /* ===== 底部指示条(横向) ===== */
@@ -464,7 +482,7 @@ const themeNames: Record<string, string> = {
     height: 9px;
     border-radius: 50%;
     border: none;
-    background: var(--border-strong);
+    background: var(--pg-border-strong);
     cursor: pointer;
     transition: all 0.3s var(--ease-spring);
     opacity: 0.6;
@@ -473,7 +491,7 @@ const themeNames: Record<string, string> = {
     opacity: 1;
   }
   .snap-dot.active {
-    background: var(--primary);
+    background: var(--pg-primary);
     opacity: 1;
     transform: scale(1.4);
   }
@@ -485,7 +503,7 @@ const themeNames: Record<string, string> = {
     width: 44px;
     height: 3px;
     border-radius: 999px;
-    background: var(--border);
+    background: var(--pg-border);
     overflow: hidden;
     z-index: 20;
     opacity: 0.6;
@@ -494,7 +512,7 @@ const themeNames: Record<string, string> = {
     height: 100%;
     width: 20%;
     border-radius: 999px;
-    background: var(--primary);
+    background: var(--pg-primary);
     transition: transform 0.35s var(--ease-soft);
   }
 
