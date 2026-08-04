@@ -5,6 +5,7 @@ import type { APIRoute } from 'astro'
 import { isServer } from '../../../lib/utils'
 import { SESSION_COOKIE, isAuthed } from '../../../lib/admin/auth'
 import { listAssets } from '../../../lib/admin/assets'
+import { listPosts } from '../../../lib/admin/posts-store'
 import { themes } from '../../../lib/theme/presets'
 import { getSiteConfig } from '../../../lib/config'
 import { getCollection } from 'astro:content'
@@ -26,6 +27,28 @@ export const GET: APIRoute = async ({ cookies }) => {
     allCats.add(p.data.category)
   }
   const assets = listAssets()
+  const fsPosts = listPosts()
+
+  // 最近动态:文章(发布/草稿)+ 资产上传,按时间合并
+  const activity: Array<{
+    kind: 'publish' | 'draft' | 'upload'
+    title: string
+    time: number
+    meta?: string
+  }> = []
+  for (const p of fsPosts) {
+    activity.push({
+      kind: p.draft.draft ? 'draft' : 'publish',
+      title: p.draft.title,
+      time: +new Date(p.draft.pubDate),
+      meta: p.draft.category,
+    })
+  }
+  for (const a of assets) {
+    activity.push({ kind: 'upload', title: a.fileName, time: a.created_at, meta: a.kind })
+  }
+  activity.sort((a, b) => b.time - a.time)
+
   return new Response(
     JSON.stringify({
       authed,
@@ -55,6 +78,7 @@ export const GET: APIRoute = async ({ cookies }) => {
         uploads: assets.length,
         uploadBytes: assets.reduce((n, a) => n + a.size, 0),
       },
+      activity: activity.slice(0, 8),
       presets: themes.map((t) => ({
         id: t.id,
         name: t.name,

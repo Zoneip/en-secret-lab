@@ -29,6 +29,7 @@ export interface SavedAsset {
   path: string
   size: number
   mime: string
+  created_at: number
 }
 
 export function saveUpload(kind: string, themeId: string | null, file: {
@@ -56,13 +57,14 @@ export function saveUpload(kind: string, themeId: string | null, file: {
     path,
     size: file.data.length,
     mime: MIME_BY_EXT[ext] ?? file.type,
+    created_at: Date.now(),
   }
   getDb()
     .prepare(
       `INSERT INTO assets (id, kind, theme_id, file_name, path, size, mime, created_at)
        VALUES (@id, @kind, @themeId, @fileName, @path, @size, @mime, @createdAt)`
     )
-    .run({ ...asset, createdAt: Date.now() })
+    .run({ ...asset, createdAt: asset.created_at })
   return asset
 }
 
