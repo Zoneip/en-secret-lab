@@ -50,6 +50,10 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
   .wallpaper-hidden {
     opacity: 0;
   }
+  /* 全屏页自带主题背景:整体卸载壁纸层(不再播放,释放合成器) */
+  body[data-no-wallpaper='true'] .wallpaper {
+    display: none;
+  }
   /* 只有当前主题+模式的层参与渲染;静态帧立即显示,动画帧由 JS 预载后淡入 */
   .wallpaper-base {
     position: absolute;

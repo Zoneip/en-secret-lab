@@ -30,7 +30,7 @@ const Vd = (k: string) => pgd[k]
 const SNAP = `--pg-bg:${V('bg')}; --pg-surface:${V('surface')}; --pg-elevated:${V('elevated')}; --pg-fg:${V('fg')}; --pg-fg-muted:${V('fg-muted')}; --pg-fg-subtle:${V('fg-subtle')}; --pg-primary:${V('primary')}; --pg-primary-soft:${V('primary-soft')}; --pg-primary-fg:${V('primary-fg')}; --pg-accent:${V('accent')}; --pg-accent-soft:${V('accent-soft')}; --pg-border:${V('border')}; --pg-border-strong:${V('border-strong')}; --pg-overlay:${V('wallpaper-overlay')}; --pg-shadow:${V('shadow')}; --pg-bg-dark:${Vd('bg')}; --pg-surface-dark:${Vd('surface')}; --pg-elevated-dark:${Vd('elevated')}; --pg-fg-dark:${Vd('fg')}; --pg-fg-muted-dark:${Vd('fg-muted')}; --pg-fg-subtle-dark:${Vd('fg-subtle')}; --pg-primary-dark:${Vd('primary')}; --pg-primary-soft-dark:${Vd('primary-soft')}; --pg-primary-fg-dark:${Vd('primary-fg')}; --pg-accent-dark:${Vd('accent')}; --pg-accent-soft-dark:${Vd('accent-soft')}; --pg-border-dark:${Vd('border')}; --pg-border-strong-dark:${Vd('border-strong')}; --pg-overlay-dark:${Vd('wallpaper-overlay')}; --pg-shadow-dark:${Vd('shadow')}`
 ---
 
-<BaseLayout title={`${oc.name} · 关于`} description={oc.description ?? '关于'} hideFooter>
+<BaseLayout title={`${oc.name} · 关于`} description={oc.description ?? '关于'} hideFooter noWallpaper>
   <div class="about-root" style={SNAP}>
     <OCScreen oc={oc} index={idx} />
     <AboutNav current={idx + 1} total={5} />

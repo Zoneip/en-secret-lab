@@ -141,7 +141,7 @@ function techLight() {
     @keyframes fl5 { from { transform: translate(318px, 128px) } to { transform: translate(0, 128px) } }
     @keyframes tx1 { from { transform: translateX(0) } to { transform: translateX(-68px) } }
     @keyframes tx2 { from { transform: translateX(0) } to { transform: translateX(-112px) } }
-    @keyframes sunspin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+    @keyframes sunspin { from { transform: rotate(0deg) } 25% { transform: rotate(90deg) } 50% { transform: rotate(180deg) } 75% { transform: rotate(270deg) } to { transform: rotate(360deg) } }
     @keyframes cursor { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
     @keyframes ufofly { from { transform: translate(0, 0) } 25% { transform: translate(-20px, -3px) } 50% { transform: translate(-40px, 0) } 75% { transform: translate(-60px, -3px) } to { transform: translate(-80px, 0) } }
     .cf1 { animation: cf1 26s linear infinite }
@@ -160,7 +160,7 @@ function techLight() {
     .tx1 { animation: tx1 3.4s linear infinite }
     .tx2 { animation: tx2 4.2s linear infinite 1s }
     .cursor { animation: cursor .9s steps(1) infinite }
-    .sunspin { animation: sunspin 22s linear infinite; transform-origin: 287px 39px; transform-box: fill-box }
+    .sunspin { animation: sunspin 22s steps(1) infinite; transform-origin: 287px 39px; transform-box: fill-box }
     .ufo { animation: ufofly 14s linear infinite }
   `)
   return { css, body: `${sky}${sun}${contrail}${clouds}${city}${pcb}${chip}${flow}${term}${term2}${ufo}` }
@@ -355,7 +355,7 @@ function fieldLight() {
     @keyframes cf2 { from { transform: translateX(-34px) } to { transform: translateX(10px) } }
     @keyframes bf1 { from { transform: translate(0, 0) } to { transform: translate(14px, -6px) } }
     @keyframes bf2 { from { transform: translate(10px, -6px) } to { transform: translate(0, 0) } }
-    @keyframes scarf { from { transform: rotate(-3deg) translateX(0) } to { transform: rotate(3deg) translateX(2px) } }
+    @keyframes scarf { from { transform: translateY(0) } 50% { transform: translateY(1px) } to { transform: translateY(0) } }
     @keyframes wing { 0%, 100% { opacity: 1 } 50% { opacity: .15 } }
     @keyframes bfly1 { 0% { transform: translate(0, 0) } 25% { transform: translate(6px, -5px) } 50% { transform: translate(12px, 0) } 75% { transform: translate(6px, 5px) } 100% { transform: translate(0, 0) } }
     @keyframes bfly2 { 0% { transform: translate(0, 0) } 25% { transform: translate(-5px, -4px) } 50% { transform: translate(-10px, 0) } 75% { transform: translate(-5px, 4px) } 100% { transform: translate(0, 0) } }
@@ -433,7 +433,7 @@ function fieldDark() {
     @keyframes glow { 0%, 100% { opacity: .25 } 25% { opacity: .7 } 50% { opacity: 1 } 75% { opacity: .55 } }
     @keyframes halo { 0%, 100% { opacity: 0 } 30% { opacity: .3 } 50% { opacity: .5 } 70% { opacity: .3 } }
     @keyframes warm { 0%, 100% { opacity: .6 } 30% { opacity: .95 } 60% { opacity: 1 } 80% { opacity: .8 } }
-    @keyframes scarf { from { transform: rotate(-3deg) translateX(0) } to { transform: rotate(3deg) translateX(2px) } }
+    @keyframes scarf { from { transform: translateY(0) } 50% { transform: translateY(1px) } to { transform: translateY(0) } }
     @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
     @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
@@ -544,8 +544,8 @@ function libraryDay() {
     @keyframes dust0 { from { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(3px, -8px); opacity: .9 } to { transform: translate(0, 0); opacity: .3 } }
     @keyframes dust1 { from { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(-3px, -6px); opacity: 1 } to { transform: translate(0, 0); opacity: .5 } }
     @keyframes dust2 { from { transform: translate(0, 0); opacity: .2 } 50% { transform: translate(2px, -10px); opacity: .7 } to { transform: translate(0, 0); opacity: .2 } }
-    @keyframes plant { from { transform: rotate(-2deg) } to { transform: rotate(2deg) } }
-    @keyframes clockspin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+    @keyframes plant { from { transform: translateX(0) } to { transform: translateX(1px) } }
+    @keyframes clockspin { from { transform: rotate(0deg) } 25% { transform: rotate(90deg) } 50% { transform: rotate(180deg) } 75% { transform: rotate(270deg) } to { transform: rotate(360deg) } }
     .beam { animation: beam 4s ease-in-out infinite }
     .sheen { animation: sheen 3.6s ease-in-out infinite }
     .curtain { animation: curtain 5s ease-in-out infinite alternate }
@@ -553,7 +553,7 @@ function libraryDay() {
     .dust1 { animation: dust1 5.5s ease-in-out infinite 1s }
     .dust2 { animation: dust2 6.5s ease-in-out infinite 2s }
     .plant { animation: plant 3.4s ease-in-out infinite alternate; transform-origin: 89px 96px; transform-box: fill-box }
-    .clockspin { animation: clockspin 18s linear infinite; transform-origin: 54px 66px; transform-box: fill-box }
+    .clockspin { animation: clockspin 18s steps(1) infinite; transform-origin: 54px 66px; transform-box: fill-box }
   `)
   return { css, body: `${grad}${wallTop}${wallMid}${wallLow}${floor}${rugDay}${curtain}${window_}${beam}${spot}${dust}${shelfL}${shelfR}${art}${plant}${desk}${clock}` }
 }
@@ -610,7 +610,7 @@ function libraryNight() {
     @keyframes mbeam { 0%, 100% { opacity: .45 } 25% { opacity: .66 } 50% { opacity: .9 } 75% { opacity: .62 } }
     @keyframes lglow { 0%, 100% { opacity: .45 } 25% { opacity: .7 } 50% { opacity: .95 } 75% { opacity: .62 } }
     @keyframes lamp { 0%, 100% { opacity: .6 } 30% { opacity: .9 } 60% { opacity: 1 } 80% { opacity: .75 } }
-    @keyframes tail { from { transform: rotate(0deg) } to { transform: rotate(24deg) } }
+    @keyframes tail { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes tw0 { 0%, 60% { opacity: 1 } 61%, 100% { opacity: .2 } }
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
@@ -688,14 +688,14 @@ function seaDay() {
     @keyframes s2 { from { transform: translateX(-34px) } to { transform: translateX(8px) } }
     @keyframes f1 { from { transform: translateX(0); opacity: .95 } 50% { opacity: .6 } to { transform: translateX(-40px); opacity: .95 } }
     @keyframes f2 { from { transform: translateX(-34px); opacity: .75 } 50% { opacity: 1 } to { transform: translateX(8px); opacity: .75 } }
-    @keyframes boat { 0% { transform: rotate(-2.5deg) translateY(0) } 25% { transform: rotate(-1deg) translateY(1px) } 50% { transform: rotate(2.5deg) translateY(1px) } 75% { transform: rotate(1deg) translateY(0) } 100% { transform: rotate(-2.5deg) translateY(0) } }
+    @keyframes boat { 0% { transform: translateY(0) } 25% { transform: translateY(1px) } 50% { transform: translateY(0) } 75% { transform: translateY(1px) } 100% { transform: translateY(0) } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-32px) } to { transform: translateX(12px) } }
     @keyframes gl1 { from { transform: translate(0, 0) } to { transform: translate(10px, -5px) } }
     @keyframes gl2 { from { transform: translate(8px, -4px) } to { transform: translate(0, 0) } }
     @keyframes wing1 { 0%, 100% { opacity: 1 } 50% { opacity: .1 } }
     @keyframes wing2 { 0%, 100% { opacity: .1 } 50% { opacity: 1 } }
-    @keyframes jump { 0% { transform: translate(0, 110px) rotate(0deg) } 15% { transform: translate(6px, 96px) rotate(-8deg) } 30% { transform: translate(12px, 88px) rotate(8deg) } 50% { transform: translate(20px, 92px) rotate(0deg) } 100% { transform: translate(40px, 130px) rotate(0deg); opacity: 0 } }
+    @keyframes jump { 0% { transform: translate(0, 110px) } 15% { transform: translate(6px, 96px) } 30% { transform: translate(12px, 88px) } 50% { transform: translate(20px, 92px) } 100% { transform: translate(40px, 130px); opacity: 0 } }
     .s1 { animation: s1 9s linear infinite }
     .s2 { animation: s2 11s linear infinite }
     .f1 { animation: f1 9s linear infinite }
@@ -947,15 +947,15 @@ function friendsShrineDay() {
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-32px) } to { transform: translateX(12px) } }
     @keyframes halo { 0%, 100% { opacity: .75 } 50% { opacity: 1 } }
-    @keyframes sway { from { transform: rotate(-0.4deg) } 50% { transform: rotate(0.4deg) } to { transform: rotate(-0.4deg) } }
-    @keyframes sleeveL { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(-4deg) translateX(-1px) } to { transform: rotate(0deg) translateX(0) } }
-    @keyframes sleeveR { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(4deg) translateX(1px) } to { transform: rotate(0deg) translateX(0) } }
-    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: 1 } 30% { transform: translate(-10px, 22px) rotate(60deg) } 55% { transform: translate(-4px, 44px) rotate(120deg) } 80% { transform: translate(-12px, 70px) rotate(200deg); opacity: .9 } 100% { transform: translate(-6px, 96px) rotate(260deg); opacity: 0 } }
-    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .95 } 35% { transform: translate(9px, 20px) rotate(-70deg) } 60% { transform: translate(3px, 42px) rotate(-140deg) } 85% { transform: translate(10px, 68px) rotate(-210deg); opacity: .8 } 100% { transform: translate(4px, 92px) rotate(-280deg); opacity: 0 } }
-    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .85 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .7 } 100% { transform: translate(0, 100px) rotate(340deg); opacity: 0 } }
-    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .9 } 45% { transform: translate(7px, 24px) rotate(-100deg) } 70% { transform: translate(-4px, 48px) rotate(-200deg) } 100% { transform: translate(6px, 90px) rotate(-300deg); opacity: 0 } }
-    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .9 } 50% { transform: translate(-14px, 40px) rotate(120deg) } 100% { transform: translate(-10px, 110px) rotate(240deg); opacity: 0 } }
-    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .85 } 55% { transform: translate(12px, 44px) rotate(-140deg) } 100% { transform: translate(8px, 112px) rotate(-280deg); opacity: 0 } }
+    @keyframes sway { from { transform: translateX(0) } 50% { transform: translateX(1px) } to { transform: translateX(0) } }
+    @keyframes sleeveL { from { transform: translateX(0) } 50% { transform: translateX(-1px) } to { transform: translateX(0) } }
+    @keyframes sleeveR { from { transform: translateX(0) } 50% { transform: translateX(1px) } to { transform: translateX(0) } }
+    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: 1 } 30% { transform: translate(-10px, 22px) rotate(90deg) } 55% { transform: translate(-4px, 44px) rotate(180deg) } 80% { transform: translate(-12px, 70px) rotate(270deg); opacity: .9 } 100% { transform: translate(-6px, 96px) rotate(360deg); opacity: 0 } }
+    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .95 } 35% { transform: translate(9px, 20px) rotate(-90deg) } 60% { transform: translate(3px, 42px) rotate(-180deg) } 85% { transform: translate(10px, 68px) rotate(-270deg); opacity: .8 } 100% { transform: translate(4px, 92px) rotate(-360deg); opacity: 0 } }
+    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .85 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .7 } 100% { transform: translate(0, 100px) rotate(360deg); opacity: 0 } }
+    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .9 } 45% { transform: translate(7px, 24px) rotate(-90deg) } 70% { transform: translate(-4px, 48px) rotate(-180deg) } 100% { transform: translate(6px, 90px) rotate(-270deg); opacity: 0 } }
+    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .9 } 50% { transform: translate(-14px, 40px) rotate(180deg) } 100% { transform: translate(-10px, 110px) rotate(270deg); opacity: 0 } }
+    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .85 } 55% { transform: translate(12px, 44px) rotate(-180deg) } 100% { transform: translate(8px, 112px) rotate(-360deg); opacity: 0 } }
     .s1 { animation: s1 9s linear infinite }
     .s2 { animation: s2 11s linear infinite }
     .f1 { animation: f1 9s linear infinite }
@@ -1068,9 +1068,9 @@ function friendsShrineNight() {
     @keyframes mp0 { 0%, 100% { opacity: .3 } 50% { opacity: .8 } }
     @keyframes mp1 { 0%, 100% { opacity: .7 } 50% { opacity: .25 } }
     @keyframes halo { 0%, 100% { opacity: .6 } 50% { opacity: .95 } }
-    @keyframes sway { from { transform: rotate(-0.4deg) } 50% { transform: rotate(0.4deg) } to { transform: rotate(-0.4deg) } }
-    @keyframes sleeveL { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(-4deg) translateX(-1px) } to { transform: rotate(0deg) translateX(0) } }
-    @keyframes sleeveR { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(4deg) translateX(1px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes sway { from { transform: translateX(0) } 50% { transform: translateX(1px) } to { transform: translateX(0) } }
+    @keyframes sleeveL { from { transform: translateX(0) } 50% { transform: translateX(-1px) } to { transform: translateX(0) } }
+    @keyframes sleeveR { from { transform: translateX(0) } 50% { transform: translateX(1px) } to { transform: translateX(0) } }
     @keyframes lantern { 0%, 100% { opacity: .55 } 50% { opacity: 1 } }
     @keyframes lhalo { 0%, 100% { opacity: .14 } 50% { opacity: .5 } }
     @keyframes lhalo2 { 0%, 100% { opacity: .08 } 50% { opacity: .3 } }
@@ -1078,12 +1078,12 @@ function friendsShrineNight() {
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
     @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
     @keyframes shoot { from { transform: translate(0, 0); opacity: 1 } to { transform: translate(-30px, 18px); opacity: 0 } }
-    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: .9 } 30% { transform: translate(-10px, 22px) rotate(60deg) } 55% { transform: translate(-4px, 44px) rotate(120deg) } 80% { transform: translate(-12px, 70px) rotate(200deg); opacity: .8 } 100% { transform: translate(-6px, 96px) rotate(260deg); opacity: 0 } }
-    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .85 } 35% { transform: translate(9px, 20px) rotate(-70deg) } 60% { transform: translate(3px, 42px) rotate(-140deg) } 85% { transform: translate(10px, 68px) rotate(-210deg); opacity: .7 } 100% { transform: translate(4px, 92px) rotate(-280deg); opacity: 0 } }
-    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .8 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .6 } 100% { transform: translate(0, 100px) rotate(340deg); opacity: 0 } }
-    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .85 } 45% { transform: translate(7px, 24px) rotate(-100deg) } 70% { transform: translate(-4px, 48px) rotate(-200deg) } 100% { transform: translate(6px, 90px) rotate(-300deg); opacity: 0 } }
-    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .85 } 50% { transform: translate(-14px, 40px) rotate(120deg) } 100% { transform: translate(-10px, 110px) rotate(240deg); opacity: 0 } }
-    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .8 } 55% { transform: translate(12px, 44px) rotate(-140deg) } 100% { transform: translate(8px, 112px) rotate(-280deg); opacity: 0 } }
+    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: .9 } 30% { transform: translate(-10px, 22px) rotate(90deg) } 55% { transform: translate(-4px, 44px) rotate(180deg) } 80% { transform: translate(-12px, 70px) rotate(270deg); opacity: .8 } 100% { transform: translate(-6px, 96px) rotate(360deg); opacity: 0 } }
+    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .85 } 35% { transform: translate(9px, 20px) rotate(-90deg) } 60% { transform: translate(3px, 42px) rotate(-180deg) } 85% { transform: translate(10px, 68px) rotate(-270deg); opacity: .7 } 100% { transform: translate(4px, 92px) rotate(-360deg); opacity: 0 } }
+    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .8 } 40% { transform: translate(-6px, 26px) rotate(90deg) } 65% { transform: translate(5px, 50px) rotate(180deg) } 90% { transform: translate(-8px, 76px) rotate(270deg); opacity: .6 } 100% { transform: translate(0, 100px) rotate(360deg); opacity: 0 } }
+    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .85 } 45% { transform: translate(7px, 24px) rotate(-90deg) } 70% { transform: translate(-4px, 48px) rotate(-180deg) } 100% { transform: translate(6px, 90px) rotate(-270deg); opacity: 0 } }
+    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .85 } 50% { transform: translate(-14px, 40px) rotate(180deg) } 100% { transform: translate(-10px, 110px) rotate(270deg); opacity: 0 } }
+    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .8 } 55% { transform: translate(12px, 44px) rotate(-180deg) } 100% { transform: translate(8px, 112px) rotate(-360deg); opacity: 0 } }
     @keyframes bg0 { 0% { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(-6px, -10px); opacity: 1 } 100% { transform: translate(0, 0); opacity: .3 } }
     @keyframes bg1 { 0% { transform: translate(0, 0); opacity: .6 } 50% { transform: translate(5px, -8px); opacity: .25 } 100% { transform: translate(0, 0); opacity: .6 } }
     @keyframes bg2 { 0% { transform: translate(0, 0); opacity: .4 } 50% { transform: translate(-4px, -12px); opacity: .9 } 100% { transform: translate(0, 0); opacity: .4 } }

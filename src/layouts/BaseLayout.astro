@@ -40,11 +40,13 @@ interface Props {
   hideFooter?: boolean
   /** 内容撑满视口,页脚贴底(内容稀疏的列表页使用) */
   fillViewport?: boolean
+  /** 隐藏全局壁纸层(全屏页自带主题背景时,避免两层动画叠播) */
+  noWallpaper?: boolean
 }
 
 const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
-const { title, description, image, type, forceTheme, hideFooter = false, fillViewport = false } = Astro.props
+const { title, description, image, type, forceTheme, hideFooter = false, fillViewport = false, noWallpaper = false } = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
 const lightDefault = config.themeByMode.light
 const darkDefault = config.themeByMode.dark
@@ -92,6 +94,7 @@ const meta = buildMeta({
     data-default-theme-light={lightDefault}
     data-default-theme-dark={darkDefault}
     {...(fillViewport ? { 'data-fill-viewport': 'true' } : {})}
+    {...(noWallpaper ? { 'data-no-wallpaper': 'true' } : {})}
     data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
     <WallpaperLayer theme={resolvedTheme} enabled={config.features.wallpapers} />
