@@ -333,10 +333,10 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
     overflow: hidden;
   }
 
-  /* OC 展示卡 */
+  /* OC 展示卡:2×2 排布 */
   .oc-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
   .oc-card {
@@ -438,6 +438,9 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
   }
 
   @media (max-width: 640px) {
+    .oc-grid {
+      grid-template-columns: 1fr;
+    }
     .hero {
       padding: 48px 0 24px;
       justify-content: center;
