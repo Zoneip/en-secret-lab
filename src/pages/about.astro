@@ -4,18 +4,18 @@
  * 屏1 = hero(自我介绍) 屏2-5 = 四个 OC(DCH/FWB/Coulyer/Zoneip)
  * 右侧圆点导航 + 每屏滚动入场动画
  */
-import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
 import { getSiteConfig } from '../lib/config'
+import { getSiteOcs, getSiteAbout } from '../lib/content/site-content'
 
-const [about] = await getCollection('about')
+const about = await getSiteAbout()
 const siteConfig = getSiteConfig()
 const siteAuthor = siteConfig.author
-const ocs = (await getCollection('ocs')).sort(
+const ocs = (await getSiteOcs()).sort(
   (a, b) =>
-    ['gray', 'yellow', 'purple', 'white'].indexOf(a.data.theme) -
-    ['gray', 'yellow', 'purple', 'white'].indexOf(b.data.theme)
+    ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
 )
 
 const themeNames: Record<string, string> = {
@@ -35,8 +35,8 @@ const themeNames: Record<string, string> = {
           {about && (
             <>
               <div class="hero-avatar-wrap">
-                {about.data.avatar ? (
-                  <img src={about.data.avatar} alt={about.data.nickname} class="hero-avatar" />
+                {about.avatar ? (
+                  <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
                 ) : (
                   <div class="hero-mascots" aria-hidden="true">
                     <Mascot role="furry" pixel={7} />
@@ -44,16 +44,16 @@ const themeNames: Record<string, string> = {
                   </div>
                 )}
               </div>
-              <p class="hero-nickname">{about.data.nickname}</p>
-              <p class="hero-tagline">{about.data.tagline}</p>
+              <p class="hero-nickname">{about.nickname}</p>
+              <p class="hero-tagline">{about.tagline}</p>
               <ul class="hero-intro">
-                {about.data.intro.map((line) => (
+                {about.intro.map((line) => (
                   <li>{line}</li>
                 ))}
               </ul>
-              {about.data.links.length > 0 && (
+              {about.links.length > 0 && (
                 <div class="hero-links">
-                  {about.data.links.map((link) => (
+                  {about.links.map((link) => (
                     <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
                       {link.label}
                     </a>
@@ -79,32 +79,32 @@ const themeNames: Record<string, string> = {
           <section
             class="snap-section oc-screen"
             data-screen
-            data-oc-theme={oc.data.theme}
+            data-oc-theme={oc.theme}
             style={`--oc-index:${i}`}
           >
             <div class="oc-bg" aria-hidden="true"></div>
             <div class="oc-inner">
               <div class="oc-art" aria-hidden="true">
-                {oc.data.art ? (
-                  <img src={oc.data.art} alt="" class="oc-art-img" />
+                {oc.art ? (
+                  <img src={oc.art} alt="" class="oc-art-img" />
                 ) : (
                   <>
-                    <Mascot role="furry" theme={oc.data.theme} pixel={9} />
-                    <Mascot role="boy" theme={oc.data.theme} pixel={7} />
+                    <Mascot role="furry" theme={oc.theme} pixel={9} />
+                    <Mascot role="boy" theme={oc.theme} pixel={7} />
                   </>
                 )}
               </div>
               <div class="oc-text">
-                <p class="oc-theme-tag">主题 · {themeNames[oc.data.theme]}</p>
-                <h2 class="oc-name">{oc.data.name}</h2>
-                <p class="oc-subtitle">{oc.data.subtitle}</p>
-                <p class="oc-desc">{oc.data.description}</p>
+                <p class="oc-theme-tag">主题 · {themeNames[oc.theme]}</p>
+                <h2 class="oc-name">{oc.name}</h2>
+                <p class="oc-subtitle">{oc.subtitle}</p>
+                <p class="oc-desc">{oc.description}</p>
                 <div class="oc-traits">
-                  {oc.data.traits.map((t) => (
+                  {oc.traits.map((t) => (
                     <span class="oc-trait">{t}</span>
                   ))}
                 </div>
-                {oc.data.quote && <p class="oc-quote">「{oc.data.quote}」</p>}
+                {oc.quote && <p class="oc-quote">「{oc.quote}」</p>}
               </div>
             </div>
             <footer class="screen-footer">

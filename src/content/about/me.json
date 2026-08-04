@@ -8,7 +8,13 @@
     "有什么想说的,欢迎在文章下面留言"
   ],
   "links": [
-    { "label": "GitHub", "url": "https://github.com" },
-    { "label": "Bilibili", "url": "https://bilibili.com" }
+    {
+      "label": "GitHub",
+      "url": "https://github.com"
+    },
+    {
+      "label": "Bilibili",
+      "url": "https://bilibili.com"
+    }
   ]
 }

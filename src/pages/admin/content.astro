@@ -1,0 +1,12 @@
+---
+/** 内容管理:栏目 / 角色 / 关于(React + shadcn) */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import ContentPage from '../../components/admin/content-page'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="内容管理" active="content">
+  <ContentPage client:only="react" />
+</AdminLayout>
