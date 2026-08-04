@@ -1,0 +1,127 @@
+---
+/** 关于页导航:圆点链接 + 进度条 + 滚轮/键盘翻页(客户端 View Transitions) */
+interface Props {
+  current: number
+  total: number
+}
+
+const { current, total } = Astro.props
+const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/${i + 1}`)]
+---
+
+<nav class="about-dots" aria-label="页面导航">
+  {hrefs.map((href, i) => (
+    <a
+      class:list={['about-dot', { active: i === current }]}
+      href={href}
+      aria-label={`第 ${i + 1} 屏`}
+      aria-current={i === current ? 'page' : undefined}
+      data-about-nav
+    ></a>
+  ))}
+</nav>
+<div class="about-track" aria-hidden="true">
+  <div class="about-track-fill" style={`transform:translateX(${(current / (total - 1)) * 400}%)`}></div>
+</div>
+
+<style>
+  .about-dots {
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+  }
+  .about-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    background: var(--p-border-strong);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    opacity: 0.6;
+    display: block;
+  }
+  .about-dot:hover {
+    opacity: 1;
+  }
+  .about-dot.active {
+    background: var(--p-primary);
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  .about-track {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--p-border);
+    overflow: hidden;
+    z-index: 20;
+    opacity: 0.6;
+  }
+  .about-track-fill {
+    height: 100%;
+    width: 20%;
+    border-radius: 999px;
+    background: var(--p-primary);
+    transition: transform 0.35s var(--ease-soft);
+  }
+  @media (max-width: 760px) {
+    .about-dots {
+      bottom: 18px;
+    }
+    .about-track {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline define:vars={{ total, current }}>
+  // 滚轮/键盘翻页:通过 View Transitions 平滑切换到相邻子页面
+  const nav = (dir) => {
+    const next = current + dir
+    if (next < 0 || next >= total) return
+    const href = next === 0 ? '/about' : `/about/${next}`
+    const a = document.createElement('a')
+    a.href = href
+    a.dataset.aboutNav = ''
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+  let lock = false
+  let lockT = 0
+  window.addEventListener(
+    'wheel',
+    (e) => {
+      if (e.deltaX && !e.deltaY) return
+      if (lock) {
+        e.preventDefault()
+        return
+      }
+      if (!e.deltaY) {
+        e.preventDefault()
+        return
+      }
+      e.preventDefault()
+      lock = true
+      nav(e.deltaY > 0 ? 1 : -1)
+      window.clearTimeout(lockT)
+      lockT = window.setTimeout(() => {
+        lock = false
+      }, 700)
+    },
+    { passive: false }
+  )
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nav(1)
+    else if (e.key === 'ArrowLeft') nav(-1)
+  })
+</script>

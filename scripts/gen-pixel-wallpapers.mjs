@@ -10,8 +10,6 @@ mkdirSync(outDir, { recursive: true })
 
 const R = (x, y, w, h, fill, anim = '') =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}"${anim ? ` class="${anim}"` : ''} fill="${fill}"/>`
-const Rd = (x, y, w, h, rx, fill, anim = '') =>
-  `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"${anim ? ` class="${anim}"` : ''} fill="${fill}"/>`
 const G = (anim = '') => `<g${anim ? ` class="${anim}"` : ''}>`
 
 /** 后处理:整图放大 k 倍(坐标/尺寸/位移/原点 ×k),提升像素密度 */
@@ -182,7 +180,7 @@ function techDark() {
     '</g>'
   const city = (() => {
     let s = ''
-    const bld = (x, w, h, col, n) => {
+    const bld = (x, w, h, col) => {
       let t = ''
       for (let wy = 4; wy < h - 4; wy += 6)
         for (let wx = 3; wx < w - 4; wx += 6) {
