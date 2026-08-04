@@ -23,6 +23,8 @@ export interface OcData {
   description: string
   traits: string[]
   quote?: string
+  quoteEffect: 'none' | 'typing' | 'fade' | 'float'
+  quoteSpeed: 'slow' | 'normal' | 'fast'
   art?: string
 }
 
@@ -72,7 +74,13 @@ export function listOcs(): OcData[] {
     .map((f) => {
       try {
         const raw = parseYaml(readFileSync(join(ocsDir(), f), 'utf8')) as Partial<OcData>
-        return { id: f.replace(/\.yaml$/, ''), traits: [], ...raw } as OcData
+        return {
+          id: f.replace(/\.yaml$/, ''),
+          traits: [],
+          quoteEffect: 'typing',
+          quoteSpeed: 'normal',
+          ...raw,
+        } as OcData
       } catch {
         return null
       }

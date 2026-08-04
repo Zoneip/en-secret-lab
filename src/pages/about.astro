@@ -104,7 +104,16 @@ const themeNames: Record<string, string> = {
                     <span class="oc-trait">{t}</span>
                   ))}
                 </div>
-                {oc.quote && <p class="oc-quote">「{oc.quote}」</p>}
+                {oc.quote && (
+                  <p
+                    class="oc-quote"
+                    data-quote-effect={oc.quoteEffect}
+                    data-quote-speed={oc.quoteSpeed}
+                  >
+                    <span class="quote-text" data-quote-full={oc.quote}>「{oc.quote}」</span>
+                    <span class="quote-caret" aria-hidden="true"></span>
+                  </p>
+                )}
               </div>
             </div>
             <footer class="screen-footer">
@@ -352,6 +361,67 @@ const themeNames: Record<string, string> = {
     font-size: 1.05rem;
     color: var(--primary);
   }
+  /* ===== 名言动效 ===== */
+  .quote-caret {
+    display: none;
+    width: 2px;
+    height: 1.15em;
+    margin-left: 3px;
+    background: currentColor;
+    vertical-align: text-bottom;
+  }
+  [data-quote-effect='typing'] .quote-caret {
+    display: inline-block;
+    animation: caret-blink 0.9s steps(1) infinite;
+  }
+  @keyframes caret-blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  [data-quote-effect='fade'] .quote-text {
+    display: inline-block;
+    animation: quote-fade 3.2s ease-in-out infinite;
+  }
+  [data-quote-effect='fade'][data-quote-speed='slow'] .quote-text {
+    animation-duration: 4.6s;
+  }
+  [data-quote-effect='fade'][data-quote-speed='fast'] .quote-text {
+    animation-duration: 2.2s;
+  }
+  @keyframes quote-fade {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  [data-quote-effect='float'] .quote-text {
+    display: inline-block;
+    animation: quote-float 3.2s ease-in-out infinite;
+  }
+  [data-quote-effect='float'][data-quote-speed='slow'] .quote-text {
+    animation-duration: 4.6s;
+  }
+  [data-quote-effect='float'][data-quote-speed='fast'] .quote-text {
+    animation-duration: 2.2s;
+  }
+  @keyframes quote-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
 
   /* ===== 屏内页脚(随滑动同步) ===== */
   .screen-footer {
@@ -514,6 +584,46 @@ const themeNames: Record<string, string> = {
   screens.forEach((s) => observer.observe(s))
   scroller.addEventListener('scroll', updateProgress, { passive: true })
   updateProgress()
+
+  // 名言打字机效果:进入视野逐字打出,离开重置可重播
+  const TYPE_SPEED = { slow: 95, normal: 55, fast: 28 }
+  const typingQuotes = [...document.querySelectorAll<HTMLElement>('[data-quote-effect="typing"]')]
+
+  function startTyping(el: HTMLElement) {
+    if (el.dataset.typed === '1') return
+    el.dataset.typed = '1'
+    const text = el.querySelector<HTMLElement>('.quote-text')
+    if (!text) return
+    const full = text.dataset.quoteFull ?? ''
+    const speed = TYPE_SPEED[(el.dataset.quoteSpeed as keyof typeof TYPE_SPEED) ?? 'normal'] ?? 55
+    text.textContent = ''
+    let i = 0
+    const timer = window.setInterval(() => {
+      i++
+      text.textContent = `「${full.slice(0, i)}」`
+      if (i >= full.length) window.clearInterval(timer)
+    }, speed)
+    el.dataset.timer = String(timer)
+  }
+
+  function resetTyping(el: HTMLElement) {
+    if (el.dataset.typed !== '1') return
+    el.dataset.typed = ''
+    window.clearInterval(Number(el.dataset.timer))
+    const text = el.querySelector<HTMLElement>('.quote-text')
+    if (text) text.textContent = `「${text.dataset.quoteFull ?? ''}」`
+  }
+
+  const quoteObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) startTyping(entry.target as HTMLElement)
+        else resetTyping(entry.target as HTMLElement)
+      }
+    },
+    { root: scroller, threshold: 0.6 }
+  )
+  typingQuotes.forEach((q) => quoteObserver.observe(q))
 
   // 键盘左右键导航
   document.addEventListener('keydown', (e) => {

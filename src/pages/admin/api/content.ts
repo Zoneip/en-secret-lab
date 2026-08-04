@@ -61,6 +61,10 @@ export const PUT: APIRoute = async ({ request }) => {
         if (!validTheme(data.theme) || !data.name?.trim()) {
           throw new Error(`角色「${id}」缺少必填字段或主题无效`)
         }
+        const effect = data.quoteEffect ?? 'typing'
+        const speed = data.quoteSpeed ?? 'normal'
+        if (!['none', 'typing', 'fade', 'float'].includes(effect)) throw new Error(`角色「${id}」动效类型无效`)
+        if (!['slow', 'normal', 'fast'].includes(speed)) throw new Error(`角色「${id}」动效速度无效`)
         saveOc(id, {
           name: data.name.trim(),
           theme: data.theme,
@@ -68,6 +72,8 @@ export const PUT: APIRoute = async ({ request }) => {
           description: (data.description ?? '').trim(),
           traits: Array.isArray(data.traits) ? data.traits.map((t) => String(t).trim()).filter(Boolean) : [],
           quote: data.quote?.trim() || undefined,
+          quoteEffect: effect,
+          quoteSpeed: speed,
           art: data.art?.trim() || undefined,
         })
       }

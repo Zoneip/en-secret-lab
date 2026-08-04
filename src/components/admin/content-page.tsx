@@ -30,6 +30,8 @@ interface OcData {
   description: string
   traits: string[]
   quote?: string
+  quoteEffect: string
+  quoteSpeed: string
   art?: string
 }
 
@@ -237,6 +239,39 @@ export default function ContentPage() {
                     onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quote: e.target.value } : x)))}
                     placeholder="「口头禅」(可留空)"
                   />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>名言动效</Label>
+                  <Select
+                    value={oc.quoteEffect || 'typing'}
+                    onValueChange={(v) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quoteEffect: v } : x)))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">无</SelectItem>
+                      <SelectItem value="typing">打字机</SelectItem>
+                      <SelectItem value="fade">淡入呼吸</SelectItem>
+                      <SelectItem value="float">上下浮动</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>动效速度</Label>
+                  <Select
+                    value={oc.quoteSpeed || 'normal'}
+                    onValueChange={(v) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quoteSpeed: v } : x)))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="slow">慢</SelectItem>
+                      <SelectItem value="normal">正常</SelectItem>
+                      <SelectItem value="fast">快</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid gap-1.5 sm:col-span-2">
                   <Label>描述</Label>

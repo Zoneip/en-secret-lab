@@ -63,6 +63,8 @@ const ocs = defineCollection({
     description: z.string(),
     traits: z.array(z.string()).default([]),
     quote: z.string().optional(),
+    quoteEffect: z.enum(['none', 'typing', 'fade', 'float']).default('typing'),
+    quoteSpeed: z.enum(['slow', 'normal', 'fast']).default('normal'),
     art: z.string().optional(),
   }),
 })
