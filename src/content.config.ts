@@ -23,7 +23,6 @@ const friends = defineCollection({
     url: z.string().url(),
     avatar: z.string().optional(),
     description: z.string().optional(),
-    group: z.string().default('其他'),
   }),
 })
 

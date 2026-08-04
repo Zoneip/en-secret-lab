@@ -35,7 +35,6 @@ interface Friend {
   url: string
   avatar?: string
   description?: string
-  group?: string
 }
 
 interface FriendRequest {
@@ -181,10 +180,7 @@ export default function FriendsPage() {
                     <a href={f.url} target="_blank" rel="noreferrer" className="font-medium hover:text-primary hover:underline">
                       {f.name}
                     </a>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {f.description ?? '—'}
-                      {f.group ? ` · 分组:${f.group}` : ''} · {f.id}
-                    </p>
+                    <p className="truncate text-xs text-muted-foreground">{f.description ?? '—'} · {f.id}</p>
                   </div>
                   <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(f)}>
                     <Trash2 />
@@ -228,7 +224,7 @@ function AddFriendDialog({
   onOpenChange: (o: boolean) => void
   onAdded: () => void
 }) {
-  const [form, setForm] = useState({ name: '', url: '', avatar: '', description: '', group: '' })
+  const [form, setForm] = useState({ name: '', url: '', avatar: '', description: '' })
   const [submitting, setSubmitting] = useState(false)
 
   async function submit(e: React.FormEvent) {
@@ -237,7 +233,7 @@ function AddFriendDialog({
     try {
       await api('/admin/api/friends', { method: 'POST', body: JSON.stringify(form) })
       toast.success('已添加')
-      setForm({ name: '', url: '', avatar: '', description: '', group: '' })
+      setForm({ name: '', url: '', avatar: '', description: '' })
       onOpenChange(false)
       onAdded()
     } catch (err) {
@@ -270,10 +266,6 @@ function AddFriendDialog({
           <div className="grid gap-1.5">
             <Label>简介</Label>
             <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          </div>
-          <div className="grid gap-1.5">
-            <Label>分组</Label>
-            <Input value={form.group} onChange={(e) => setForm({ ...form, group: e.target.value })} placeholder="如:技术 / 生活(默认 其他)" />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

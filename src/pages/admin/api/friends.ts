@@ -31,7 +31,6 @@ export const POST: APIRoute = async ({ request }) => {
     url: body.url.trim(),
     avatar: body.avatar?.trim() || undefined,
     description: body.description?.trim() || undefined,
-    group: body.group?.trim() || '其他',
   })
   return new Response(JSON.stringify({ ok: true, friend }))
 }
