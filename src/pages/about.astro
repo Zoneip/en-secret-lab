@@ -223,7 +223,12 @@ const themeNames: Record<string, string> = {
     align-items: center;
     justify-content: center;
     overflow-y: auto;
-    padding: 48px 56px;
+    padding: 48px 56px 56px;
+    /* 屏外完全脱离绘制,仅滚动中与视口相交的屏参与渲染 */
+    visibility: hidden;
+  }
+  .snap-section.in-view {
+    visibility: visible;
   }
 
   /* ===== 屏1 hero ===== */
@@ -250,6 +255,12 @@ const themeNames: Record<string, string> = {
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.7s var(--ease-soft), transform 0.7s var(--ease-soft);
+  }
+  .snap-section.active .hero-inner {
+    transition-delay: 0.1s;
+  }
+  .snap-section:not(.active) .hero-inner {
+    transition: none;
   }
   .snap-section.active .hero-inner {
     opacity: 1;
@@ -371,7 +382,18 @@ const themeNames: Record<string, string> = {
     background: var(--p-surface);
     border: 1px solid var(--p-border);
     box-shadow: var(--p-shadow);
+    /* 动画仅当前屏运行为避免 5 屏常驻动画掉帧 */
+  }
+  .snap-section.active .oc-art {
     animation: bob 4s ease-in-out infinite;
+  }
+  .snap-section:not(.active) .oc-inner {
+    transition: none;
+  }
+  /* 屏外暂停一切动效(motion-* 预设动画与 bob),杜绝常驻动画掉帧 */
+  .snap-section:not(.active) [data-motion-group],
+  .snap-section:not(.active) .oc-art {
+    animation: none;
   }
   .oc-art-img {
     width: 220px;
@@ -699,6 +721,42 @@ const themeNames: Record<string, string> = {
   )
   typingQuotes.forEach((q) => quoteObserver.observe(q))
 
+  // 滚轮翻页:垂直滚轮离散切换,横向手势原生跟手
+  let pageLock = false
+  let pageLockT = 0
+  scroller.addEventListener(
+    'wheel',
+    (e) => {
+      // 横向滚动(触摸板)交还原生,纵向滚轮翻页
+      if (e.deltaX && !e.deltaY) return
+      if (pageLock || e.deltaY === 0) {
+        e.preventDefault()
+        return
+      }
+      e.preventDefault()
+      pageLock = true
+      const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
+      const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
+      scroller.scrollTo({ left: next * scroller.clientWidth, behavior: 'smooth' })
+      window.clearTimeout(pageLockT)
+      pageLockT = window.setTimeout(() => {
+        pageLock = false
+      }, 680)
+    },
+    { passive: false }
+  )
+
+  // 屏外裁剪:仅与视口相交的屏参与绘制(bob/打字机/壁纸之外的合成开销归零)
+  const inViewIo = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        entry.target.classList.toggle('in-view', entry.isIntersecting)
+      }
+    },
+    { threshold: 0 }
+  )
+  screens.forEach((sc) => inViewIo.observe(sc))
+
   // 键盘左右键导航
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') {
@@ -716,12 +774,12 @@ const themeNames: Record<string, string> = {
   const ocIo = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        const active = entry.isIntersecting && entry.intersectionRatio > 0.55
-        if (active) entry.target.setAttribute('data-anim-active', '')
-        else entry.target.removeAttribute('data-anim-active')
+        // 滞后阈值:进入 >0.5 才激活,退出 <0.1 才取消,滚动中不反复切换
+        if (entry.intersectionRatio > 0.5) entry.target.setAttribute('data-anim-active', '')
+        else if (entry.intersectionRatio < 0.1) entry.target.removeAttribute('data-anim-active')
       }
     },
-    { threshold: [0, 0.3, 0.55, 0.8, 1] }
+    { threshold: [0, 0.1, 0.5, 0.9, 1] }
   )
   ocScreens.forEach((sc) => ocIo.observe(sc))
 </script>
