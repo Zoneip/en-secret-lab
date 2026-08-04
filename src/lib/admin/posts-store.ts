@@ -21,6 +21,7 @@ export interface PostDraft {
   pubDate: string
   updatedDate?: string
   category: string
+  series?: string
   tags: string[]
   draft: boolean
   featured: boolean
@@ -53,6 +54,7 @@ export function serializePost(d: PostDraft): string {
   if (d.description) lines.push(`description: ${d.description}`)
   if (d.updatedDate) lines.push(`updatedDate: ${d.updatedDate}`)
   lines.push(`category: ${d.category}`)
+  if (d.series) lines.push(`series: ${d.series}`)
   if (d.tags.length > 0) {
     lines.push(`tags: ${JSON.stringify(d.tags).replace(/"/g, "'")}`)
   }
@@ -96,6 +98,7 @@ export function parsePostFile(fileName: string, raw: string): PostFile {
       pubDate: String(fm.pubDate ?? new Date().toISOString().slice(0, 10)),
       updatedDate: fm.updatedDate ? String(fm.updatedDate) : undefined,
       category: String(fm.category ?? '随笔'),
+      series: fm.series ? String(fm.series) : undefined,
       tags: (fm.tags as string[]) ?? [],
       draft: Boolean(fm.draft),
       featured: Boolean(fm.featured),

@@ -3,6 +3,7 @@ title: 用 CSS 变量做一套能换肤的主题系统
 description: 四套配色 × 深浅模式,全靠一个 data-theme 属性和几十个 CSS 变量。
 pubDate: 2026-08-02
 category: 技术
+series: 主题系统
 tags: ["css", "前端", "主题"]
 featured: true
 ---

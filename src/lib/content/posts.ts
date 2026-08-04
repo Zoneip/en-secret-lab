@@ -9,6 +9,7 @@ export interface PostLike {
   title: string
   pubDate: Date
   category: string
+  series?: string
   tags: string[]
   featured: boolean
   draft: boolean
@@ -24,6 +25,7 @@ export function toPostLike(post: PostEntry): PostLike {
     title: post.data.title,
     pubDate: post.data.pubDate,
     category: post.data.category,
+    series: post.data.series,
     tags: post.data.tags,
     featured: post.data.featured,
     draft: post.data.draft,

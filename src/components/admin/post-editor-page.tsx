@@ -29,6 +29,7 @@ interface PostDraft {
   pubDate: string
   updatedDate?: string
   category: string
+  series?: string
   tags: string[]
   draft: boolean
   featured: boolean
@@ -41,6 +42,7 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
     title: '',
     pubDate: new Date().toISOString().slice(0, 10),
     category: '随笔',
+    series: '',
     tags: [],
     draft: true,
     featured: false,
@@ -167,6 +169,15 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
           <div className="grid gap-1.5">
             <Label htmlFor="e-date">发布日期</Label>
             <Input id="e-date" type="date" value={form.pubDate} onChange={(e) => set('pubDate', e.target.value)} />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="e-series">系列(可选,同系列自动成组便于连续阅读)</Label>
+            <Input
+              id="e-series"
+              value={form.series ?? ''}
+              onChange={(e) => set('series', e.target.value || undefined)}
+              placeholder="如:主题系统"
+            />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="e-updated">更新日期</Label>

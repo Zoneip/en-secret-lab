@@ -3,6 +3,7 @@ title: 用 SVG 画像素画,然后把它变成组件
 description: 字符画稿 + 调色板映射,一次定义、随意换色。
 pubDate: 2026-08-03
 category: 技术
+series: 主题系统
 tags: ["svg", "像素", "前端"]
 ---
 

@@ -37,6 +37,11 @@ const all = await getAllPosts()
 const idx = all.findIndex((p) => p.slug === slug)
 const prev = idx > 0 ? all[idx - 1] : undefined
 const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : undefined
+// 同系列内上一篇/下一篇(连续阅读)
+const seriesPosts = post.series ? all.filter((p) => p.series === post.series) : []
+const seriesIdx = seriesPosts.findIndex((p) => p.slug === slug)
+const seriesPrev = seriesIdx > 0 ? seriesPosts[seriesIdx - 1] : undefined
+const seriesNext = seriesIdx >= 0 && seriesIdx < seriesPosts.length - 1 ? seriesPosts[seriesIdx + 1] : undefined
 
 // 正文渲染:静态版用 astro:content,动态版用 markdown-it(实时文件)
 let contentHtml = ''
@@ -87,6 +92,12 @@ const words = content.body
   </article>
 
   <div class="container">
+    {post.series && (
+      <p class="series-badge">
+        系列 · {post.series}
+        {seriesPrev || seriesNext ? <span class="series-nav-links">{[seriesPrev && <a href={`/blog/${seriesPrev.slug}`} class="series-link">上一篇</a>, seriesNext && <a href={`/blog/${seriesNext.slug}`} class="series-link">下一篇</a>].filter(Boolean)}</span> : ''}
+      </p>
+    )}
     <nav class="adjacent" aria-label="上下篇文章">
       {prev ? (
         <a class="adj card" href={`/blog/${prev.slug}`}>
@@ -150,6 +161,25 @@ const words = content.body
   .prose {
     min-width: 0;
   }
+  .series-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 36px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.85rem;
+  }
+  .series-nav-links {
+    display: flex;
+    gap: 12px;
+  }
+  .series-link {
+    font-size: 0.8rem;
+  }
   .adjacent {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -187,7 +217,26 @@ const words = content.body
     }
   }
   @media (max-width: 640px) {
-    .adjacent {
+    .series-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 36px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.85rem;
+  }
+  .series-nav-links {
+    display: flex;
+    gap: 12px;
+  }
+  .series-link {
+    font-size: 0.8rem;
+  }
+  .adjacent {
       grid-template-columns: 1fr;
     }
     .post-head h1 {

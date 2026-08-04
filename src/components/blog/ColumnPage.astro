@@ -1,14 +1,23 @@
 ---
 /**
- * 栏目页:由 src/content/columns/*.yaml 数据驱动
- * 控制台"内容 → 栏目"可编辑
+ * 栏目页 v2:知识目录式阅读(非卡片)
+ * 左:系列目录(sticky) 右:按系列分组的行式列表 + 筛选
+ * 系列由文章 frontmatter 的 series 字段手动整理(控制台文章编辑可填)
  */
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getAllPosts } from '../../lib/content/data'
 import { getSiteColumns } from '../../lib/content/site-content'
+import { formatDate, readingTime } from '../../lib/utils'
 import Mascot from '../mascot/Mascot.astro'
-import PostCard from '../blog/PostCard.astro'
 import EmptyState from '../ui/EmptyState.astro'
+
+function slugify(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'other'
+}
 
 interface Props {
   id: string
@@ -23,113 +32,411 @@ if (!column) {
 }
 
 const { title, subtitle, description, theme, category } = column
-const posts = (await getAllPosts()).filter((p) => p.category === category)
+const allPosts = await getAllPosts()
+const posts = allPosts.filter((p) => p.category === category)
+
+// 按系列分组:保留系列顺序(按首篇日期),未分组的归入"其他"
+const groups = new Map<string, typeof posts>()
+for (const p of posts) {
+  const key = p.series ?? '__other__'
+  if (!groups.has(key)) groups.set(key, [])
+  groups.get(key)!.push(p)
+}
+const seriesNames = [...groups.keys()].sort((a, b) => {
+  if (a === '__other__') return 1
+  if (b === '__other__') return -1
+  return +groups.get(b)![0].pubDate - +groups.get(a)![0].pubDate
+})
+const displayName = (key: string) => (key === '__other__' ? '其他' : key)
 ---
 
 <BaseLayout title={title} description={description} forceTheme={theme}>
   <div class="page-enter container">
-    <section class="column-hero">
-      <div class="column-mascot" data-motion-group="mascot" aria-hidden="true">
-        <Mascot role="furry" theme={theme} pixel={9} />
+    <!-- 栏目头 -->
+    <header class="col-head">
+      <div class="col-mascot" data-motion-group="mascot" aria-hidden="true">
+        <Mascot role="furry" theme={theme} pixel={7} />
       </div>
-      <div class="column-text">
-        <p class="column-sub">{subtitle}</p>
+      <div class="col-text">
+        <p class="col-sub">{subtitle}</p>
         <h1>{title}</h1>
-        <p class="column-desc">{description}</p>
-        <div class="column-meta">
+        <p class="col-desc">{description}</p>
+        <div class="col-meta">
           <span class="chip">{category}分类</span>
-          <span class="count">{posts.length} 篇</span>
+          <span class="count">{posts.length} 篇 · {seriesNames.length} 个系列</span>
         </div>
       </div>
-    </section>
+    </header>
 
-    {posts.length > 0 ? (
-      <div class="grid">
-        {posts.map((p) => (
-          <PostCard
-            dataMotion={true}
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-          />
-        ))}
-      </div>
-    ) : (
-      <EmptyState title={`「${title}」还没有文章`} description={`写一篇分类为「${category}」的文章,就会出现在这里`} />
-    )}
+    {
+      posts.length === 0 ? (
+        <EmptyState title={`「${title}」还没有文章`} description={`写一篇分类为「${category}」的文章,就会出现在这里`} />
+      ) : (
+        <div class="col-body">
+          <!-- 左侧系列目录 -->
+          <aside class="series-nav" aria-label="系列目录">
+            <p class="nav-title">系列</p>
+            <nav class="nav-list" data-series-nav>
+              {seriesNames.map((key) => (
+                <a class="nav-item" href={`#series-${slugify(displayName(key))}`} key={key}>
+                  <span class="nav-name">{displayName(key)}</span>
+                  <span class="nav-count">{groups.get(key)!.length}</span>
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          <!-- 右侧列表 -->
+          <div class="reading-list">
+            <!-- 筛选 chips -->
+            <div class="filter-bar" data-filter-bar>
+              <button class="filter-chip active" data-filter="__all__">全部</button>
+              {seriesNames.map((key) => (
+                <button class="filter-chip" data-filter={key} key={key}>
+                  {displayName(key)}
+                </button>
+              ))}
+            </div>
+
+            {seriesNames.map((key) => (
+              <section class="series-group" data-series={key} id={`series-${slugify(displayName(key))}`} key={key}>
+                <h2 class="series-head">
+                  {displayName(key)}
+                  <span class="series-count">{groups.get(key)!.length} 篇</span>
+                </h2>
+                <ol class="article-list">
+                  {groups.get(key)!.map((p) => (
+                    <li class="article-row" data-row key={p.slug}>
+                      <a class="article-link" href={`/blog/${p.slug}`}>
+                        <span class="row-bar" aria-hidden="true"></span>
+                        <span class="row-main">
+                          <span class="row-title">{p.title}</span>
+                          {p.description && <span class="row-desc">{p.description}</span>}
+                          <span class="row-meta">
+                            {p.tags.map((t) => (
+                              <span class="row-tag" key={t}>
+                                #{t}
+                              </span>
+                            ))}
+                            <span class="row-date">{formatDate(p.pubDate)}</span>
+                            <span class="row-read">约 {readingTime(p.description ?? '') + 4} 分钟</span>
+                          </span>
+                        </span>
+                        <svg class="row-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                          <path d="M5 12h14m0 0-5-5m5 5-5 5" />
+                        </svg>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+          </div>
+        </div>
+      )
+    }
   </div>
 </BaseLayout>
 
+<script>
+  const slugify = (s: string) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'other'
+
+  // 系列筛选
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.filter-chip')]
+  const groups = [...document.querySelectorAll<HTMLElement>('.series-group')]
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const filter = chip.dataset.filter!
+      chips.forEach((c) => c.classList.toggle('active', c === chip))
+      groups.forEach((g) => {
+        const show = filter === '__all__' || g.dataset.series === filter
+        g.hidden = !show
+      })
+      // 激活的系列目录项
+      document.querySelectorAll('.nav-item').forEach((n) => {
+        const target = n.getAttribute('href')?.slice(1)
+        n.classList.toggle(
+          'active',
+          filter === '__all__' ? false : target === `series-${slugify(filter)}`
+        )
+      })
+    })
+  })
+
+  // 滚动高亮当前系列
+  const navItems = [...document.querySelectorAll<HTMLElement>('.nav-item')]
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        const id = (entry.target as HTMLElement).id
+        navItems.forEach((n) => n.classList.toggle('active', n.getAttribute('href') === `#${id}`))
+      }
+    },
+    { rootMargin: '-20% 0px -70% 0px' }
+  )
+  groups.forEach((g) => observer.observe(g))
+</script>
+
 <style>
-  .column-hero {
+  .col-head {
     display: flex;
     align-items: center;
-    gap: 32px;
-    padding: 56px 0 40px;
+    gap: 28px;
+    padding: 48px 0 32px;
   }
-  .column-mascot {
+  .col-mascot {
     flex-shrink: 0;
-    padding: 14px;
-    border-radius: 22px;
+    padding: 12px;
+    border-radius: 20px;
     background: var(--surface);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    animation: bob 3.5s ease-in-out infinite;
   }
-  @keyframes bob {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-7px);
-    }
-  }
-  .column-sub {
+  .col-sub {
     font-family: var(--font-display);
     color: var(--primary);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-  .column-text h1 {
-    font-size: 2.2rem;
-    margin-bottom: 10px;
+  .col-text h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
   }
-  .column-desc {
+  .col-desc {
     color: var(--fg-muted);
     max-width: 52ch;
   }
-  .column-meta {
+  .col-meta {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 16px;
+    margin-top: 14px;
   }
   .count {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--fg-subtle);
   }
-  .grid {
+
+  /* 主体:左目录 + 右列表 */
+  .col-body {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 22px;
-    padding-bottom: 24px;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    padding-bottom: 48px;
+  }
+  .series-nav {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+    max-height: calc(100vh - var(--header-h) - 48px);
+    overflow-y: auto;
+    padding-right: 8px;
+    border-right: 1px solid var(--border);
+  }
+  .nav-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--fg);
+    margin-bottom: 10px;
+  }
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-item:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  .nav-item.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 500;
+  }
+  .nav-count {
+    font-size: 0.7rem;
+    color: var(--fg-subtle);
   }
 
+  /* 筛选条 */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .filter-chip {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+    color: var(--fg-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .filter-chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-fg);
+  }
+
+  /* 系列分组 */
+  .series-group {
+    margin-bottom: 36px;
+    scroll-margin-top: calc(var(--header-h) + 20px);
+  }
+  .series-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 1.15rem;
+    color: var(--fg);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .series-count {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
+    font-weight: 400;
+  }
+
+  /* 行式文章条目(高密度) */
+  .article-list {
+    list-style: none;
+  }
+  .article-row {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .article-row:last-child {
+    border-bottom: none;
+  }
+  .article-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s;
+  }
+  .article-link:hover {
+    transform: translateX(4px);
+  }
+  .row-bar {
+    width: 4px;
+    height: 42px;
+    border-radius: 2px;
+    background: var(--border-strong);
+    flex-shrink: 0;
+    transition: background 0.2s, height 0.2s;
+  }
+  .article-link:hover .row-bar {
+    background: var(--primary);
+    height: 52px;
+  }
+  .row-main {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .row-title {
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    color: var(--fg);
+    line-height: 1.45;
+    transition: color 0.15s;
+  }
+  .article-link:hover .row-title {
+    color: var(--primary);
+  }
+  .row-desc {
+    font-size: 0.88rem;
+    color: var(--fg-muted);
+    line-height: 1.75;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
+  }
+  .row-tag {
+    color: var(--primary);
+    opacity: 0.8;
+  }
+  .row-arrow {
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .article-link:hover .row-arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 860px) {
+    .col-body {
+      grid-template-columns: 1fr;
+    }
+    .series-nav {
+      display: none;
+    }
+  }
   @media (max-width: 640px) {
-    .column-hero {
+    .col-head {
       flex-direction: column;
       text-align: center;
-      padding: 40px 0 28px;
+      padding: 36px 0 24px;
     }
-    .column-desc {
+    .col-desc {
       margin-inline: auto;
     }
-    .column-meta {
+    .col-meta {
       justify-content: center;
+    }
+    .article-link {
+      padding: 13px 6px;
+      gap: 12px;
+    }
+    .row-arrow {
+      display: none;
     }
   }
 </style>

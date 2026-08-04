@@ -33,6 +33,7 @@ export function toPostLike(parsed: { slug: string; draft: PostDraft }): PostLike
     title: parsed.draft.title,
     pubDate: new Date(parsed.draft.pubDate),
     category: parsed.draft.category,
+    series: parsed.draft.series,
     tags: parsed.draft.tags,
     featured: parsed.draft.featured,
     draft: parsed.draft.draft,
