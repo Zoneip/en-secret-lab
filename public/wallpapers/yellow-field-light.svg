@@ -6,7 +6,7 @@
     @keyframes cf2 { from { transform: translateX(-68px) } to { transform: translateX(20px) } }
     @keyframes bf1 { from { transform: translate(0, 0) } to { transform: translate(28px, -12px) } }
     @keyframes bf2 { from { transform: translate(20px, -12px) } to { transform: translate(0, 0) } }
-    @keyframes scarf { from { transform: translateY(0) } 50% { transform: translateY(2px) } to { transform: translateY(0) } }
+    @keyframes scarf { from { transform: rotate(-3deg) translateX(0) } to { transform: rotate(3deg) translateX(4px) } }
     @keyframes wing { 0%, 100% { opacity: 1 } 50% { opacity: .15 } }
     @keyframes bfly1 { 0% { transform: translate(0, 0) } 25% { transform: translate(12px, -10px) } 50% { transform: translate(24px, 0) } 75% { transform: translate(12px, 10px) } 100% { transform: translate(0, 0) } }
     @keyframes bfly2 { 0% { transform: translate(0, 0) } 25% { transform: translate(-10px, -8px) } 50% { transform: translate(-20px, 0) } 75% { transform: translate(-10px, 8px) } 100% { transform: translate(0, 0) } }
