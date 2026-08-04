@@ -44,6 +44,8 @@ const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
 const { title, description, image, type, forceTheme, hideFooter = false } = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
+const lightDefault = config.themeByMode.light
+const darkDefault = config.themeByMode.dark
 // 全局动效预设(控制台可调控)
 const motion = config.homepage.motion
 const motionSpeed = { slow: '4.5s', normal: '3s', fast: '1.8s' }[motion.speed]
@@ -71,7 +73,7 @@ const meta = buildMeta({
       .filter((m) => !('title' in m))
       .map((m) => <meta {...m} />)}
     {overrideCss && <style set:html={overrideCss}></style>}
-    <script set:html={bootScript()} />
+    <script set:html={bootScript(lightDefault, darkDefault)} />
     <script>
       // 主题切换时附加过渡动画类(由 ThemeSwitcher 触发)
       window.addEventListener('enlab:theme-change', () => {
@@ -83,7 +85,11 @@ const meta = buildMeta({
       })
     </script>
   </head>
-  <body data-is-server-runtime={String(isServer)} data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
+  <body
+    data-is-server-runtime={String(isServer)}
+    data-default-theme-light={lightDefault}
+    data-default-theme-dark={darkDefault}
+    data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
     <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
     <SiteHeader />

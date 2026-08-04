@@ -21,6 +21,7 @@ interface Site {
   description: string
   author: string
   defaultTheme: string
+  themeByMode: { light: string; dark: string }
   features: Record<string, boolean>
   nav: Array<{ label: string; url: string }>
   icp: string
@@ -145,8 +146,28 @@ export default function SettingsPage() {
               <Input value={site.author} onChange={(e) => setSite({ ...site, author: e.target.value })} />
             </div>
             <div className="grid gap-1.5">
-              <Label>默认主题</Label>
-              <Select value={site.defaultTheme} onValueChange={(v) => setSite({ ...site, defaultTheme: v })}>
+              <Label>浅色模式默认主题</Label>
+              <Select
+                value={site.themeByMode?.light ?? 'gray'}
+                onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, light: v } })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gray">灰糖</SelectItem>
+                  <SelectItem value="yellow">蜜糖</SelectItem>
+                  <SelectItem value="purple">葡萄</SelectItem>
+                  <SelectItem value="white">棉花糖</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1.5">
+              <Label>深色模式默认主题</Label>
+              <Select
+                value={site.themeByMode?.dark ?? 'purple'}
+                onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, dark: v } })}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>

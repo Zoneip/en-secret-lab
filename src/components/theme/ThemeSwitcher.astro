@@ -64,19 +64,32 @@ import { themes } from '../../lib/theme/presets'
     } catch {
       /* ignore */
     }
-    return { theme: 'gray', mode: 'system' }
+    return { theme: undefined, themeLocked: false, mode: 'system' }
   }
 
-  function applyPrefs(prefs: { theme: string; mode: string }) {
+  interface Prefs {
+    theme?: string
+    themeLocked: boolean
+    mode: string
+  }
+
+  function modeIsDark(mode: string): boolean {
+    return mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+  }
+
+  function applyPrefs(prefs: Prefs) {
     // 栏目页强制主题优先
     const forced = document.documentElement.dataset.forceTheme
-    const theme = forced || prefs.theme
+    const dark = modeIsDark(prefs.mode)
+    const mode = dark ? 'dark' : 'light'
+    // 主题:强制 / 手动锁定 / 模式默认主题
+    const lightDefault = document.body.dataset.defaultThemeLight ?? 'gray'
+    const darkDefault = document.body.dataset.defaultThemeDark ?? 'purple'
+    const theme = forced || (prefs.themeLocked && prefs.theme) || (dark ? darkDefault : lightDefault)
     document.documentElement.dataset.theme = theme
-    const dark =
-      prefs.mode === 'dark' ||
-      (prefs.mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
-    document.documentElement.dataset.mode = dark ? 'dark' : 'light'
+    document.documentElement.dataset.mode = mode
     document.documentElement.dataset.modePref = prefs.mode
+    document.documentElement.dataset.themeLocked = String(forced || prefs.themeLocked)
     window.dispatchEvent(new CustomEvent('enlab:theme-change'))
 
     themeCards.forEach((card) => {
@@ -90,7 +103,7 @@ import { themes } from '../../lib/theme/presets'
     })
   }
 
-  function savePrefs(prefs: { theme: string; mode: string }) {
+  function savePrefs(prefs: Prefs) {
     try {
       localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))
     } catch {
@@ -101,6 +114,7 @@ import { themes } from '../../lib/theme/presets'
   function setTheme(theme: string) {
     const prefs = readPrefs()
     prefs.theme = theme
+    prefs.themeLocked = true
     savePrefs(prefs)
     applyPrefs(prefs)
   }
@@ -108,6 +122,8 @@ import { themes } from '../../lib/theme/presets'
   function setMode(mode: string) {
     const prefs = readPrefs()
     prefs.mode = mode
+    // 未锁定主题时,跟随新模式的默认主题
+    if (!prefs.themeLocked) prefs.theme = undefined
     savePrefs(prefs)
     applyPrefs(prefs)
   }

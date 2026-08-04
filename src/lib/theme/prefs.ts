@@ -1,7 +1,7 @@
 /** 访客偏好(L3):localStorage 读写,客户端专用 */
 import { PREFS_KEY, type ThemePrefs, type ThemeId, type ColorMode } from './engine'
 
-export const DEFAULT_PREFS: ThemePrefs = { theme: 'gray', mode: 'system' }
+export const DEFAULT_PREFS: ThemePrefs = { themeLocked: false, mode: 'system' }
 
 export function readPrefs(storage: Storage): ThemePrefs {
   try {
@@ -9,7 +9,8 @@ export function readPrefs(storage: Storage): ThemePrefs {
     if (!raw) return DEFAULT_PREFS
     const parsed = JSON.parse(raw) as Partial<ThemePrefs>
     return {
-      theme: parsed.theme === undefined ? DEFAULT_PREFS.theme : parsed.theme,
+      theme: parsed.theme,
+      themeLocked: parsed.themeLocked ?? false,
       mode: parsed.mode === undefined ? DEFAULT_PREFS.mode : parsed.mode,
     }
   } catch {
@@ -26,18 +27,25 @@ export function resolveMode(mode: ColorMode | 'system', systemDark: boolean): Co
   return mode === 'system' ? (systemDark ? 'dark' : 'light') : mode
 }
 
-/** 构建防 FOUC 内联脚本(在首帧渲染前执行);data-force-theme 存在时锁定该主题(栏目页) */
-export function bootScript(): string {
+/** 构建防 FOUC 内联脚本;深浅模式各有默认主题,手动锁定主题则保持 */
+export function bootScript(lightDefault: string, darkDefault: string): string {
   return `(function(){
   var K='${PREFS_KEY}';
-  var t='${DEFAULT_PREFS.theme}', m='${DEFAULT_PREFS.mode}';
+  var m='${DEFAULT_PREFS.mode}';
   var ft=document.documentElement.dataset.forceTheme;
-  if(ft){t=ft;m='light';}
-  try{var p=JSON.parse(localStorage.getItem(K)||'null'); if(p){if(!ft&&p.theme)t=p.theme; if(p.mode)m=p.mode;}}catch(e){}
+  var p=null;
+  try{p=JSON.parse(localStorage.getItem(K)||'null');}catch(e){}
+  if(p&&p.mode)m=p.mode;
   var dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  var mode=dark?'dark':'light';
+  var t;
+  if(ft){t=ft;}
+  else if(p&&p.themeLocked&&p.theme){t=p.theme;}
+  else{t=mode==='dark'?'${darkDefault}':'${lightDefault}';}
   document.documentElement.dataset.theme=t;
-  document.documentElement.dataset.mode=dark?'dark':'light';
+  document.documentElement.dataset.mode=mode;
   document.documentElement.dataset.modePref=m;
+  document.documentElement.dataset.themeLocked=String(!!(ft||(p&&p.themeLocked)));
 })();`
 }
 

@@ -57,6 +57,7 @@ export const GET: APIRoute = async ({ cookies }) => {
         description: siteConfig.description,
         author: siteConfig.author,
         defaultTheme: siteConfig.defaultTheme,
+        themeByMode: siteConfig.themeByMode,
         features: siteConfig.features,
         wallpaperEnabled: siteConfig.wallpaperEnabled,
         nav: siteConfig.nav,

@@ -14,6 +14,13 @@ export const siteConfigSchema = z.object({
   description: z.string().default('一个圆润可爱的 Kemono 风个人博客'),
   author: z.string().default('EN'),
   defaultTheme: z.enum(['gray', 'yellow', 'purple', 'white']).default('gray'),
+  /** 深浅模式各自的默认主题(切换模式时未锁定主题则跟随) */
+  themeByMode: z
+    .object({
+      light: z.enum(['gray', 'yellow', 'purple', 'white']).default('gray'),
+      dark: z.enum(['gray', 'yellow', 'purple', 'white']).default('purple'),
+    })
+    .default({ light: 'gray', dark: 'purple' }),
   /** 全局开关 */
   features: z
     .object({
