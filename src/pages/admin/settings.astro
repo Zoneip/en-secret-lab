@@ -1,0 +1,12 @@
+---
+/** 设置与内容(合并管理) */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import SettingsPage from '../../components/admin/settings-page'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="设置与内容" active="settings">
+  <SettingsPage client:only="react" />
+</AdminLayout>

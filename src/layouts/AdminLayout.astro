@@ -18,9 +18,8 @@ const { title, active } = Astro.props
 const nav = [
   { key: 'dashboard', label: '仪表盘', href: '/admin', icon: 'layout-dashboard' },
   { key: 'posts', label: '文章', href: '/admin/posts', icon: 'file-text' },
-  { key: 'content', label: '内容', href: '/admin/content', icon: 'layout' },
+  { key: 'settings', label: '设置', href: '/admin/settings', icon: 'settings' },
   { key: 'themes', label: '主题', href: '/admin/themes', icon: 'palette' },
-  { key: 'site', label: '站点设置', href: '/admin/site', icon: 'settings' },
   { key: 'assets', label: '资产', href: '/admin/assets', icon: 'image' },
 ]
 ---
@@ -138,9 +137,8 @@ const nav = [
         links: [
           { label: '仪表盘', href: '/admin' },
           { label: '文章', href: '/admin/posts' },
-          { label: '内容', href: '/admin/content' },
           { label: '主题', href: '/admin/themes' },
-          { label: '站点设置', href: '/admin/site' },
+          { label: '设置', href: '/admin/settings' },
           { label: '资产', href: '/admin/assets' },
         ],
       }
