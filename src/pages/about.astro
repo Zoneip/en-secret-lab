@@ -8,6 +8,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
 import { getSiteConfig } from '../lib/config'
 import { getSiteOcs, getSiteAbout } from '../lib/content/site-content'
+import { getTheme } from '../lib/theme/presets'
+import { wallpaperCss } from '../lib/theme/engine'
 
 const about = await getSiteAbout()
 const siteConfig = getSiteConfig()
@@ -80,7 +82,7 @@ const themeNames: Record<string, string> = {
             class="snap-section oc-screen"
             data-screen
             data-oc-theme={oc.theme}
-            style={`--oc-index:${i}`}
+            style={`--oc-index:${i}; --oc-bg:${wallpaperCss(getTheme(oc.theme).wallpaper.light)}; --oc-overlay:${getTheme(oc.theme).palette.light['wallpaper-overlay']}`}
           >
             <div class="oc-bg" aria-hidden="true"></div>
             <div class="oc-inner">
@@ -258,21 +260,15 @@ const themeNames: Record<string, string> = {
   .oc-bg {
     position: absolute;
     inset: 0;
-    background: var(--bg);
+    background: var(--oc-bg, var(--bg));
     transition: background 0.2s;
     z-index: -1;
-  }
-  :root[data-theme='gray'] .oc-screen[data-oc-theme='gray'] .oc-bg,
-  :root[data-theme='yellow'] .oc-screen[data-oc-theme='yellow'] .oc-bg,
-  :root[data-theme='purple'] .oc-screen[data-oc-theme='purple'] .oc-bg,
-  :root[data-theme='white'] .oc-screen[data-oc-theme='white'] .oc-bg {
-    background: var(--wallpaper-light-src);
   }
   .oc-bg::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--wallpaper-overlay);
+    background: var(--oc-overlay, var(--wallpaper-overlay));
   }
   .oc-inner {
     position: relative;
