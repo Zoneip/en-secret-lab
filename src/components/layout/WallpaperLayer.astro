@@ -108,34 +108,38 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
   }
 </style>
 
-<script is:inline>
-  // 预载当前主题+模式的动画帧,就绪后淡入;主题/模式切换时重新预载
-  function wallpaperFindLayer(theme, mode) {
-    return document.querySelector(
-      `.wallpaper-base[data-wallpaper-theme="${theme}"][data-wallpaper-${mode === 'dark' ? 'dark' : 'light'}]`
-    )
-  }
-  function wallpaperActivate() {
-    const theme = document.documentElement.dataset.theme || 'gray'
-    const mode = document.documentElement.dataset.mode || 'light'
-    const layer = wallpaperFindLayer(theme, mode)
-    if (!layer) return
-    if (layer.dataset.wlReady === '1') return
-    const img = new Image()
-    img.onload = () => {
-      layer.setAttribute('data-wl-ready', '')
-      layer.dataset.wlReady = '1'
+<script is:inline data-astro-rerun>
+  ;(function () {
+    if (window.__wallpaperCleanup) window.__wallpaperCleanup()
+    const findLayer = (theme, mode) => {
+      return document.querySelector(
+        `.wallpaper-base[data-wallpaper-theme="${theme}"][data-wallpaper-${mode === 'dark' ? 'dark' : 'light'}]`
+      )
     }
-    img.onerror = () => {
-      layer.dataset.wlReady = '1'
+    const activate = () => {
+      const theme = document.documentElement.dataset.theme || 'gray'
+      const mode = document.documentElement.dataset.mode || 'light'
+      const layer = findLayer(theme, mode)
+      if (!layer) return
+      if (layer.dataset.wlReady === '1') return
+      const img = new Image()
+      img.onload = () => {
+        layer.setAttribute('data-wl-ready', '')
+        layer.dataset.wlReady = '1'
+      }
+      img.onerror = () => {
+        layer.dataset.wlReady = '1'
+      }
+      const anim = layer.querySelector('.wl-anim')
+      if (anim) img.src = anim.style.backgroundImage.replace(/url\(["']?(.*?)["']?\)/, '$1')
     }
-    const anim = layer.querySelector('.wl-anim')
-    if (anim) img.src = anim.style.backgroundImage.replace(/url\\(["']?(.*?)["']?\\)/, '$1')
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wallpaperActivate)
-  } else {
-    wallpaperActivate()
-  }
-  window.addEventListener('enlab:theme-change', wallpaperActivate)
+    const onTheme = () => activate()
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', activate)
+    else activate()
+    window.addEventListener('enlab:theme-change', onTheme)
+    window.__wallpaperCleanup = () => {
+      window.removeEventListener('enlab:theme-change', onTheme)
+      window.__wallpaperCleanup = undefined
+    }
+  })()
 </script>
