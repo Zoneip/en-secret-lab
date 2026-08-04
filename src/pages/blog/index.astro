@@ -27,7 +27,7 @@ const posts = all.slice(0, PAGE_SIZE)
     </header>
 
     {posts.length > 0 ? (
-      <div class="grid" data-motion-group="cards">
+      <div class="grid">
         {posts.map((p) => (
           <PostCard
             slug={p.slug}

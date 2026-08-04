@@ -44,9 +44,10 @@ const posts = (await getAllPosts()).filter((p) => p.category === category)
     </section>
 
     {posts.length > 0 ? (
-      <div class="grid" data-motion-group="cards">
+      <div class="grid">
         {posts.map((p) => (
           <PostCard
+            dataMotion={true}
             slug={p.slug}
             title={p.title}
             description={p.description}

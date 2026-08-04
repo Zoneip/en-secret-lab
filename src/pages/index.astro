@@ -19,7 +19,7 @@ const hp = config.homepage
 const visible = await getAllPosts()
 const featuredPosts = featured(visible)
 const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
-const columns = await getSiteColumns()
+const columns = (await getSiteColumns()).sort((a, b) => ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) - ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme))
 const ocs = (await getSiteOcs()).sort(
   (a, b) => ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) - ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
 )
@@ -86,9 +86,9 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
       hp.showColumnOverview && columns.length > 0 && (
         <section class="section">
           <h2 class="section-title">探索实验室</h2>
-          <div class="column-grid" data-motion-group="cards">
+          <div class="column-grid">
             {columns.map((c) => (
-              <a class="column-card" href={`/${c.id}`} key={c.id} style={`--oc-color:${col(c.theme)}`}>
+              <a class="column-card" data-motion-group="cards" href={`/${c.id}`} key={c.id} style={`--oc-color:${col(c.theme)}`}>
                 <div class="column-card-head">
                   <Mascot role="furry" theme={c.theme} pixel={5} />
                   <span class="column-count">{countByCategory(c.category)} 篇</span>
@@ -108,9 +108,9 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
       hp.showOcSection && ocs.length > 0 && (
         <section class="section">
           <h2 class="section-title">实验室的伙伴们</h2>
-          <div class="oc-grid" data-motion-group="cards">
+          <div class="oc-grid">
             {ocs.map((oc) => (
-              <div class="oc-card" data-oc-theme={oc.theme} style={`--oc-bg:${ocBg(oc.theme)}`} key={oc.id}>
+              <div class="oc-card" data-motion-group="cards" data-oc-theme={oc.theme} style={`--oc-bg:${ocBg(oc.theme)}`} key={oc.id}>
                 <div class="oc-card-top">
                   <Mascot role="boy" theme={oc.theme} pixel={6} />
                   <Mascot role="furry" theme={oc.theme} pixel={5} />
@@ -138,7 +138,7 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
         最新消息
         <a class="more underline-tail" href="/blog">全部文章</a>
       </h2>
-      <div class="grid" data-motion-group="cards">
+      <div class="grid">
         {recent.map((p) => (
           <PostCard
             slug={p.slug}

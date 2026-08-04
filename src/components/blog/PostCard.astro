@@ -11,13 +11,15 @@ interface Props {
   category?: string
   tags?: string[]
   cover?: string
+  /** 卡片级动效挂载(控制台调控) */
+  dataMotion?: boolean
 }
 
-const { slug, title, description, pubDate, category, tags = [], cover } = Astro.props
+const { slug, title, description, pubDate, category, tags = [], cover, dataMotion = false } = Astro.props
 const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
 ---
 
-<article class="post-card card">
+<article class="post-card card" {...(dataMotion ? { "data-motion-group": "cards" } : {})}>
   <a href={`/blog/${slug}`} class="post-link" aria-label={title}>
     {coverUrl ? (
       <div class="cover">
