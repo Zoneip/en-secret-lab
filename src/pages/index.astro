@@ -37,6 +37,7 @@ const techStack = [
 
 const countByCategory = (cat: string) => visible.filter((p) => p.category === cat).length
 const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', purple: '葡萄', white: '棉花糖' }
+const ocNameByTheme: Record<string, string> = Object.fromEntries(ocs.map((o) => [o.theme, o.name]))
 const THEME_COLORS: Record<string, string> = { gray: '#5c677d', yellow: '#e59b2e', purple: '#8b5cf6', white: '#8fa3b8' }
 const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
 const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
@@ -67,7 +68,7 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
           themeIds.map((t) => (
             <div class="hero-mascot-item" key={t}>
               <Mascot role="furry" theme={t} pixel={7} />
-              <span class="hero-mascot-name">{themeNames[t]}</span>
+              <span class="hero-mascot-name">{ocNameByTheme[t] ?? themeNames[t]}</span>
             </div>
           ))
         }

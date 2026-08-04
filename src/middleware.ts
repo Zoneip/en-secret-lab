@@ -79,6 +79,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const response = await next()
 
+  // HTML 页面不缓存(防止旧页面引用构建后失效的字体/资源)
+  const ct = response.headers.get('Content-Type') ?? ''
+  if (ct.includes('text/html')) {
+    response.headers.set('Cache-Control', 'no-cache')
+  }
+
   // 安全头
   if (!response.headers.has('X-Content-Type-Options')) {
     response.headers.set('X-Content-Type-Options', 'nosniff')
