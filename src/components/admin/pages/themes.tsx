@@ -347,21 +347,11 @@ export default function ThemeEditorPage() {
                 <ImageIcon className="size-4" />
                 友链页专属壁纸
               </h4>
-              <button
-                role="switch"
-                aria-checked={friendsWallpaper}
-                onClick={() => saveFriendsWallpaper(!friendsWallpaper)}
-                className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
-                  friendsWallpaper ? 'bg-primary' : 'bg-input'
-                }`}
+              <Switch
+                checked={friendsWallpaper}
+                onCheckedChange={(v) => saveFriendsWallpaper(v)}
                 disabled={fwSaving}
-              >
-                <span
-                  className={`absolute top-0.5 size-4 rounded-full bg-white transition-transform ${
-                    friendsWallpaper ? 'translate-x-[18px]' : 'translate-x-0.5'
-                  }`}
-                />
-              </button>
+              />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               巫女静静地在孤岛上守望,樱花萌芽,几度轮回春?独立主题,不出现在访客主题切换栏。
