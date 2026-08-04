@@ -363,30 +363,32 @@ const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', p
   }
 </style>
 
-<script is:inline>
-  // 背景动画帧预载(独立页面:加载即预载当前屏,无其它屏干扰)
-  const ocScreen = document.querySelector('.oc-screen')
-  if (ocScreen) {
-    const light = ocScreen.style.getPropertyValue('--oc-bg-light-anim').trim()
-    const dark = ocScreen.style.getPropertyValue('--oc-bg-dark-anim').trim()
-    const pick = document.documentElement.dataset.mode === 'dark' ? dark : light
-    const img = new Image()
-    img.onload = () => ocScreen.setAttribute('data-bg-ready', '')
-    img.src = pick.replace(/^url\(["']?(.*?)["']?\)$/, '$1')
-  }
-  // 打字机直接播放(页面唯一,无需观察器)
-  const TYPE_SPEED = { slow: 95, normal: 55, fast: 28 }
-  const q = document.querySelector('[data-quote-effect="typing"]')
-  if (q) {
-    const text = q.querySelector('.quote-text')
-    const full = text?.dataset.quoteFull ?? ''
-    const speed = TYPE_SPEED[q.dataset.quoteSpeed] ?? 55
-    text.textContent = ''
-    let i = 0
-    const timer = window.setInterval(() => {
-      i++
-      text.textContent = `「${full.slice(0, i)}」`
-      if (i >= full.length) window.clearInterval(timer)
-    }, speed)
-  }
+<script is:inline data-astro-rerun>
+  ;(function () {
+    // 背景动画帧预载(独立页面:加载即预载当前屏,无其它屏干扰)
+    const ocScreen = document.querySelector('.oc-screen')
+    if (ocScreen) {
+      const light = ocScreen.style.getPropertyValue('--oc-bg-light-anim').trim()
+      const dark = ocScreen.style.getPropertyValue('--oc-bg-dark-anim').trim()
+      const pick = document.documentElement.dataset.mode === 'dark' ? dark : light
+      const img = new Image()
+      img.onload = () => ocScreen.setAttribute('data-bg-ready', '')
+      img.src = pick.replace(/^url\(["']?(.*?)["']?\)$/, '$1')
+    }
+    // 打字机直接播放(页面唯一,无需观察器)
+    const TYPE_SPEED = { slow: 95, normal: 55, fast: 28 }
+    const q = document.querySelector('[data-quote-effect="typing"]')
+    if (q) {
+      const text = q.querySelector('.quote-text')
+      const full = text?.dataset.quoteFull ?? ''
+      const speed = TYPE_SPEED[q.dataset.quoteSpeed] ?? 55
+      text.textContent = ''
+      let i = 0
+      const timer = window.setInterval(() => {
+        i++
+        text.textContent = `「${full.slice(0, i)}」`
+        if (i >= full.length) window.clearInterval(timer)
+      }, speed)
+    }
+  })()
 </script>
