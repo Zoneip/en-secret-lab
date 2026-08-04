@@ -9,6 +9,9 @@ export async function getSiteResources(): Promise<ResourceData[]> {
   if (isServer) return listResources()
   const items = await getCollection('resources')
   return items
-    .map((r) => ({ id: r.id, pubDate: r.data.pubDate.toISOString().slice(0, 10), ...r.data }))
+    .map((r) => {
+      const { pubDate, ...rest } = r.data
+      return { id: r.id, pubDate: pubDate.toISOString().slice(0, 10), ...rest }
+    })
     .sort((a, b) => +new Date(b.pubDate) - +new Date(a.pubDate))
 }

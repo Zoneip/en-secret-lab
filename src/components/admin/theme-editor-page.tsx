@@ -49,6 +49,17 @@ export default function ThemeEditorPage() {
   const [edits, setEdits] = useState<Record<string, string>>({})
   const [wallpaper, setWallpaper] = useState<{ light: string; dark: string }>({ light: '', dark: '' })
   const [saving, setSaving] = useState(false)
+  const [isDark, setIsDark] = useState(false)
+
+  // 跟随控制台暗色模式:预览使用对应色板
+  useEffect(() => {
+    const html = document.documentElement
+    const update = () => setIsDark(html.classList.contains('dark'))
+    update()
+    const obs = new MutationObserver(update)
+    obs.observe(html, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
 
   useEffect(() => {
     api<{ presets: Preset[] }>('/admin/api/state')
@@ -77,6 +88,7 @@ export default function ThemeEditorPage() {
   }, [current])
 
   // 实时预览:仅在预览容器作用域内应用(不污染控制台全局样式)
+  const previewMode = isDark ? 'dark' : 'light'
   const previewVars = useMemo(() => {
     if (!current) return {}
     const vars: Record<string, string> = {}
@@ -88,6 +100,7 @@ export default function ThemeEditorPage() {
     }
     return vars
   }, [current, edits])
+  const pv = (token: string) => `var(--pv-${previewMode}-${token})`
 
   if (!current) {
     return (
@@ -207,32 +220,32 @@ export default function ThemeEditorPage() {
           className="mt-4 flex items-center gap-4 rounded-xl border p-4 transition-colors"
           style={{
             ...(previewVars as React.CSSProperties),
-            background: 'var(--pv-light-bg)',
+            background: pv('bg'),
           }}
         >
           <span
             className="flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold shadow-sm transition-colors"
-            style={{ background: 'var(--pv-light-primary)', color: 'var(--pv-light-primary-fg)' }}
+            style={{ background: pv('primary'), color: pv('primary-fg') }}
           >
             E
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium transition-colors" style={{ color: 'var(--pv-light-fg)' }}>
-              预览示例
+            <p className="text-sm font-medium transition-colors" style={{ color: pv('fg') }}>
+              预览示例 · {previewMode === 'dark' ? '深色模式' : '浅色模式'}
             </p>
-            <p className="truncate text-xs transition-colors" style={{ color: 'var(--pv-light-fg-muted)' }}>
-              这是卡片文本 · 主色 {edits['light.primary'] ?? ''}
+            <p className="truncate text-xs transition-colors" style={{ color: pv('fg-muted') }}>
+              这是卡片文本 · 主色 {edits[`${previewMode}.primary`] ?? ''}
             </p>
           </div>
           <span
             className="hidden shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors sm:inline"
-            style={{ background: 'var(--pv-light-primary)', color: 'var(--pv-light-primary-fg)' }}
+            style={{ background: pv('primary'), color: pv('primary-fg') }}
           >
             按钮
           </span>
           <span
             className="hidden shrink-0 rounded-full px-3 py-1 text-xs transition-colors sm:inline"
-            style={{ background: 'var(--pv-light-accent-soft)', color: 'var(--pv-light-accent-fg)' }}
+            style={{ background: pv('accent-soft'), color: pv('accent-fg') }}
           >
             标签
           </span>

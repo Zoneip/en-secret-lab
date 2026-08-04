@@ -103,7 +103,7 @@ export default function ContentPage() {
     )
   }
 
-  async function save(part: 'columns' | 'ocs' | 'about') {
+  async function save(part: 'columns' | 'ocs' | 'about' | 'resources') {
     setSaving(true)
     try {
       await api('/admin/api/content', {

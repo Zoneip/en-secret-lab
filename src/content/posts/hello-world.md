@@ -1,9 +1,10 @@
 ---
 title: 欢迎来到 EN 的秘密实验室
-description: 这里是一个圆润可爱的角落,会慢慢长出代码、生活和奇思妙想。
 pubDate: 2026-08-01
+description: 这里是一个圆润可爱的角落,会慢慢长出代码、生活和奇思妙想。
 category: 随笔
-tags: ["furry", "碎碎念", "开站"]
+tags: ['furry','碎碎念','开站']
+draft: false
 featured: true
 ---
 
