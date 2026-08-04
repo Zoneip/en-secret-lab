@@ -39,7 +39,18 @@ export const siteConfigSchema = z.object({
   /** 页脚/导航自定义 */
   nav: z
     .array(z.object({ label: z.string(), url: z.string() }))
-    .default([{ label: '首页', url: '/' }]),
+    .default([
+      { label: '首页', url: '/' },
+      { label: '知识', url: '/knowledge' },
+      { label: '幻想', url: '/fantasy' },
+      { label: '思考', url: '/thinking' },
+      { label: '记录', url: '/journal' },
+      { label: '文章', url: '/blog' },
+      { label: '标签', url: '/tags' },
+      { label: '分类', url: '/categories' },
+      { label: '关于', url: '/about' },
+      { label: '友链', url: '/friends' },
+    ]),
   /** 控制台导入的字体 */
   fonts: z
     .array(

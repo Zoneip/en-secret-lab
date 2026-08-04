@@ -100,17 +100,17 @@ function StatCard({ stat, value, index }: { stat: (typeof STAT_CARDS)[number]; v
   const num = useCountUp(value)
   const Icon = stat.icon
   return (
-    <Card className="animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ animationDelay: `${index * 50}ms` }}>
-      <div className="flex items-center gap-3">
+    <Card className="flex min-h-[76px] items-center animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ animationDelay: `${index * 50}ms` }}>
+      <div className="flex w-full items-center gap-3 px-5">
         <span
           className="flex size-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
           style={{ background: `linear-gradient(135deg, ${stat.color}, color-mix(in srgb, ${stat.color} 60%, #fff))` }}
         >
           <Icon className="size-5" />
         </span>
-        <div>
+        <div className="flex min-w-0 flex-col">
           <p className="text-xl font-bold tabular-nums leading-none">{num}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
+          <p className="mt-1.5 truncate text-xs text-muted-foreground">{stat.label}</p>
         </div>
       </div>
     </Card>

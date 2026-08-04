@@ -2,12 +2,13 @@
 /**
  * 首页:hero 问候 + 最新文章卡片流 + 分类速览
  */
-import { getAllPosts } from '../lib/content/data'
+import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { featured } from '../lib/content/posts'
 import { aggregateByKey } from '../lib/content/taxonomy'
 import { getSiteConfig } from '../lib/config'
 import { formatDate } from '../lib/utils'
+import { getAllPosts } from '../lib/content/data'
 import Mascot from '../components/mascot/Mascot.astro'
 import PostCard from '../components/blog/PostCard.astro'
 import TagCloud from '../components/blog/TagCloud.astro'
@@ -18,13 +19,20 @@ const featuredPosts = featured(visible)
 const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
 const categories = aggregateByKey(visible, 'category')
 const themeIds = ['gray', 'yellow', 'purple', 'white']
+const [about] = await getCollection('about')
 ---
 
 <BaseLayout title={config.title} description={config.description}>
   <div class="page-enter container">
     <section class="hero">
       <div class="hero-text">
-        <p class="hero-greet">这里的主人回来啦</p>
+        {
+          about?.data.avatar ? (
+            <img src={about.data.avatar} alt={about.data.nickname} class="hero-avatar" />
+          ) : (
+            <p class="hero-greet">这里的主人回来啦</p>
+          )
+        }
         <h1>{config.title}</h1>
         <p class="hero-desc">{config.description}</p>
         <div class="hero-actions">
@@ -111,6 +119,15 @@ const themeIds = ['gray', 'yellow', 'purple', 'white']
     font-family: var(--font-display);
     color: var(--primary);
     margin-bottom: 8px;
+  }
+  .hero-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+    object-fit: cover;
+    margin-bottom: 14px;
+    border: 3px solid var(--surface);
+    box-shadow: var(--shadow);
   }
   .hero h1 {
     font-size: 2.6rem;

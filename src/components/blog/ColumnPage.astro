@@ -1,0 +1,129 @@
+---
+/**
+ * 栏目页:知识/幻想/思考/记录,各绑定一个主题与分类
+ * 知识→技术(DCH 灰) 幻想→幻想(Coulyer 紫) 思考→随笔(FWB 黄) 记录→生活(Zoneip 白)
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getAllPosts } from '../../lib/content/data'
+import Mascot from '../mascot/Mascot.astro'
+import PostCard from '../blog/PostCard.astro'
+import EmptyState from '../ui/EmptyState.astro'
+
+interface Props {
+  title: string
+  subtitle: string
+  description: string
+  theme: string
+  category: string
+}
+
+const { title, subtitle, description, theme, category } = Astro.props
+const posts = (await getAllPosts()).filter((p) => p.category === category)
+---
+
+<BaseLayout title={title} description={description} forceTheme={theme}>
+  <div class="page-enter container">
+    <section class="column-hero">
+      <div class="column-mascot" aria-hidden="true">
+        <Mascot role="furry" theme={theme} pixel={9} />
+      </div>
+      <div class="column-text">
+        <p class="column-sub">{subtitle}</p>
+        <h1>{title}</h1>
+        <p class="column-desc">{description}</p>
+        <div class="column-meta">
+          <span class="chip">{category}分类</span>
+          <span class="count">{posts.length} 篇</span>
+        </div>
+      </div>
+    </section>
+
+    {posts.length > 0 ? (
+      <div class="grid">
+        {posts.map((p) => (
+          <PostCard
+            slug={p.slug}
+            title={p.title}
+            description={p.description}
+            pubDate={p.pubDate}
+            category={p.category}
+            tags={p.tags}
+            cover={p.cover}
+          />
+        ))}
+      </div>
+    ) : (
+      <EmptyState title={`「${title}」还没有文章`} description={`写一篇分类为「${category}」的文章,就会出现在这里`} />
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .column-hero {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 56px 0 40px;
+  }
+  .column-mascot {
+    flex-shrink: 0;
+    padding: 14px;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    animation: bob 3.5s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
+  }
+  .column-sub {
+    font-family: var(--font-display);
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .column-text h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+  .column-desc {
+    color: var(--fg-muted);
+    max-width: 52ch;
+  }
+  .column-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .count {
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+    padding-bottom: 24px;
+  }
+
+  @media (max-width: 640px) {
+    .column-hero {
+      flex-direction: column;
+      text-align: center;
+      padding: 40px 0 28px;
+    }
+    .column-desc {
+      margin-inline: auto;
+    }
+    .column-meta {
+      justify-content: center;
+    }
+  }
+</style>

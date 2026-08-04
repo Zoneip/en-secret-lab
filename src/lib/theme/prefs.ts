@@ -26,12 +26,14 @@ export function resolveMode(mode: ColorMode | 'system', systemDark: boolean): Co
   return mode === 'system' ? (systemDark ? 'dark' : 'light') : mode
 }
 
-/** 构建防 FOUC 内联脚本(在首帧渲染前执行) */
+/** 构建防 FOUC 内联脚本(在首帧渲染前执行);data-force-theme 存在时锁定该主题(栏目页) */
 export function bootScript(): string {
   return `(function(){
   var K='${PREFS_KEY}';
   var t='${DEFAULT_PREFS.theme}', m='${DEFAULT_PREFS.mode}';
-  try{var p=JSON.parse(localStorage.getItem(K)||'null'); if(p){if(p.theme)t=p.theme; if(p.mode)m=p.mode;}}catch(e){}
+  var ft=document.documentElement.dataset.forceTheme;
+  if(ft){t=ft;m='light';}
+  try{var p=JSON.parse(localStorage.getItem(K)||'null'); if(p){if(!ft&&p.theme)t=p.theme; if(p.mode)m=p.mode;}}catch(e){}
   var dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme=t;
   document.documentElement.dataset.mode=dark?'dark':'light';

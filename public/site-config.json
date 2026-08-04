@@ -15,6 +15,10 @@
   "themeOverrides": {},
   "nav": [
     { "label": "首页", "url": "/" },
+    { "label": "知识", "url": "/knowledge" },
+    { "label": "幻想", "url": "/fantasy" },
+    { "label": "思考", "url": "/thinking" },
+    { "label": "记录", "url": "/journal" },
     { "label": "文章", "url": "/blog" },
     { "label": "标签", "url": "/tags" },
     { "label": "分类", "url": "/categories" },

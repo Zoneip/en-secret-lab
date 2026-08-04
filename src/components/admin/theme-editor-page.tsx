@@ -76,15 +76,17 @@ export default function ThemeEditorPage() {
     })
   }, [current])
 
-  // 实时预览:切主题 + 应用编辑
-  useEffect(() => {
-    if (!current) return
-    document.documentElement.dataset.theme = current.id
-    document.documentElement.dataset.mode = 'light'
-    for (const [k, v] of Object.entries(edits)) {
-      const [, token] = k.split('.')
-      document.documentElement.style.setProperty(`--${token}`, v)
+  // 实时预览:仅在预览容器作用域内应用(不污染控制台全局样式)
+  const previewVars = useMemo(() => {
+    if (!current) return {}
+    const vars: Record<string, string> = {}
+    for (const mode of ['light', 'dark'] as const) {
+      for (const s of SWATCH_ORDER) {
+        const edited = edits[`${mode}.${s.key}`]
+        if (edited) vars[`--pv-${mode}-${s.key}`] = edited
+      }
     }
+    return vars
   }, [current, edits])
 
   if (!current) {
@@ -198,6 +200,42 @@ export default function ThemeEditorPage() {
               {saving ? '保存中…' : '保存修改'}
             </Button>
           </div>
+        </div>
+
+        {/* 局部作用域实时预览 */}
+        <div
+          className="mt-4 flex items-center gap-4 rounded-xl border p-4 transition-colors"
+          style={{
+            ...(previewVars as React.CSSProperties),
+            background: 'var(--pv-light-bg)',
+          }}
+        >
+          <span
+            className="flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold shadow-sm transition-colors"
+            style={{ background: 'var(--pv-light-primary)', color: 'var(--pv-light-primary-fg)' }}
+          >
+            E
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium transition-colors" style={{ color: 'var(--pv-light-fg)' }}>
+              预览示例
+            </p>
+            <p className="truncate text-xs transition-colors" style={{ color: 'var(--pv-light-fg-muted)' }}>
+              这是卡片文本 · 主色 {edits['light.primary'] ?? ''}
+            </p>
+          </div>
+          <span
+            className="hidden shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors sm:inline"
+            style={{ background: 'var(--pv-light-primary)', color: 'var(--pv-light-primary-fg)' }}
+          >
+            按钮
+          </span>
+          <span
+            className="hidden shrink-0 rounded-full px-3 py-1 text-xs transition-colors sm:inline"
+            style={{ background: 'var(--pv-light-accent-soft)', color: 'var(--pv-light-accent-fg)' }}
+          >
+            标签
+          </span>
         </div>
       </Card>
 

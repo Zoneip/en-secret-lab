@@ -68,7 +68,10 @@ import { themes } from '../../lib/theme/presets'
   }
 
   function applyPrefs(prefs: { theme: string; mode: string }) {
-    document.documentElement.dataset.theme = prefs.theme
+    // 栏目页强制主题优先
+    const forced = document.documentElement.dataset.forceTheme
+    const theme = forced || prefs.theme
+    document.documentElement.dataset.theme = theme
     const dark =
       prefs.mode === 'dark' ||
       (prefs.mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
@@ -77,8 +80,8 @@ import { themes } from '../../lib/theme/presets'
     window.dispatchEvent(new CustomEvent('enlab:theme-change'))
 
     themeCards.forEach((card) => {
-      card.setAttribute('aria-pressed', String(card.dataset.themeId === prefs.theme))
-      card.classList.toggle('selected', card.dataset.themeId === prefs.theme)
+      card.setAttribute('aria-pressed', String(card.dataset.themeId === theme))
+      card.classList.toggle('selected', card.dataset.themeId === theme)
     })
     modeButtons.forEach((btn) => {
       const isActive = btn.dataset.mode === prefs.mode
@@ -109,6 +112,13 @@ import { themes } from '../../lib/theme/presets'
     applyPrefs(prefs)
   }
 
+  // 栏目页强制主题时,禁止切换配色
+  function lockSwitcher() {
+    const locked = Boolean(document.documentElement.dataset.forceTheme)
+    fab.hidden = locked
+    if (locked) panel.hidden = true
+  }
+
   function togglePanel(force?: boolean) {
     const open = force ?? panel.hidden
     panel.hidden = !open
@@ -129,6 +139,7 @@ import { themes } from '../../lib/theme/presets'
     if (!panel.hidden && !root.contains(e.target as Node)) togglePanel(false)
   })
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyPrefs(readPrefs()))
+  lockSwitcher()
   applyPrefs(readPrefs())
 </script>
 

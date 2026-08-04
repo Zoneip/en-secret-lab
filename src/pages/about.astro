@@ -20,8 +20,14 @@ const [about] = await getCollection('about')
 
         <div class="card profile">
           <div class="mascots" aria-hidden="true">
-            <Mascot role="furry" pixel={9} />
-            <Mascot role="boy" pixel={7} />
+            {about.data.avatar ? (
+              <img src={about.data.avatar} alt={about.data.nickname} class="avatar-img" />
+            ) : (
+              <>
+                <Mascot role="furry" pixel={9} />
+                <Mascot role="boy" pixel={7} />
+              </>
+            )}
           </div>
           <div class="profile-text">
             <p class="nickname">{about.data.nickname}</p>
@@ -71,6 +77,14 @@ const [about] = await getCollection('about')
   .mascots {
     display: flex;
     gap: 2px;
+  }
+  .avatar-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 32px;
+    object-fit: cover;
+    border: 3px solid var(--surface);
+    box-shadow: var(--shadow);
   }
   .profile-text {
     min-width: 260px;
