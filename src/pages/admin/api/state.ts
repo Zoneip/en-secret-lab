@@ -67,6 +67,7 @@ export const GET: APIRoute = async ({ cookies }) => {
         icp: siteConfig.icp,
         police: siteConfig.police,
         homepage: siteConfig.homepage,
+        themeOverrides: siteConfig.themeOverrides,
       },
       stats: {
         posts: posts.length,

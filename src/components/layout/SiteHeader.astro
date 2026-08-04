@@ -50,7 +50,10 @@ const current = active ?? Astro.url.pathname
     position: sticky;
     top: 0;
     z-index: 30;
-    background: var(--topbar-bg, color-mix(in srgb, var(--bg) 82%, transparent));
+    background-color: var(--topbar-bg, color-mix(in srgb, var(--bg) 76%, transparent));
+    background-image:
+      var(--topbar-tint, linear-gradient(180deg, color-mix(in srgb, var(--primary) 16%, transparent), color-mix(in srgb, var(--accent) 7%, transparent) 100%)),
+      var(--topbar-grad, none);
     backdrop-filter: blur(var(--topbar-blur, 12px));
     border-bottom: 1px solid var(--border);
     /* 装饰层(主题绑定):accent 渐变线 + ornament 像素装饰 */

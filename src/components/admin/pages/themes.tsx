@@ -13,6 +13,7 @@ import { Label } from '../ui/label'
 import { Skeleton } from '../ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface Asset {
   id: string
