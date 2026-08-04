@@ -42,6 +42,7 @@ const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
 const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
 const ocBgDark = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.dark)
 const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode]['wallpaper-overlay']
+const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode][key]
 ---
 
 <BaseLayout title={config.title} description={config.description}>
@@ -116,7 +117,7 @@ const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).pal
                 class="oc-card"
                 data-motion-group="cards"
                 data-oc-theme={oc.theme}
-                style={`--oc-bg-light:${ocBg(oc.theme)}; --oc-bg-dark:${ocBgDark(oc.theme)}; --oc-overlay-light:${ocOverlay(oc.theme, 'light')}; --oc-overlay-dark:${ocOverlay(oc.theme, 'dark')}`}
+                style={`--oc-bg-light:${ocBg(oc.theme)}; --oc-bg-dark:${ocBgDark(oc.theme)}; --oc-overlay-light:${ocOverlay(oc.theme, 'light')}; --oc-overlay-dark:${ocOverlay(oc.theme, 'dark')}; --oc-primary-light:${ocTok(oc.theme, 'primary', 'light')}; --oc-primary-dark:${ocTok(oc.theme, 'primary', 'dark')}; --oc-fg-light:${ocTok(oc.theme, 'fg', 'light')}; --oc-fg-dark:${ocTok(oc.theme, 'fg', 'dark')}; --oc-muted-light:${ocTok(oc.theme, 'fg-muted', 'light')}; --oc-muted-dark:${ocTok(oc.theme, 'fg-muted', 'dark')}`}
                 key={oc.id}
               >
                 <div class="oc-card-top">
@@ -384,11 +385,11 @@ const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).pal
   .oc-card-name {
     font-family: var(--font-display);
     font-size: 1.5rem;
-    color: var(--primary);
+    color: var(--oc-primary-dark);
   }
   .oc-card-sub {
     font-size: 0.85rem;
-    color: var(--fg-muted);
+    color: var(--oc-muted-dark);
   }
   .oc-card-traits {
     display: flex;
@@ -400,13 +401,24 @@ const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).pal
     font-size: 0.72rem;
     padding: 2px 10px;
     border-radius: 999px;
-    border: 1px solid var(--border-strong);
-    color: var(--fg-muted);
+    border: 1px solid var(--oc-primary-dark);
+    color: var(--oc-muted-dark);
   }
   .oc-card-quote {
     font-family: var(--font-display);
     font-size: 0.9rem;
-    color: var(--primary);
+    color: var(--oc-primary-dark);
+  }
+  :root[data-mode='light'] .oc-card-name,
+  :root[data-mode='light'] .oc-card-quote {
+    color: var(--oc-primary-light);
+  }
+  :root[data-mode='light'] .oc-card-sub {
+    color: var(--oc-muted-light);
+  }
+  :root[data-mode='light'] .oc-card-trait {
+    border-color: var(--oc-primary-light);
+    color: var(--oc-muted-light);
   }
 
   /* 最新消息 */
