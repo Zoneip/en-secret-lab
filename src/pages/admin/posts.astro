@@ -329,6 +329,9 @@ export const prerender = !isServer
     place-items: center;
     padding: 20px;
   }
+  .modal-backdrop[hidden] {
+    display: none;
+  }
   .modal {
     width: min(460px, 100%);
     background: var(--a-surface);

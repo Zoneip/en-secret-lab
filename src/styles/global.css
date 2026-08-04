@@ -158,25 +158,29 @@ a:hover {
   border-radius: 4px;
 }
 
-/* 圆润滚动条 */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+/* 圆润滚动条:仅作用于根滚动容器,避免 * 选择器引发大量兼容性标记 */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
 }
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-*::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 6px;
-  border: 2px solid var(--bg);
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: var(--fg-subtle);
+@supports selector(::-webkit-scrollbar) {
+  html::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  html::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 6px;
+    border: 2px solid var(--bg);
+  }
+  html::-webkit-scrollbar-thumb:hover {
+    background: var(--fg-subtle);
+  }
 }
 
 img,

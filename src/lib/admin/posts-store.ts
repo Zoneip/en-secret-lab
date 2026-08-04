@@ -74,7 +74,9 @@ export function parsePostFile(fileName: string, raw: string): PostFile {
       if (!eq) continue
       const [, key, value] = eq
       if (key === 'tags') {
-        fm.tags = [...value.matchAll(/'([^']+)'|"([^"]+)"|([^,]+)/g)]
+        // 兼容 YAML 数组与简单列表:先取 [ ] 内内容,再逐个匹配引号/裸词
+        const inner = value.match(/\[(.*)\]/)?.[1] ?? value
+        fm.tags = [...inner.matchAll(/'([^']+)'|"([^"]+)"|([^,\s[]+)/g)]
           .map((g) => (g[1] ?? g[2] ?? g[3]).trim())
           .filter(Boolean)
       } else if (value === 'true' || value === 'false') {
