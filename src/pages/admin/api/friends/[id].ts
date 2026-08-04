@@ -41,6 +41,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
         url: req.url,
         avatar: req.avatar,
         description: req.description,
+        group: '其他',
       })
     }
     setRequestStatus(id, body.action)
@@ -56,6 +57,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       url: body.friend.url.trim(),
       avatar: body.friend.avatar?.trim() || undefined,
       description: body.friend.description?.trim() || undefined,
+      group: body.friend.group?.trim() || '其他',
     })
     return new Response(JSON.stringify({ ok: true }))
   }

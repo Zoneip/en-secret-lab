@@ -14,6 +14,7 @@ export interface FriendData {
   url: string
   avatar?: string
   description?: string
+  group?: string
 }
 
 export interface FriendRequest {
@@ -39,7 +40,7 @@ export function listFriends(): FriendData[] {
     .map((f) => {
       try {
         const raw = parseYaml(readFileSync(join(friendsDir(), f), 'utf8')) as Omit<FriendData, 'id'>
-        return { id: f.replace(/\.yaml$/, ''), ...raw }
+        return { id: f.replace(/\.yaml$/, ''), group: '其他', ...raw }
       } catch {
         return null
       }
