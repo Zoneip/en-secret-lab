@@ -1,0 +1,792 @@
+---
+/**
+ * 关于页:全屏滑动结构
+ * 屏1 = hero(自我介绍) 屏2-5 = 四个 OC(DCH/FWB/Coulyer/Zoneip)
+ * 右侧圆点导航 + 每屏滚动入场动画
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Mascot from '../components/mascot/Mascot.astro'
+import { getSiteConfig } from '../lib/config'
+import { getSiteOcs, getSiteAbout } from '../lib/content/site-content'
+import { getTheme } from '../lib/theme/presets'
+import { wallpaperCss } from '../lib/theme/engine'
+
+
+const about = await getSiteAbout()
+const siteConfig = getSiteConfig()
+const OC_SCENE: Record<string, { light: string; dark: string }> = {
+  gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
+  yellow: { light: 'yellow-field-light', dark: 'yellow-field-dark' },
+  purple: { light: 'purple-library-day', dark: 'purple-library-night' },
+  white: { light: 'white-sea-day', dark: 'white-sea-dark' },
+}
+const ocBg = (theme: string, mode: 'light' | 'dark') =>
+  `url(/wallpapers/${OC_SCENE[theme][mode]}-static.svg)`
+const ocBgAnim = (theme: string, mode: 'light' | 'dark') =>
+  `url(/wallpapers/${OC_SCENE[theme][mode]}.svg)`
+const siteAuthor = siteConfig.author
+
+// 关于页主题色 = 当前主题色板快照(内联具体色值,不再引用 CSS 变量;
+// 每屏独立配色是未来的大改动方向,当前各屏暂时统一拷贝)
+const pgTheme = getTheme(siteConfig.defaultTheme)
+const pgTokens = pgTheme.palette.light
+const pgTokensDark = pgTheme.palette.dark
+const pgV = (k: string) => pgTokens[k]
+const pgVd = (k: string) => pgTokensDark[k]
+const ocs = (await getSiteOcs()).sort(
+  (a, b) =>
+    ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
+)
+
+const themeNames: Record<string, string> = {
+  gray: '灰糖',
+  yellow: '蜜糖',
+  purple: '葡萄',
+  white: '棉花糖',
+}
+---
+
+<BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
+  <div
+    class="snap-wrap"
+    style={`--pg-bg:${pgV('bg')}; --pg-surface:${pgV('surface')}; --pg-elevated:${pgV('elevated')}; --pg-fg:${pgV('fg')}; --pg-fg-muted:${pgV('fg-muted')}; --pg-fg-subtle:${pgV('fg-subtle')}; --pg-primary:${pgV('primary')}; --pg-primary-soft:${pgV('primary-soft')}; --pg-primary-fg:${pgV('primary-fg')}; --pg-accent:${pgV('accent')}; --pg-accent-soft:${pgV('accent-soft')}; --pg-border:${pgV('border')}; --pg-border-strong:${pgV('border-strong')}; --pg-overlay:${pgV('wallpaper-overlay')}; --pg-shadow:${pgV('shadow')}; --pg-bg-dark:${pgVd('bg')}; --pg-surface-dark:${pgVd('surface')}; --pg-elevated-dark:${pgVd('elevated')}; --pg-fg-dark:${pgVd('fg')}; --pg-fg-muted-dark:${pgVd('fg-muted')}; --pg-fg-subtle-dark:${pgVd('fg-subtle')}; --pg-primary-dark:${pgVd('primary')}; --pg-primary-soft-dark:${pgVd('primary-soft')}; --pg-primary-fg-dark:${pgVd('primary-fg')}; --pg-accent-dark:${pgVd('accent')}; --pg-accent-soft-dark:${pgVd('accent-soft')}; --pg-border-dark:${pgVd('border')}; --pg-border-strong-dark:${pgVd('border-strong')}; --pg-overlay-dark:${pgVd('wallpaper-overlay')}; --pg-shadow-dark:${pgVd('shadow')}`}
+  >
+    <!-- hero 屏背景(独立快照,不随用户主题) -->
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="snap-scroller" data-snap-scroller>
+      <!-- 屏1:hero -->
+      <section class="snap-section hero-screen" data-screen>
+        <div class="hero-inner">
+          {about && (
+            <>
+              <div class="hero-avatar-wrap">
+                {about.avatar ? (
+                  <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
+                ) : (
+                  <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
+                    <Mascot role="furry" pixel={7} />
+                    <Mascot role="boy" pixel={6} />
+                  </div>
+                )}
+              </div>
+              <p class="hero-nickname">{about.nickname}</p>
+              <p class="hero-tagline">{about.tagline}</p>
+              <ul class="hero-intro">
+                {about.intro.map((line) => (
+                  <li>{line}</li>
+                ))}
+              </ul>
+              {about.links.length > 0 && (
+                <div class="hero-links">
+                  {about.links.map((link) => (
+                    <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          <div class="hero-scroll-hint" aria-hidden="true">
+            <span>左右滑动看看四位伙伴</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l-5 6 5 6M19 6l-5 6 5 6" /></svg>
+          </div>
+        </div>
+        <footer class="screen-footer">
+          <span>© {new Date().getFullYear()} {siteAuthor} · 秘密实验室</span>
+          <a href="/rss.xml">RSS</a>
+        </footer>
+      </section>
+
+      <!-- 屏2-5:四个 OC -->
+      {
+        ocs.map((oc, i) => (
+          <section
+            class="snap-section oc-screen"
+            data-screen
+            data-oc-theme={oc.theme}
+            style={`--oc-index:${i}; --oc-bg-light:${ocBg(oc.theme, 'light')}; --oc-bg-dark:${ocBg(oc.theme, 'dark')}; --oc-bg-light-anim:${ocBgAnim(oc.theme, 'light')}; --oc-bg-dark-anim:${ocBgAnim(oc.theme, 'dark')}; --oc-overlay-light:${getTheme(oc.theme).palette.light['wallpaper-overlay']}; --oc-overlay-dark:${getTheme(oc.theme).palette.dark['wallpaper-overlay']}`}
+          >
+            <div class="oc-bg" aria-hidden="true"></div>
+            <div class="oc-inner">
+              <div class="oc-art" data-motion-group="mascot" aria-hidden="true">
+                {oc.art ? (
+                  <img src={oc.art} alt="" class="oc-art-img" />
+                ) : (
+                  <>
+                    <Mascot role="furry" theme={oc.theme} pixel={9} />
+                    <Mascot role="boy" theme={oc.theme} pixel={7} />
+                  </>
+                )}
+              </div>
+              <div class="oc-text">
+                <p class="oc-theme-tag">主题 · {themeNames[oc.theme]}</p>
+                <h2 class="oc-name">{oc.name}</h2>
+                <p class="oc-subtitle">{oc.subtitle}</p>
+                <p class="oc-desc">{oc.description}</p>
+                <div class="oc-traits">
+                  {oc.traits.map((t) => (
+                    <span class="oc-trait">{t}</span>
+                  ))}
+                </div>
+                {oc.quote && (
+                  <p
+                    class="oc-quote"
+                    data-quote-effect={oc.quoteEffect}
+                    data-quote-speed={oc.quoteSpeed}
+                  >
+                    <span class="quote-text" data-quote-full={oc.quote}>「{oc.quote}」</span>
+                    <span class="quote-caret" aria-hidden="true"></span>
+                  </p>
+                )}
+              </div>
+            </div>
+            <footer class="screen-footer">
+              <span>© {new Date().getFullYear()} {siteAuthor} · 秘密实验室</span>
+              <a href="/rss.xml">RSS</a>
+            </footer>
+          </section>
+        ))
+      }
+    </div>
+
+    <!-- 底部指示条(横向滑动) -->
+    <nav class="snap-dots" aria-label="页面导航">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <button class="snap-dot" data-dot={i} aria-label={`跳转到第 ${i + 1} 屏`}></button>
+      ))}
+    </nav>
+    <div class="snap-track" aria-hidden="true">
+      <div class="snap-track-fill" data-track-fill></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* 深浅色间接层:深色默认,浅色覆盖(快照全部注入 dark 版本) */
+  .snap-wrap {
+    --p-bg: var(--pg-bg-dark, var(--pg-bg));
+    --p-surface: var(--pg-surface-dark, var(--pg-surface));
+    --p-elevated: var(--pg-elevated-dark, var(--pg-elevated));
+    --p-fg: var(--pg-fg-dark, var(--pg-fg));
+    --p-fg-muted: var(--pg-fg-muted-dark, var(--pg-fg-muted));
+    --p-fg-subtle: var(--pg-fg-subtle-dark, var(--pg-fg-subtle));
+    --p-primary: var(--pg-primary-dark, var(--pg-primary));
+    --p-primary-soft: var(--pg-primary-soft-dark, var(--pg-primary-soft));
+    --p-primary-fg: var(--pg-primary-fg-dark, var(--pg-primary-fg));
+    --p-accent: var(--pg-accent-dark, var(--pg-accent));
+    --p-accent-soft: var(--pg-accent-soft-dark, var(--pg-accent-soft));
+    --p-border: var(--pg-border-dark, var(--pg-border));
+    --p-border-strong: var(--pg-border-strong-dark, var(--pg-border-strong));
+    --p-overlay: var(--pg-overlay-dark, var(--pg-overlay));
+    --p-shadow: var(--pg-shadow-dark, var(--pg-shadow));
+  }
+  :root[data-mode='light'] .snap-wrap {
+    --p-bg: var(--pg-bg);
+    --p-surface: var(--pg-surface);
+    --p-elevated: var(--pg-elevated);
+    --p-fg: var(--pg-fg);
+    --p-fg-muted: var(--pg-fg-muted);
+    --p-fg-subtle: var(--pg-fg-subtle);
+    --p-primary: var(--pg-primary);
+    --p-primary-soft: var(--pg-primary-soft);
+    --p-primary-fg: var(--pg-primary-fg);
+    --p-accent: var(--pg-accent);
+    --p-accent-soft: var(--pg-accent-soft);
+    --p-border: var(--pg-border);
+    --p-border-strong: var(--pg-border-strong);
+    --p-overlay: var(--pg-overlay);
+    --p-shadow: var(--pg-shadow);
+  }
+  .snap-wrap {
+    position: fixed;
+    inset: 0;
+    top: var(--header-h);
+    bottom: 0;
+  }
+  .snap-scroller {
+    height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .snap-scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .snap-section {
+    min-height: 100%;
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 48px 56px 56px;
+    /* 屏外完全脱离绘制,仅滚动中与视口相交的屏参与渲染 */
+    visibility: hidden;
+  }
+  .snap-section.in-view {
+    visibility: visible;
+  }
+
+  /* ===== 屏1 hero ===== */
+  .hero-screen {
+    text-align: center;
+  }
+  .hero-bg {
+    position: fixed;
+    inset: 0;
+    top: var(--header-h);
+    background: var(--p-bg-dark, var(--p-bg));
+    z-index: -2;
+    transition: background 0.3s;
+  }
+  :root[data-mode='light'] .hero-bg {
+    background: var(--p-bg);
+  }
+  .hero-inner {
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s var(--ease-soft), transform 0.7s var(--ease-soft);
+  }
+  .snap-section.active .hero-inner {
+    transition-delay: 0.1s;
+  }
+  .snap-section:not(.active) .hero-inner {
+    transition: none;
+  }
+  .snap-section.active .hero-inner {
+    opacity: 1;
+    transform: none;
+  }
+  .hero-avatar-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .hero-avatar {
+    width: 132px;
+    height: 132px;
+    border-radius: 36px;
+    object-fit: cover;
+    border: 3px solid var(--p-surface);
+    box-shadow: var(--p-shadow);
+  }
+  .hero-mascots {
+    display: flex;
+    gap: 2px;
+    padding: 10px;
+    border-radius: 22px;
+    background: var(--p-surface);
+    border: 1px solid var(--p-border);
+    box-shadow: var(--p-shadow);
+  }
+  .hero-nickname {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    color: var(--p-primary);
+  }
+  .hero-tagline {
+    color: var(--p-fg-muted);
+  }
+  .hero-intro {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--p-fg);
+    font-size: 0.92rem;
+  }
+  .hero-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .hero-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--p-fg-subtle);
+    font-size: 0.8rem;
+    margin-top: 24px;
+    animation: hint-bob 2s ease-in-out infinite;
+  }
+  .hero-scroll-hint svg {
+    width: 20px;
+    height: 20px;
+  }
+  @keyframes hint-bob {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(6px);
+    }
+  }
+
+  /* ===== OC 屏 ===== */
+  .oc-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--oc-bg-dark, var(--p-bg));
+    transition: background 0.2s;
+    z-index: -1;
+  }
+  :root[data-mode='light'] .oc-bg {
+    background: var(--oc-bg-light, var(--p-bg));
+  }
+  /* 当前屏激活:换成动画版壁纸(其余屏静态帧,减少滚动开销) */
+  .oc-screen[data-anim-active] .oc-bg {
+    background: var(--oc-bg-dark-anim, var(--oc-bg-dark, var(--p-bg)));
+  }
+  :root[data-mode='light'] .oc-screen[data-anim-active] .oc-bg {
+    background: var(--oc-bg-light-anim, var(--oc-bg-light, var(--p-bg)));
+  }
+  .oc-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--oc-overlay-dark, var(--wallpaper-overlay));
+  }
+  :root[data-mode='light'] .oc-bg::after {
+    background: var(--oc-overlay-light, var(--wallpaper-overlay));
+  }
+  .oc-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 56px;
+    max-width: 860px;
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s var(--ease-soft) 0.1s, transform 0.7s var(--ease-soft) 0.1s;
+  }
+  .snap-section.active .oc-inner {
+    opacity: 1;
+    transform: none;
+  }
+  .oc-art {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 18px;
+    border-radius: 28px;
+    background: var(--p-surface);
+    border: 1px solid var(--p-border);
+    box-shadow: var(--p-shadow);
+    /* 动画仅当前屏运行为避免 5 屏常驻动画掉帧 */
+  }
+  .snap-section.active .oc-art {
+    animation: bob 4s ease-in-out infinite;
+  }
+  .snap-section:not(.active) .oc-inner {
+    transition: none;
+  }
+  /* 屏外暂停一切动效(motion-* 预设动画与 bob),杜绝常驻动画掉帧 */
+  .snap-section:not(.active) [data-motion-group],
+  .snap-section:not(.active) .oc-art {
+    animation: none;
+  }
+  .oc-art-img {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .oc-text {
+    min-width: 0;
+  }
+  .oc-theme-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 2px 12px;
+    border-radius: 999px;
+    background: var(--p-primary-soft);
+    color: var(--p-primary);
+    margin-bottom: 12px;
+  }
+  .oc-name {
+    font-size: 3rem;
+    color: var(--p-primary);
+    line-height: 1.1;
+  }
+  .oc-subtitle {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--p-fg);
+    margin: 6px 0 14px;
+  }
+  .oc-desc {
+    color: var(--p-fg-muted);
+    max-width: 46ch;
+    line-height: 1.9;
+  }
+  .oc-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .oc-trait {
+    font-size: 0.82rem;
+    padding: 3px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--p-border-strong);
+    color: var(--p-fg-muted);
+  }
+  .oc-quote {
+    margin-top: 18px;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--p-primary);
+  }
+  /* ===== 名言动效 ===== */
+  .quote-caret {
+    display: none;
+    width: 2px;
+    height: 1.15em;
+    margin-left: 3px;
+    background: currentColor;
+    vertical-align: text-bottom;
+  }
+  [data-quote-effect='typing'] .quote-caret {
+    display: inline-block;
+    animation: caret-blink 0.9s steps(1) infinite;
+  }
+  @keyframes caret-blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  [data-quote-effect='fade'] .quote-text {
+    display: inline-block;
+    animation: quote-fade 3.2s ease-in-out infinite;
+  }
+  [data-quote-effect='fade'][data-quote-speed='slow'] .quote-text {
+    animation-duration: 4.6s;
+  }
+  [data-quote-effect='fade'][data-quote-speed='fast'] .quote-text {
+    animation-duration: 2.2s;
+  }
+  @keyframes quote-fade {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  [data-quote-effect='float'] .quote-text {
+    display: inline-block;
+    animation: quote-float 3.2s ease-in-out infinite;
+  }
+  [data-quote-effect='float'][data-quote-speed='slow'] .quote-text {
+    animation-duration: 4.6s;
+  }
+  [data-quote-effect='float'][data-quote-speed='fast'] .quote-text {
+    animation-duration: 2.2s;
+  }
+  @keyframes quote-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* ===== 屏内页脚(随滑动同步) ===== */
+  .screen-footer {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.72rem;
+    color: var(--p-fg-subtle);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .screen-footer a {
+    pointer-events: auto;
+    color: var(--p-fg-subtle);
+    text-decoration: none;
+  }
+  .screen-footer a:hover {
+    color: var(--p-primary);
+  }
+
+  /* ===== 底部指示条(横向) ===== */
+  .snap-dots {
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+  }
+  .snap-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    background: var(--p-border-strong);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    opacity: 0.6;
+  }
+  .snap-dot:hover {
+    opacity: 1;
+  }
+  .snap-dot.active {
+    background: var(--p-primary);
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  .snap-track {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--p-border);
+    overflow: hidden;
+    z-index: 20;
+    opacity: 0.6;
+  }
+  .snap-track-fill {
+    height: 100%;
+    width: 20%;
+    border-radius: 999px;
+    background: var(--p-primary);
+    transition: transform 0.35s var(--ease-soft);
+  }
+
+  .snap-section > :global(.pixel-divider) {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 760px) {
+    .snap-wrap {
+      top: var(--header-h);
+    }
+    .oc-inner {
+      flex-direction: column;
+      gap: 28px;
+      text-align: center;
+    }
+    .oc-art {
+      transform: scale(0.85);
+    }
+    .oc-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .oc-name {
+      font-size: 2.4rem;
+    }
+    .oc-desc {
+      max-width: 36ch;
+    }
+    .oc-traits {
+      justify-content: center;
+    }
+    .snap-dots {
+      bottom: 18px;
+    }
+    .snap-track {
+      display: none;
+    }
+    .hero-nickname {
+      font-size: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .snap-scroller {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  const scroller = document.querySelector<HTMLElement>('[data-snap-scroller]')!
+  const screens = [...document.querySelectorAll<HTMLElement>('[data-screen]')]
+  const dots = [...document.querySelectorAll<HTMLButtonElement>('[data-dot]')]
+  const trackFill = document.querySelector<HTMLElement>('[data-track-fill]')
+
+  // 底部指示条点击跳转
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      screens[i]?.scrollIntoView({ behavior: 'smooth', inline: 'start' })
+    })
+  })
+
+  // 滚动更新:高亮当前屏 + 进度条 + 入场动画
+  const updateProgress = () => {
+    const max = scroller.scrollWidth - scroller.clientWidth
+    const ratio = max > 0 ? scroller.scrollLeft / max : 0
+    if (trackFill) trackFill.style.transform = `translateX(${ratio * 400}%)`
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const idx = screens.indexOf(entry.target as HTMLElement)
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active')
+          dots.forEach((d, i) => d.classList.toggle('active', i === idx))
+        } else {
+          entry.target.classList.remove('active')
+        }
+      }
+    },
+    { root: scroller, threshold: 0.5 }
+  )
+  screens.forEach((s) => observer.observe(s))
+  scroller.addEventListener('scroll', updateProgress, { passive: true })
+  updateProgress()
+
+  // 名言打字机效果:进入视野逐字打出,离开重置可重播
+  const TYPE_SPEED = { slow: 95, normal: 55, fast: 28 }
+  const typingQuotes = [...document.querySelectorAll<HTMLElement>('[data-quote-effect="typing"]')]
+
+  function startTyping(el: HTMLElement) {
+    if (el.dataset.typed === '1') return
+    el.dataset.typed = '1'
+    const text = el.querySelector<HTMLElement>('.quote-text')
+    if (!text) return
+    const full = text.dataset.quoteFull ?? ''
+    const speed = TYPE_SPEED[(el.dataset.quoteSpeed as keyof typeof TYPE_SPEED) ?? 'normal'] ?? 55
+    text.textContent = ''
+    let i = 0
+    const timer = window.setInterval(() => {
+      i++
+      text.textContent = `「${full.slice(0, i)}」`
+      if (i >= full.length) window.clearInterval(timer)
+    }, speed)
+    el.dataset.timer = String(timer)
+  }
+
+  function resetTyping(el: HTMLElement) {
+    if (el.dataset.typed !== '1') return
+    el.dataset.typed = ''
+    window.clearInterval(Number(el.dataset.timer))
+    const text = el.querySelector<HTMLElement>('.quote-text')
+    if (text) text.textContent = `「${text.dataset.quoteFull ?? ''}」`
+  }
+
+  const quoteObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) startTyping(entry.target as HTMLElement)
+        else resetTyping(entry.target as HTMLElement)
+      }
+    },
+    { root: scroller, threshold: 0.6 }
+  )
+  typingQuotes.forEach((q) => quoteObserver.observe(q))
+
+  // 滚轮翻页:垂直滚轮离散切换,横向手势原生跟手
+  let pageLock = false
+  let pageLockT = 0
+  scroller.addEventListener(
+    'wheel',
+    (e) => {
+      // 横向滚动(触摸板)交还原生,纵向滚轮翻页
+      if (e.deltaX && !e.deltaY) return
+      if (pageLock || e.deltaY === 0) {
+        e.preventDefault()
+        return
+      }
+      e.preventDefault()
+      pageLock = true
+      const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
+      const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
+      scroller.scrollTo({ left: next * scroller.clientWidth, behavior: 'smooth' })
+      window.clearTimeout(pageLockT)
+      pageLockT = window.setTimeout(() => {
+        pageLock = false
+      }, 680)
+    },
+    { passive: false }
+  )
+
+  // 屏外裁剪:仅与视口相交的屏参与绘制(bob/打字机/壁纸之外的合成开销归零)
+  const inViewIo = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        entry.target.classList.toggle('in-view', entry.isIntersecting)
+      }
+    },
+    { threshold: 0 }
+  )
+  screens.forEach((sc) => inViewIo.observe(sc))
+
+  // 键盘左右键导航
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') {
+      const idx = dots.findIndex((d) => d.classList.contains('active'))
+      dots[Math.min(idx + 1, dots.length - 1)]?.click()
+    } else if (e.key === 'ArrowLeft') {
+      const idx = dots.findIndex((d) => d.classList.contains('active'))
+      dots[Math.max(idx - 1, 0)]?.click()
+    }
+  })
+</script>
+<script is:inline>
+  // 性能:仅当前屏挂载动画壁纸,其余屏用静态帧(减少合成层与动画开销)
+  const ocScreens = document.querySelectorAll('.oc-screen')
+  const ocIo = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        // 滞后阈值:进入 >0.5 才激活,退出 <0.1 才取消,滚动中不反复切换
+        if (entry.intersectionRatio > 0.5) entry.target.setAttribute('data-anim-active', '')
+        else if (entry.intersectionRatio < 0.1) entry.target.removeAttribute('data-anim-active')
+      }
+    },
+    { threshold: [0, 0.1, 0.5, 0.9, 1] }
+  )
+  ocScreens.forEach((sc) => ocIo.observe(sc))
+</script>
+  </body>
+</html>
