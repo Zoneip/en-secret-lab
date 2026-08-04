@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Skeleton } from './ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import ContentPage from './content-page'
+import ThemeEditorPage from './theme-editor-page'
 
 interface Site {
   title: string
@@ -94,9 +95,11 @@ export default function SettingsPage() {
     }
   }
 
-  const [tab, setTab] = useState<'site' | 'content'>(() => {
+  const [tab, setTab] = useState<'site' | 'content' | 'themes'>(() => {
     const t = new URLSearchParams(window.location.search).get('tab')
-    return t === 'content' ? 'content' : 'site'
+    if (t === 'content') return 'content'
+    if (t === 'themes') return 'themes'
+    return 'site'
   })
 
   useEffect(() => {
@@ -115,14 +118,18 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
-      <Tabs value={tab} onValueChange={(v) => setTab(v as 'site' | 'content')}>
-        <TabsList>
-          <TabsTrigger value="site">设置</TabsTrigger>
-          <TabsTrigger value="content">内容</TabsTrigger>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as 'site' | 'content' | 'themes')}>
+        <TabsList className="h-11 w-full gap-1 rounded-xl bg-muted/60 p-1 sm:w-auto">
+          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">设置</TabsTrigger>
+          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">内容</TabsTrigger>
+          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">主题</TabsTrigger>
         </TabsList>
         <TabsContent value="site" className="mt-4 flex flex-col gap-4">
-      <Card className="gap-5 p-5 sm:p-6">
-        <h3 className="text-sm font-semibold">基础信息</h3>
+      <Card className="gap-5 rounded-2xl border-border/70 p-5 shadow-sm sm:p-6">
+        <h3 className="flex items-center gap-2 text-sm font-semibold">
+          <span className="block size-2.5 rounded-full bg-primary shadow-[0_0_0_4px_rgba(92,103,125,0.12)]" />
+          基础信息
+        </h3>
         <div className="grid gap-4">
           <div className="grid gap-1.5">
             <Label>站点标题</Label>
@@ -344,6 +351,9 @@ export default function SettingsPage() {
         </TabsContent>
         <TabsContent value="content" className="mt-4">
           <ContentPage />
+        </TabsContent>
+        <TabsContent value="themes" className="mt-4">
+          <ThemeEditorPage />
         </TabsContent>
       </Tabs>
     </div>
