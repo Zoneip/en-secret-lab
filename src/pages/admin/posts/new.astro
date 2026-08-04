@@ -1,9 +1,12 @@
 ---
-/** 文章编辑器入口:新建 */
+/** 文章编辑器:新建(React) */
 import { isServer } from '../../../lib/utils'
-import PostEditor from '../../../components/admin/PostEditor.astro'
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+import PostEditorPage from '../../../components/admin/post-editor-page'
 
 export const prerender = !isServer
 ---
 
-<PostEditor />
+<AdminLayout title="写新文章" active="posts">
+  <PostEditorPage isNew={true} client:only="react" />
+</AdminLayout>

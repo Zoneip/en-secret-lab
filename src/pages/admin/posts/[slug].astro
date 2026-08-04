@@ -1,14 +1,16 @@
 ---
-/** 文章编辑器入口:编辑已有文章 */
+/** 文章编辑器:编辑(React) */
 import { isServer } from '../../../lib/utils'
-import PostEditor from '../../../components/admin/PostEditor.astro'
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+import PostEditorPage from '../../../components/admin/post-editor-page'
 
 export const prerender = !isServer
 
-/** 静态构建占位:不生成任何路径(admin 为 server 专属) */
 export function getStaticPaths() {
   return []
 }
 ---
 
-<PostEditor />
+<AdminLayout title="编辑文章" active="posts">
+  <PostEditorPage isNew={false} slug={Astro.params.slug} client:only="react" />
+</AdminLayout>
