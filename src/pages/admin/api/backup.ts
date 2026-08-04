@@ -4,7 +4,7 @@
  * PUT /admin/api/backup/config — 设置定时/冗余
  */
 import type { APIRoute } from 'astro'
-import { isServer } from '../../../../lib/utils'
+import { isServer } from '../../../lib/utils'
 import {
   getBackupConfig,
   setBackupConfig,
@@ -12,7 +12,7 @@ import {
   exportContent,
   listBackups,
   listExports,
-} from '../../../../lib/admin/backup'
+} from '../../../lib/admin/backup'
 
 export const prerender = !isServer
 

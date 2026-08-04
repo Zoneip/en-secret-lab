@@ -82,7 +82,7 @@ export default function BackupPage() {
   async function doDelete() {
     if (!deleteTarget) return
     try {
-      await api(`/admin/api/backup/file?kind=${deleteTarget.kind}&name=${encodeURIComponent(deleteTarget.name)}`, {
+      await api(`/admin/api/backup-file?kind=${deleteTarget.kind}&name=${encodeURIComponent(deleteTarget.name)}`, {
         method: 'DELETE',
       })
       toast.success('已删除')
@@ -177,7 +177,7 @@ export default function BackupPage() {
                   <p className="text-xs text-muted-foreground">{fmtTime(b.createdAt)} · {fmtSize(b.size)}</p>
                 </div>
                 <a
-                  href={`/admin/api/backup/file?kind=backup&name=${encodeURIComponent(b.name)}`}
+                  href={`/admin/api/backup-file?kind=backup&name=${encodeURIComponent(b.name)}`}
                   download
                   className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
                   title="下载"
@@ -212,7 +212,7 @@ export default function BackupPage() {
                   <p className="text-xs text-muted-foreground">{fmtTime(b.createdAt)} · {fmtSize(b.size)}</p>
                 </div>
                 <a
-                  href={`/admin/api/backup/file?kind=export&name=${encodeURIComponent(b.name)}`}
+                  href={`/admin/api/backup-file?kind=export&name=${encodeURIComponent(b.name)}`}
                   download
                   className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
                   title="下载"

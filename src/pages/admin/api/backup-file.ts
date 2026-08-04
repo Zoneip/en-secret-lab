@@ -3,8 +3,8 @@
  */
 import type { APIRoute } from 'astro'
 import { createReadStream, unlinkSync } from 'node:fs'
-import { isServer } from '../../../../lib/utils'
-import { backupFile } from '../../../../lib/admin/backup'
+import { isServer } from '../../../lib/utils'
+import { backupFile } from '../../../lib/admin/backup'
 
 export const prerender = !isServer
 
