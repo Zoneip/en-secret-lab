@@ -62,6 +62,9 @@ const SWATCH_ORDER: Array<{ key: string; label: string }> = [
   { key: 'shadow', label: '阴影' },
 ]
 
+const SAKURA_TAB = { id: 'friends', name: '樱花', description: '巫女孤岛 · 专属壁纸主题(不出现在访客主题切换栏)' }
+const SAKURA_TINT = '#F2A8C4'
+
 export default function ThemeEditorPage() {
   const [presets, setPresets] = useState<Preset[] | null>(null)
   const [active, setActive] = useState('gray')
@@ -96,6 +99,7 @@ export default function ThemeEditorPage() {
       .catch((e) => toast.error(e.message))
   }, [])
 
+  const isFriends = active === SAKURA_TAB.id
   const current = useMemo(() => presets?.find((p) => p.id === active), [presets, active])
 
   useEffect(() => {
@@ -138,7 +142,7 @@ export default function ThemeEditorPage() {
   }, [current, edits])
   const pv = (token: string) => `var(--pv-${previewMode}-${token})`
 
-  if (!current) {
+  if (!presets) {
     return (
       <div className="mx-auto flex max-w-5xl flex-col gap-4">
         <Skeleton className="h-40" />
@@ -268,22 +272,57 @@ export default function ThemeEditorPage() {
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold">{current.name}</h3>
-            <p className="text-xs text-muted-foreground">{current.description}</p>
+            <h3 className="text-base font-semibold">{isFriends ? SAKURA_TAB.name : current.name}</h3>
+            <p className="text-xs text-muted-foreground">{isFriends ? SAKURA_TAB.description : current.description}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={reset}>
-              <RotateCcw />
-              重置此主题
-            </Button>
-            <Button onClick={save} disabled={saving}>
-              <Save />
-              {saving ? '保存中…' : '保存修改'}
-            </Button>
+            {!isFriends && (
+              <>
+                <Button variant="outline" onClick={reset}>
+                  <RotateCcw />
+                  重置此主题
+                </Button>
+                <Button onClick={save} disabled={saving}>
+                  <Save />
+                  {saving ? '保存中…' : '保存修改'}
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* 局部作用域实时预览 */}
+        {/* 樱花主题:壁纸管理与预览 */}
+        {isFriends && (
+          <Card className="mt-4 p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="flex items-center gap-2 text-sm font-semibold">
+                <ImageIcon className="size-4" />
+                友链页专属壁纸
+              </h4>
+              <Switch
+                checked={friendsWallpaper}
+                onCheckedChange={(v) => saveFriendsWallpaper(v)}
+                disabled={fwSaving}
+              />
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              巫女静静地在孤岛上守望,樱花萌芽,几度轮回春?本主题仅用于友链页背景,不参与前台主题切换。
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-lg border">
+                <img src="/wallpapers/friends-shrine-day-static.svg" alt="樱花壁纸·白天" className="aspect-video w-full object-cover" />
+                <p className="px-2 py-1 text-[11px] text-muted-foreground">白天</p>
+              </div>
+              <div className="overflow-hidden rounded-lg border">
+                <img src="/wallpapers/friends-shrine-night-static.svg" alt="樱花壁纸·黑夜" className="aspect-video w-full object-cover" />
+                <p className="px-2 py-1 text-[11px] text-muted-foreground">黑夜</p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* 局部作用域实时预览(仅常规主题) */}
+        {!isFriends && (
         <div
           className="mt-4 flex items-center gap-4 rounded-xl border p-4 transition-colors"
           style={{
@@ -318,6 +357,7 @@ export default function ThemeEditorPage() {
             标签
           </span>
         </div>
+        )}
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-4">
@@ -337,36 +377,23 @@ export default function ThemeEditorPage() {
                 {p.name}
               </TabsTrigger>
             ))}
+            <TabsTrigger
+              value={SAKURA_TAB.id}
+              className="h-11 justify-start gap-2.5 rounded-lg border px-3 data-[state=active]:border-primary/40 data-[state=active]:bg-primary/5 data-[state=active]:shadow-none"
+            >
+              <span className="flex -space-x-1">
+                <span className="size-3.5 rounded-full border border-black/5" style={{ background: SAKURA_TINT }} />
+                <span className="size-3.5 rounded-full border border-black/5" style={{ background: '#E8A8C8' }} />
+                <span className="size-3.5 rounded-full border border-black/5" style={{ background: '#F7D8E6' }} />
+              </span>
+              {SAKURA_TAB.name}
+            </TabsTrigger>
           </TabsList>
         </Tabs>
 
         <div className="grid gap-4 lg:col-span-3">
-          <Card className="p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-3">
-              <h4 className="flex items-center gap-2 text-sm font-semibold">
-                <ImageIcon className="size-4" />
-                友链页专属壁纸
-              </h4>
-              <Switch
-                checked={friendsWallpaper}
-                onCheckedChange={(v) => saveFriendsWallpaper(v)}
-                disabled={fwSaving}
-              />
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              巫女静静地在孤岛上守望,樱花萌芽,几度轮回春?独立主题,不出现在访客主题切换栏。
-            </p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div className="overflow-hidden rounded-lg border">
-                <img src="/wallpapers/friends-shrine-day-static.svg" alt="友链壁纸·白天" className="aspect-video w-full object-cover" />
-                <p className="px-2 py-1 text-[11px] text-muted-foreground">白天</p>
-              </div>
-              <div className="overflow-hidden rounded-lg border">
-                <img src="/wallpapers/friends-shrine-night-static.svg" alt="友链壁纸·黑夜" className="aspect-video w-full object-cover" />
-                <p className="px-2 py-1 text-[11px] text-muted-foreground">黑夜</p>
-              </div>
-            </div>
-          </Card>
+          {isFriends ? null : (
+          <div className="contents">
           <Card className="p-5 sm:p-6">
             <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold">
               <Settings2 className="size-4" />
@@ -529,6 +556,8 @@ export default function ThemeEditorPage() {
               )}
             </DialogContent>
           </Dialog>
+          </div>
+          )}
         </div>
       </div>
     </div>
