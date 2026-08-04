@@ -7,8 +7,8 @@
     "secondary": "#C084FC"
   },
   "wallpaper": {
-    "light": "gradient:linear-gradient(180deg, #F9F5FD 0%, #F1E7FB 55%, #E6D8F5 100%)",
-    "dark": "gradient:linear-gradient(180deg, #1A1526 0%, #151120 55%, #100C19 100%)"
+    "light": "url:/wallpapers/purple-library-day.svg",
+    "dark": "url:/wallpapers/purple-library-night.svg"
   },
   "palette": {
     "light": {
@@ -26,7 +26,7 @@
       "accent": "#C084FC",
       "accent-soft": "#F7EFFE",
       "accent-fg": "#332B42",
-      "wallpaper-overlay": "rgba(251, 248, 254, 0.84)",
+      "wallpaper-overlay": "rgba(252, 250, 255, 0.54)",
       "shadow": "0 8px 24px rgba(110, 98, 132, 0.12)"
     },
     "dark": {
@@ -44,7 +44,7 @@
       "accent": "#8B5CF6",
       "accent-soft": "#2A1E3E",
       "accent-fg": "#E8E1F5",
-      "wallpaper-overlay": "rgba(23, 19, 32, 0.8)",
+      "wallpaper-overlay": "rgba(19, 14, 32, 0.64)",
       "shadow": "0 8px 24px rgba(0, 0, 0, 0.42)"
     }
   }

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" shape-rendering="crispEdges">
+<style>
+    @keyframes w1 { from { transform: translateX(0) } to { transform: translateX(-20px) } }
+    @keyframes w2 { from { transform: translateX(-18px) } to { transform: translateX(4px) } }
+    @keyframes glow { 0%, 100% { opacity: .25 } 50% { opacity: 1 } }
+    @keyframes halo { 0%, 100% { opacity: 0 } 50% { opacity: .5 } }
+    @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
+    @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
+    @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
+    @keyframes bg0 { 0% { transform: translate(0, 0); opacity: .2 } 25% { opacity: 1 } 50% { transform: translate(4px, -14px); opacity: .4 } 75% { opacity: 1 } 100% { transform: translate(9px, 2px); opacity: .2 } }
+    @keyframes bg1 { 0% { transform: translate(0, 0); opacity: .5 } 30% { transform: translate(-5px, -10px); opacity: 1 } 70% { transform: translate(-2px, 6px); opacity: .3 } 100% { transform: translate(5px, -4px); opacity: .5 } }
+    @keyframes bg2 { 0% { transform: translate(0, 0); opacity: 1 } 40% { transform: translate(6px, 8px); opacity: .25 } 80% { transform: translate(-4px, -6px); opacity: .8 } 100% { transform: translate(0, 0); opacity: 1 } }
+    .w1 { animation: w1 4.8s ease-in-out infinite alternate }
+    .w2 { animation: w2 5.6s ease-in-out infinite alternate }
+    .glow { animation: glow 1.6s ease-in-out infinite }
+    .halo { animation: halo 1.6s ease-in-out infinite }
+    .tw0 { animation: tw0 2.4s steps(1) infinite }
+    .tw1 { animation: tw1 3s steps(1) infinite }
+    .tw2 { animation: tw2 2s steps(1) infinite }
+    .bg0 { animation: bg0 5s ease-in-out infinite }
+    .bg1 { animation: bg1 6.5s ease-in-out infinite 1s }
+    .bg2 { animation: bg2 5.5s ease-in-out infinite 2s }
+    .moonp { animation: glow 5s ease-in-out infinite }
+  </style>
+<rect x="0" y="0" width="320" height="30" fill="#141B3C"/><rect x="0" y="30" width="320" height="30" fill="#181F45"/><rect x="0" y="60" width="320" height="30" fill="#1C234E"/><circle cx="52" cy="42" r="9" fill="#F5E7B0" class="moonp"/><circle cx="52" cy="42" r="13" fill="#F5E7B0" opacity="0.18" class="moonp"/><circle cx="52" cy="42" r="17" fill="#F5E7B0" opacity="0.08" class="moonp"/><rect x="0" y="90" width="320" height="22" class="w1" fill="#4A3D1C"/><rect x="0" y="96" width="320" height="4" class="w1" fill="#2E2510"/><rect x="0" y="96" width="320" height="18" class="w2" fill="#443818"/><rect x="0" y="97" width="320" height="4" class="w2" fill="#2E2510"/><rect x="0" y="104" width="320" height="16" class="w1" fill="#51441F"/><rect x="0" y="98" width="320" height="4" class="w1" fill="#2E2510"/><rect x="0" y="112" width="320" height="14" class="w2" fill="#3E3215"/><rect x="0" y="98" width="320" height="4" class="w2" fill="#2E2510"/><rect x="0" y="124" width="320" height="12" class="w1" fill="#4A3D1C"/><rect x="0" y="100" width="320" height="4" class="w1" fill="#2E2510"/><rect x="0" y="136" width="320" height="10" class="w2" fill="#382D12"/><rect x="0" y="102" width="320" height="4" class="w2" fill="#2E2510"/><g><rect x="178" y="74" width="12" height="12" fill="#2A2418"/><rect x="176" y="64" width="18" height="6" fill="#3A2F1C"/><rect x="170" y="66" width="30" height="3" fill="#33291A"/><rect x="174" y="62" width="22" height="3" fill="#423623"/><rect x="170" y="88" width="30" height="3" fill="#3A2F1C"/><rect x="168" y="91" width="34" height="30" fill="#251F14"/><rect x="184" y="121" width="3" height="8" fill="#3A2F1C"/><rect x="176" y="129" width="3" height="10" fill="#3A2F1C"/><rect x="192" y="129" width="3" height="10" fill="#3A2F1C"/><rect x="164" y="88" width="4" height="22" fill="#251F14"/><rect x="201" y="88" width="4" height="22" fill="#251F14"/><rect x="179" y="78" width="3" height="3" class="glow" fill="#FFE066"/><rect x="186" y="78" width="3" height="3" class="glow" fill="#FFE066"/><rect x="178" y="77" width="5" height="5" class="halo" fill="#FFE066"/><rect x="185" y="77" width="5" height="5" class="halo" fill="#FFE066"/></g><rect x="30" y="60" width="2" height="2" class="bg0" fill="#D8F04C"/><rect x="74" y="77" width="2" height="2" class="bg1" fill="#D8F04C"/><rect x="118" y="64" width="2" height="2" class="bg2" fill="#D8F04C"/><rect x="162" y="81" width="2" height="2" class="bg0" fill="#D8F04C"/><rect x="206" y="68" width="2" height="2" class="bg1" fill="#D8F04C"/><rect x="250" y="85" width="2" height="2" class="bg2" fill="#D8F04C"/>
+</svg>

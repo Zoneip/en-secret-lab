@@ -1,33 +1,41 @@
 ---
-/** 固定背景壁纸层:渐变兜底 + 站长图片,遮罩保证可读性 */
+/** 固定背景壁纸层:渲染 4 主题 × 深浅,由客户端 data-theme/data-mode 切换显隐 */
 import { getTheme } from '../../lib/theme/presets'
 import { wallpaperCss } from '../../lib/theme/engine'
 
 interface Props {
+  /** 兜底主题(JS 禁用时显示的默认壁纸) */
   theme: string
   /** 站长关闭壁纸时只保留纯背景色 */
   enabled?: boolean
 }
 
-const { theme, enabled = true } = Astro.props
-const preset = getTheme(theme)
+const { theme: fallbackTheme, enabled = true } = Astro.props
+const themeIds = ['gray', 'yellow', 'purple', 'white'] as const
+const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
 ---
 
-<div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true">
-  <div
-    class="wallpaper-base"
-    data-wallpaper-light
-    style={`background-image:${wallpaperCss(preset.wallpaper.light)}`}
-  ></div>
-  <div
-    class="wallpaper-base"
-    data-wallpaper-dark
-    style={`background-image:${wallpaperCss(preset.wallpaper.dark)}`}
-  ></div>
+<div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true" data-wallpaper-fallback={fallbackTheme}>
+  {presets.map(({ id, preset }) => (
+    <Fragment>
+      <div
+        class="wallpaper-base"
+        data-wallpaper-theme={id}
+        data-wallpaper-light
+        style={`background-image:${wallpaperCss(preset.wallpaper.light)}`}
+      ></div>
+      <div
+        class="wallpaper-base"
+        data-wallpaper-theme={id}
+        data-wallpaper-dark
+        style={`background-image:${wallpaperCss(preset.wallpaper.dark)}`}
+      ></div>
+    </Fragment>
+  ))}
   <div class="wallpaper-overlay"></div>
 </div>
 
-<style>
+<style is:global>
   .wallpaper {
     position: fixed;
     inset: 0;
@@ -43,18 +51,24 @@ const preset = getTheme(theme)
     inset: 0;
     background-size: cover;
     background-position: center;
+    opacity: 0;
     transition: opacity 0.4s var(--ease-soft);
   }
-  [data-mode='light'] .wallpaper-base[data-wallpaper-light] {
+  /* 默认兜底:JS 未运行或未设主题时,显示 SSR 兜底主题的浅色壁纸 */
+  html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
     opacity: 1;
   }
-  [data-mode='light'] .wallpaper-base[data-wallpaper-dark] {
-    opacity: 0;
-  }
-  [data-mode='dark'] .wallpaper-base[data-wallpaper-light] {
-    opacity: 0;
-  }
-  [data-mode='dark'] .wallpaper-base[data-wallpaper-dark] {
+  /* 按客户端实际主题 + 模式显隐 */
+  html[data-theme='gray'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html[data-theme='gray'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark],
+  html[data-theme='yellow'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-light],
+  html[data-theme='yellow'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-dark],
+  html[data-theme='purple'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-light],
+  html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
+  html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
+  html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark] {
     opacity: 1;
   }
   .wallpaper-overlay {

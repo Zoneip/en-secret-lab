@@ -7,8 +7,8 @@
     "secondary": "#9AA5B5"
   },
   "wallpaper": {
-    "light": "gradient:linear-gradient(180deg, #F7F8FA 0%, #F1F3F6 60%, #E8EBEF 100%)",
-    "dark": "gradient:linear-gradient(180deg, #17191E 0%, #121419 55%, #0D0F13 100%)"
+    "light": "url:/wallpapers/gray-tech-light.svg",
+    "dark": "url:/wallpapers/gray-tech-dark.svg"
   },
   "palette": {
     "light": {
@@ -26,7 +26,7 @@
       "accent": "#9AA5B5",
       "accent-soft": "#F0F2F6",
       "accent-fg": "#2B2E35",
-      "wallpaper-overlay": "rgba(250, 251, 252, 0.82)",
+      "wallpaper-overlay": "rgba(248, 251, 253, 0.52)",
       "shadow": "0 8px 24px rgba(43, 46, 53, 0.08)"
     },
     "dark": {
@@ -44,7 +44,7 @@
       "accent": "#7C8CA3",
       "accent-soft": "#242B38",
       "accent-fg": "#E2E4EA",
-      "wallpaper-overlay": "rgba(21, 23, 28, 0.78)",
+      "wallpaper-overlay": "rgba(8, 13, 24, 0.64)",
       "shadow": "0 8px 24px rgba(0, 0, 0, 0.35)"
     }
   }

@@ -94,7 +94,7 @@ const meta = buildMeta({
     {...(fillViewport ? { 'data-fill-viewport': 'true' } : {})}
     data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
-    <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
+    <WallpaperLayer theme={resolvedTheme} enabled={config.features.wallpapers} />
     <SiteHeader />
     <main id="main">
       <slot />
