@@ -244,7 +244,7 @@ export default function SettingsPage() {
               <div key={g.key} className="grid gap-1.5">
                 <Label>{g.label}</Label>
                 <Select
-                  value={site.homepage.motion[g.key]}
+                  value={site.homepage.motion[g.key as keyof typeof site.homepage.motion]}
                   onValueChange={(v) =>
                     setSite({ ...site, homepage: { ...site.homepage, motion: { ...site.homepage.motion, [g.key]: v } } })
                   }

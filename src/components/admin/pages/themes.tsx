@@ -272,8 +272,8 @@ export default function ThemeEditorPage() {
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold">{isFriends ? SAKURA_TAB.name : current.name}</h3>
-            <p className="text-xs text-muted-foreground">{isFriends ? SAKURA_TAB.description : current.description}</p>
+            <h3 className="text-base font-semibold">{isFriends ? SAKURA_TAB.name : current?.name}</h3>
+            <p className="text-xs text-muted-foreground">{isFriends ? SAKURA_TAB.description : current?.description}</p>
           </div>
           <div className="flex gap-2">
             {!isFriends && (
