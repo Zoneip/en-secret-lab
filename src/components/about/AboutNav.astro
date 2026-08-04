@@ -83,55 +83,36 @@ const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/
   }
 </style>
 
-<script is:inline data-astro-rerun define:vars={{ total, current }}>
-  // 滚轮/键盘翻页(每次 View Transitions 导航后由 data-astro-rerun 重新执行,
-  // 先清理旧页面的监听,避免残留导致连跳/失效)
-  ;(function () {
-    if (window.__aboutNavCleanup) window.__aboutNavCleanup()
-
-    const nav = (dir) => {
-      const next = current + dir
-      if (next < 0 || next >= total) return
-      const href = next === 0 ? '/about' : `/about/${next}`
-      const a = document.createElement('a')
-      a.href = href
-      a.dataset.aboutNav = ''
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-    }
-
-    let lock = false
-    let lockT = 0
-    const onWheel = (e) => {
+<script is:inline define:vars={{ total, current }}>
+  // 滚轮/键盘翻页:整页导航(每页独立文档,无脚本残留,动画彻底隔离)
+  let lock = false
+  let lockT = 0
+  const go = (dir) => {
+    const next = current + dir
+    if (next < 0 || next >= total) return
+    const href = next === 0 ? '/about' : `/about/${next}`
+    window.location.href = href
+  }
+  window.addEventListener(
+    'wheel',
+    (e) => {
       if (e.deltaX && !e.deltaY) return
-      if (lock) {
-        e.preventDefault()
-        return
-      }
-      if (!e.deltaY) {
+      if (lock || !e.deltaY) {
         e.preventDefault()
         return
       }
       e.preventDefault()
       lock = true
-      nav(e.deltaY > 0 ? 1 : -1)
+      go(e.deltaY > 0 ? 1 : -1)
       window.clearTimeout(lockT)
       lockT = window.setTimeout(() => {
         lock = false
-      }, 900)
-    }
-    const onKey = (e) => {
-      if (e.key === 'ArrowRight') nav(1)
-      else if (e.key === 'ArrowLeft') nav(-1)
-    }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    document.addEventListener('keydown', onKey)
-    window.__aboutNavCleanup = () => {
-      window.removeEventListener('wheel', onWheel)
-      document.removeEventListener('keydown', onKey)
-      window.__aboutNavCleanup = undefined
-    }
-  })()
+      }, 600)
+    },
+    { passive: false }
+  )
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(1)
+    else if (e.key === 'ArrowLeft') go(-1)
+  })
 </script>

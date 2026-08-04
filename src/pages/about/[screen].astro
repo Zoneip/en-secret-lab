@@ -1,6 +1,5 @@
 ---
 /** 关于页 - 子页面(2-5 屏):单个 OC,独立文档,动画与其它屏完全隔离 */
-import { ClientRouter } from 'astro:transitions'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import AboutNav from '../../components/about/AboutNav.astro'
 import OCScreen from '../../components/about/OCScreen.astro'
@@ -32,7 +31,6 @@ const SNAP = `--pg-bg:${V('bg')}; --pg-surface:${V('surface')}; --pg-elevated:${
 ---
 
 <BaseLayout title={`${oc.name} · 关于`} description={oc.description ?? '关于'} hideFooter>
-  <ClientRouter />
   <div class="about-root" style={SNAP}>
     <OCScreen oc={oc} index={idx} />
     <AboutNav current={idx + 1} total={5} />

@@ -1,6 +1,5 @@
 ---
 /** 关于页 - 第 1 屏(hero 自我介绍):独立子页面,动画与其它屏隔离 */
-import { ClientRouter } from 'astro:transitions'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import AboutNav from '../../components/about/AboutNav.astro'
 import Mascot from '../../components/mascot/Mascot.astro'
@@ -20,7 +19,6 @@ const SNAP = `--pg-bg:${V('bg')}; --pg-surface:${V('surface')}; --pg-elevated:${
 ---
 
 <BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
-  <ClientRouter />
   <div class="about-root" style={SNAP}>
     <section class="about-stage hero-screen">
       <div class="hero-bg" aria-hidden="true"></div>
