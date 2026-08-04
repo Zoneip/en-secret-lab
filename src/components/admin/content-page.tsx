@@ -35,6 +35,19 @@ interface OcData {
   art?: string
 }
 
+interface ResourceData {
+  id: string
+  title: string
+  description: string
+  category: string
+  tags: string[]
+  size?: string
+  file?: string
+  externalUrl?: string
+  pubDate: string
+  downloads: number
+}
+
 interface AboutData {
   nickname: string
   tagline: string
@@ -61,15 +74,19 @@ export default function ContentPage() {
   const [columns, setColumns] = useState<ColumnData[] | null>(null)
   const [ocs, setOcs] = useState<OcData[] | null>(null)
   const [about, setAbout] = useState<AboutData | null>(null)
+  const [resources, setResources] = useState<ResourceData[] | null>(null)
   const [saving, setSaving] = useState(false)
 
   const load = () =>
-    api<{ columns: ColumnData[]; ocs: OcData[]; about: AboutData | null }>('/admin/api/content')
-      .then((d: { columns: ColumnData[]; ocs: OcData[]; about: AboutData | null }) => {
+    api<{ columns: ColumnData[]; ocs: OcData[]; about: AboutData | null; resources: ResourceData[] }>(
+      '/admin/api/content'
+    )
+      .then((d: { columns: ColumnData[]; ocs: OcData[]; about: AboutData | null; resources: ResourceData[] }) => {
         const order = ['gray', 'yellow', 'purple', 'white']
         setColumns([...d.columns].sort((a, b) => order.indexOf(a.theme) - order.indexOf(b.theme)))
         setOcs([...d.ocs].sort((a, b) => order.indexOf(a.theme) - order.indexOf(b.theme)))
         setAbout(d.about)
+        setResources(d.resources)
       })
       .catch((e: Error) => toast.error(e.message))
 
@@ -77,7 +94,7 @@ export default function ContentPage() {
     load()
   }, [])
 
-  if (!columns || !ocs || !about) {
+  if (!columns || !ocs || !about || !resources) {
     return (
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
         <Skeleton className="h-10" />
@@ -92,7 +109,14 @@ export default function ContentPage() {
       await api('/admin/api/content', {
         method: 'PUT',
         body: JSON.stringify({
-          [part]: part === 'columns' ? toMap(columns!) : part === 'ocs' ? toMap(ocs!) : about,
+          [part]:
+            part === 'columns'
+              ? toMap(columns!)
+              : part === 'ocs'
+                ? toMap(ocs!)
+                : part === 'resources'
+                  ? toMap(resources!)
+                  : about,
         }),
       })
       toast.success('已保存')
@@ -111,6 +135,7 @@ export default function ContentPage() {
           <TabsTrigger value="columns">栏目</TabsTrigger>
           <TabsTrigger value="ocs">角色</TabsTrigger>
           <TabsTrigger value="about">关于</TabsTrigger>
+          <TabsTrigger value="resources">资源</TabsTrigger>
         </TabsList>
 
         {/* 栏目 */}
@@ -374,6 +399,108 @@ export default function ContentPage() {
               </Button>
             </div>
           </Card>
+        </TabsContent>
+
+        {/* 资源 */}
+        <TabsContent value="resources" className="flex flex-col gap-4">
+          {resources.map((r) => (
+            <Card key={r.id} className="gap-4 p-5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">
+                  {r.title}
+                  <span className="ml-2 text-[11px] font-normal text-muted-foreground">/ {r.id}</span>
+                </h3>
+                <span className="text-[11px] text-muted-foreground">下载 {r.downloads} 次</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-1.5">
+                  <Label>标题</Label>
+                  <Input
+                    value={r.title}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, title: e.target.value } : x)))
+                    }
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>分类</Label>
+                  <Input
+                    value={r.category}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, category: e.target.value } : x)))
+                    }
+                  />
+                </div>
+                <div className="grid gap-1.5 sm:col-span-2">
+                  <Label>描述</Label>
+                  <Textarea
+                    value={r.description}
+                    rows={2}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, description: e.target.value } : x)))
+                    }
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>大小显示(如 12.4 MB)</Label>
+                  <Input
+                    value={r.size ?? ''}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, size: e.target.value } : x)))
+                    }
+                    placeholder="12.4 MB"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>标签(逗号分隔)</Label>
+                  <Input
+                    value={r.tags.join(', ')}
+                    onChange={(e) =>
+                      setResources(
+                        resources.map((x) =>
+                          x.id === r.id
+                            ? {
+                                ...x,
+                                tags: e.target.value
+                                  .split(/[,，]/)
+                                  .map((t) => t.trim())
+                                  .filter(Boolean),
+                              }
+                            : x
+                        )
+                      )
+                    }
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>上传文件路径(/uploads/...)</Label>
+                  <Input
+                    value={r.file ?? ''}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, file: e.target.value } : x)))
+                    }
+                    placeholder="先在资产页上传,再填入路径"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>外部下载链接(可选)</Label>
+                  <Input
+                    value={r.externalUrl ?? ''}
+                    onChange={(e) =>
+                      setResources(resources.map((x) => (x.id === r.id ? { ...x, externalUrl: e.target.value } : x)))
+                    }
+                    placeholder="https://…(优先于文件)"
+                  />
+                </div>
+              </div>
+            </Card>
+          ))}
+          <div className="flex justify-end">
+            <Button onClick={() => save('resources')} disabled={saving}>
+              <Save />
+              保存资源
+            </Button>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

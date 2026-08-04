@@ -1,0 +1,145 @@
+---
+/**
+ * 资源站列表页:卡片流(动态版实时读文件,静态版用集合)
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getSiteResources } from '../../lib/content/site-resources'
+import Mascot from '../../components/mascot/Mascot.astro'
+
+const resources = await getSiteResources()
+const categories = [...new Set(resources.map((r) => r.category))]
+---
+
+<BaseLayout title="资源" description="实验室里分享的资源">
+  <div class="page-enter container">
+    <section class="res-hero">
+      <div class="res-mascot" aria-hidden="true">
+        <Mascot role="furry" pixel={9} />
+      </div>
+      <div class="res-text">
+        <p class="res-sub">实验室的资源仓库</p>
+        <h1>资源</h1>
+        <p class="res-desc">分享一些好用的东西:工具、文件、素材,随取随用。</p>
+        <div class="res-meta">
+          <span class="chip">{resources.length} 项资源</span>
+          {categories.map((c) => (
+            <span class="chip">{c}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      {resources.map((r) => (
+        <a class="res-card card" href={`/resources/${r.id}`} key={r.id}>
+          <div class="res-head">
+            <span class="res-icon" aria-hidden="true"></span>
+            <span class="chip">{r.category}</span>
+          </div>
+          <h2 class="res-title">{r.title}</h2>
+          <p class="res-desc-text">{r.description}</p>
+          <div class="res-foot">
+            <span class="res-size">{r.size ?? '—'}</span>
+            <span class="res-dl">下载 {r.downloads}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .res-hero {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 56px 0 40px;
+  }
+  .res-mascot {
+    flex-shrink: 0;
+    padding: 14px;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .res-sub {
+    font-family: var(--font-display);
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .res-text h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+  .res-desc {
+    color: var(--fg-muted);
+    max-width: 52ch;
+  }
+  .res-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    padding-bottom: 32px;
+  }
+  .res-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    color: var(--fg);
+  }
+  .res-card:hover {
+    transform: translateY(-3px);
+  }
+  .res-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .res-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    opacity: 0.85;
+  }
+  .res-title {
+    font-size: 1.15rem;
+    color: var(--fg);
+  }
+  .res-desc-text {
+    font-size: 0.88rem;
+    color: var(--fg-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .res-foot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--fg-subtle);
+    margin-top: auto;
+  }
+
+  @media (max-width: 640px) {
+    .res-hero {
+      flex-direction: column;
+      text-align: center;
+    }
+    .res-desc {
+      margin-inline: auto;
+    }
+    .res-meta {
+      justify-content: center;
+    }
+  }
+</style>

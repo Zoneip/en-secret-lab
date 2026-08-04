@@ -15,6 +15,7 @@ import {
   type OcData,
   type AboutData,
 } from '../../../lib/admin/content-store'
+import { listResources, saveResource, type ResourceData } from '../../../lib/admin/resources-store'
 
 export const prerender = !isServer
 
@@ -27,7 +28,7 @@ function validTheme(v: unknown): v is 'gray' | 'yellow' | 'purple' | 'white' {
 export const GET: APIRoute = () => {
   if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   return new Response(
-    JSON.stringify({ columns: listColumns(), ocs: listOcs(), about: getAbout() }),
+    JSON.stringify({ columns: listColumns(), ocs: listOcs(), about: getAbout(), resources: listResources() }),
     { headers: { 'Content-Type': 'application/json' } }
   )
 }
@@ -38,6 +39,7 @@ export const PUT: APIRoute = async ({ request }) => {
     columns?: Record<string, Partial<ColumnData>>
     ocs?: Record<string, Partial<OcData>>
     about?: AboutData
+    resources?: Record<string, Partial<ResourceData>>
   } | null
   if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
 
@@ -75,6 +77,24 @@ export const PUT: APIRoute = async ({ request }) => {
           quoteEffect: effect,
           quoteSpeed: speed,
           art: data.art?.trim() || undefined,
+        })
+      }
+    }
+    if (body.resources) {
+      for (const [id, data] of Object.entries(body.resources)) {
+        if (!data.title?.trim()) throw new Error(`资源「${id}」缺少标题`)
+        if (data.file && !String(data.file).startsWith('/uploads/')) {
+          throw new Error(`资源「${id}」文件路径无效`)
+        }
+        saveResource(id, {
+          title: data.title.trim(),
+          description: (data.description ?? '').trim(),
+          category: (data.category ?? '其他').trim(),
+          tags: Array.isArray(data.tags) ? data.tags.map((t) => String(t).trim()).filter(Boolean) : [],
+          size: data.size?.trim() || undefined,
+          file: data.file?.trim() || undefined,
+          externalUrl: data.externalUrl?.trim() || undefined,
+          pubDate: data.pubDate ?? new Date().toISOString().slice(0, 10),
         })
       }
     }

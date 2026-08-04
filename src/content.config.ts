@@ -69,4 +69,22 @@ const ocs = defineCollection({
   }),
 })
 
-export const collections = { posts, friends, about, columns, ocs }
+const resources = defineCollection({
+  type: 'data',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().default(''),
+    category: z.string().default('其他'),
+    tags: z.array(z.string()).default([]),
+    /** 文件大小显示文本(如 12.4 MB) */
+    size: z.string().optional(),
+    /** 动态版上传的文件(/uploads/...) */
+    file: z.string().optional(),
+    /** 外部下载链接(静态版) */
+    externalUrl: z.string().url().optional(),
+    pubDate: z.coerce.date(),
+    downloads: z.number().default(0),
+  }),
+})
+
+export const collections = { posts, friends, about, columns, ocs, resources }
