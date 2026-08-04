@@ -5,7 +5,6 @@
 import type { GetStaticPaths } from 'astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getSiteResources } from '../../lib/content/site-resources'
-import { formatDate } from '../../lib/utils'
 import { isServer } from '../../lib/utils'
 import { getDownloads } from '../../lib/admin/resources-store'
 
@@ -35,7 +34,7 @@ const hasFile = Boolean(resource.file || resource.externalUrl)
     <article class="card detail">
       <div class="detail-head">
         <span class="chip">{resource.category}</span>
-        <span class="date">{formatDate(resource.pubDate)}</span>
+        <span class="date">{resource.pubDate}</span>
       </div>
       <h1>{resource.title}</h1>
       <p class="desc">{resource.description}</p>

@@ -20,7 +20,30 @@ interface Site {
   defaultTheme: string
   features: Record<string, boolean>
   nav: Array<{ label: string; url: string }>
+  homepage: {
+    announcement: string
+    showAnnouncement: boolean
+    showTechStack: boolean
+    showOcSection: boolean
+    showColumnOverview: boolean
+    motion: {
+      hero: string
+      mascot: string
+      cards: string
+      topbar: string
+      ambient: string
+      speed: string
+    }
+  }
 }
+
+const MOTION_GROUPS = [
+  { key: 'mascot', label: '吉祥物动效', options: [['none', '无'], ['bob', '呼吸漂浮'], ['ear-tip', '耳朵抖动'], ['tail-wag', '尾巴摆动'], ['wobble', '呆萌摇摆']] },
+  { key: 'cards', label: '卡片动效', options: [['none', '无'], ['card-lift', '悬浮浮起'], ['card-tilt', '3D 倾斜'], ['card-sheen', '光泽扫过'], ['card-border-flow', '边框流光'], ['card-float-in', '入场浮入']] },
+  { key: 'topbar', label: '顶部栏动效', options: [['none', '无'], ['topbar-gradient', '渐变流动'], ['nav-underline', '导航下划线']] },
+  { key: 'ambient', label: '环境动效', options: [['none', '无'], ['pulse-soft', '柔和脉冲'], ['scroll-hint', '滚动提示'], ['float-slow', '大漂浮']] },
+  { key: 'hero', label: 'Hero 动效', options: [['none', '无'], ['float-slow', '大漂浮'], ['spin-slow', '缓慢旋转']] },
+]
 
 const FEATURES = [
   { key: 'search', label: '全站搜索' },
@@ -120,6 +143,95 @@ export default function SitePage() {
               <Switch checked={Boolean(site.features[f.key])} onCheckedChange={(v) => setSite({ ...site, features: { ...site.features, [f.key]: v } })} />
             </label>
           ))}
+        </div>
+      </Card>
+
+      <Card className="gap-5 p-5 sm:p-6">
+        <h3 className="text-sm font-semibold">主页</h3>
+        <div className="grid gap-3">
+          <div className="grid gap-1.5">
+            <Label>公告内容(留空隐藏)</Label>
+            <Textarea
+              value={site.homepage.announcement}
+              rows={2}
+              onChange={(e) =>
+                setSite({ ...site, homepage: { ...site.homepage, announcement: e.target.value } })
+              }
+              placeholder="欢迎来到实验室…"
+            />
+          </div>
+          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2">
+            <label className="flex cursor-pointer items-center justify-between text-sm">
+              <span>显示公告</span>
+              <Switch
+                checked={site.homepage.showAnnouncement}
+                onCheckedChange={(v) => setSite({ ...site, homepage: { ...site.homepage, showAnnouncement: v } })}
+              />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between text-sm">
+              <span>显示四栏目鸟瞰</span>
+              <Switch
+                checked={site.homepage.showColumnOverview}
+                onCheckedChange={(v) => setSite({ ...site, homepage: { ...site.homepage, showColumnOverview: v } })}
+              />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between text-sm">
+              <span>显示 OC 展示区</span>
+              <Switch
+                checked={site.homepage.showOcSection}
+                onCheckedChange={(v) => setSite({ ...site, homepage: { ...site.homepage, showOcSection: v } })}
+              />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between text-sm">
+              <span>显示技术栈区</span>
+              <Switch
+                checked={site.homepage.showTechStack}
+                onCheckedChange={(v) => setSite({ ...site, homepage: { ...site.homepage, showTechStack: v } })}
+              />
+            </label>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {MOTION_GROUPS.map((g) => (
+              <div key={g.key} className="grid gap-1.5">
+                <Label>{g.label}</Label>
+                <Select
+                  value={site.homepage.motion[g.key]}
+                  onValueChange={(v) =>
+                    setSite({ ...site, homepage: { ...site.homepage, motion: { ...site.homepage.motion, [g.key]: v } } })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {g.options.map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ))}
+            <div className="grid gap-1.5">
+              <Label>动效速度</Label>
+              <Select
+                value={site.homepage.motion.speed}
+                onValueChange={(v) =>
+                  setSite({ ...site, homepage: { ...site.homepage, motion: { ...site.homepage.motion, speed: v } } })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="slow">慢</SelectItem>
+                  <SelectItem value="normal">正常</SelectItem>
+                  <SelectItem value="fast">快</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </Card>
 

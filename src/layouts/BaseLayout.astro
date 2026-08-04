@@ -12,6 +12,10 @@ import '@fontsource/jetbrains-mono/400.css'
 import '../styles/global.css'
 import '../styles/prose.css'
 import '../styles/theme-tokens.generated.css'
+import '../assets/motion/keyframes/mascot.css'
+import '../assets/motion/keyframes/cards.css'
+import '../assets/motion/keyframes/topbar.css'
+import '../assets/motion/keyframes/ambient.css'
 
 import { getSiteConfig, getThemeOverrides } from '../lib/config'
 import { buildMeta } from '../lib/seo'
@@ -39,6 +43,9 @@ const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
 const { title, description, image, type, forceTheme, hideFooter = false } = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
+// 全局动效预设(控制台可调控)
+const motion = config.homepage.motion
+const motionSpeed = { slow: '4.5s', normal: '3s', fast: '1.8s' }[motion.speed]
 const siteUrl = Astro.site?.toString() ?? 'http://localhost:4321'
 const pageUrl = absoluteUrl(siteUrl, Astro.url.pathname)
 const meta = buildMeta({
@@ -75,7 +82,7 @@ const meta = buildMeta({
       })
     </script>
   </head>
-  <body>
+  <body data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
     <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
     <SiteHeader />

@@ -1,0 +1,98 @@
+/* ============ 动效资产 · 环境(keyframes/ambient.css) ============
+ * 版本:v1.0.0
+ * 说明:页面环境动效,适合 hero 装饰、像素星星、公告标签、跑马灯、滚动提示。
+ * 所有时长以 --motion-duration(默认 3s)为旋钮,幅度以 --motion-intensity 缩放。
+ */
+
+/* 大漂浮:上下 ±12px,8s(基础时长 ×2.667),适合 hero 装饰 */
+.motion-float-slow {
+  animation: motion-float-slow calc(var(--motion-duration, 3s) * 2.667) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+@keyframes motion-float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(calc(-12px * var(--motion-intensity, 1)));
+  }
+  75% {
+    transform: translateY(calc(12px * var(--motion-intensity, 1)));
+  }
+}
+
+/* 缓慢旋转:12s 一圈(基础时长 ×4),适合像素星星/装饰 */
+.motion-spin-slow {
+  animation: motion-spin-slow calc(var(--motion-duration, 3s) * 4) linear infinite;
+}
+@keyframes motion-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(calc(360deg * var(--motion-intensity, 1)));
+  }
+}
+
+/* 柔和脉冲:opacity 0.7 → 1,2.4s(基础时长 ×0.8),适合公告标签 */
+.motion-pulse-soft {
+  animation: motion-pulse-soft calc(var(--motion-duration, 3s) * 0.8) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+@keyframes motion-pulse-soft {
+  0%,
+  100% {
+    opacity: calc(1 - 0.3 * var(--motion-intensity, 1));
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 公告跑马灯:内容从右向左滚过(translateX 100% → -100%),20s 无限(基础时长 ×6.667)
+ * 无缝循环请在 HTML 内复制一份相同内容;单份内容会一次性滚过后跳回。 */
+.motion-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.motion-marquee > * {
+  display: inline-block;
+  animation: motion-marquee calc(var(--motion-duration, 3s) * 6.667) linear infinite;
+}
+@keyframes motion-marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* 滚动提示:上下浮动 + 箭头随动位移 + 透明度呼吸,约 2.1s(基础时长 ×0.7) */
+.motion-scroll-hint {
+  animation: motion-scroll-hint calc(var(--motion-duration, 3s) * 0.7) var(--ease-in-out, ease-in-out) infinite;
+}
+@keyframes motion-scroll-hint {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(calc(8px * var(--motion-intensity, 1)));
+  }
+}
+
+/* ============ 无障碍:尊重系统"减少动态效果" ============
+ * 全库统一:任一文件被单独引入时也保证动画/过渡被禁用。
+ * 伪元素与子元素的动画需要单独点名,父级 animation: none 不会停止它们。 */
+@media (prefers-reduced-motion: reduce) {
+  .motion-bob, .motion-bob-fast, .motion-ear-tip, .motion-tail-wag, .motion-blink, .motion-wobble,
+  .motion-card-lift, .motion-card-tilt, .motion-card-sheen, .motion-card-border-flow, .motion-card-float-in,
+  .motion-topbar-gradient, .motion-topbar-shrink, .motion-nav-underline, .motion-float-slow, .motion-spin-slow,
+  .motion-pulse-soft, .motion-marquee, .motion-scroll-hint,
+  .motion-card-sheen::after, .motion-card-border-flow::before, .motion-marquee > *, .motion-stagger > * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

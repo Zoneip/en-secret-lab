@@ -61,6 +61,47 @@ export const siteConfigSchema = z.object({
       })
     )
     .default([]),
+  /** 主页配置(控制台可调控) */
+  homepage: z
+    .object({
+      announcement: z.string().default(''),
+      showAnnouncement: z.boolean().default(false),
+      showTechStack: z.boolean().default(true),
+      showOcSection: z.boolean().default(true),
+      showColumnOverview: z.boolean().default(true),
+      motion: z
+        .object({
+          hero: z.enum(['none', 'float-slow', 'spin-slow']).default('float-slow'),
+          mascot: z.enum(['none', 'bob', 'ear-tip', 'tail-wag', 'wobble']).default('bob'),
+          cards: z.enum(['none', 'card-lift', 'card-tilt', 'card-sheen', 'card-border-flow', 'card-float-in']).default('card-lift'),
+          topbar: z.enum(['none', 'topbar-gradient', 'nav-underline']).default('nav-underline'),
+          ambient: z.enum(['none', 'pulse-soft', 'scroll-hint']).default('scroll-hint'),
+          speed: z.enum(['slow', 'normal', 'fast']).default('normal'),
+        })
+        .default({
+          hero: 'float-slow',
+          mascot: 'bob',
+          cards: 'card-lift',
+          topbar: 'nav-underline',
+          ambient: 'scroll-hint',
+          speed: 'normal',
+        }),
+    })
+    .default({
+      announcement: '',
+      showAnnouncement: false,
+      showTechStack: true,
+      showOcSection: true,
+      showColumnOverview: true,
+      motion: {
+        hero: 'float-slow',
+        mascot: 'bob',
+        cards: 'card-lift',
+        topbar: 'nav-underline',
+        ambient: 'scroll-hint',
+        speed: 'normal',
+      },
+    }),
 })
 
 export type SiteConfig = z.infer<typeof siteConfigSchema>

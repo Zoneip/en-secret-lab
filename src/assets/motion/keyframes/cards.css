@@ -1,0 +1,129 @@
+/* ============ 动效资产 · 卡片(keyframes/cards.css) ============
+ * 版本:v1.0.0
+ * 说明:主页 OC 卡 / 栏目卡动效。
+ *   - hover 类动效为 transition,时长 = 基础时长 ×0.1 ≈ 0.3s;
+ *   - transform 一律以 --motion-intensity(默认 1)缩放幅度;
+ *   - 入场类(.motion-card-float-in)配合容器上的 .motion-stagger 交错延迟。
+ */
+
+/* 悬浮浮起:translateY(-6px) + 阴影增大,0.3s(基础时长 ×0.1) */
+.motion-card-lift {
+  transition: transform calc(var(--motion-duration, 3s) * 0.1) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    box-shadow calc(var(--motion-duration, 3s) * 0.1) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.motion-card-lift:hover {
+  transform: translateY(calc(-6px * var(--motion-intensity, 1)));
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--primary) 20%, transparent);
+  will-change: transform, box-shadow;
+}
+
+/* 3D 倾斜:固定 rotateX(4deg) rotateY(-3deg),0.3s(基础时长 ×0.1)
+ * perspective 由父级提供(如父容器设 perspective: 1000px),本类不包含 */
+.motion-card-tilt {
+  transform-style: preserve-3d;
+  transition: transform calc(var(--motion-duration, 3s) * 0.1) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+.motion-card-tilt:hover {
+  transform: rotateX(calc(4deg * var(--motion-intensity, 1))) rotateY(calc(-3deg * var(--motion-intensity, 1)));
+  will-change: transform;
+}
+
+/* 光泽扫过:45° 渐变带,透明 → 白(0.15 透明度)→ 透明,3s 循环(基础时长 ×1) */
+.motion-card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.motion-card-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%);
+  transform: translateX(-130%);
+  animation: motion-card-sheen var(--motion-duration, 3s) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+  pointer-events: none;
+}
+@keyframes motion-card-sheen {
+  to {
+    transform: translateX(130%);
+  }
+}
+
+/* 边框流光:conic-gradient 旋转 360°,2px 光带,4s 循环(基础时长 ×1.333)
+ * 依赖 @property 注册角度变量;不支持的环境自动降级为静态渐变描边 */
+@property --border-flow-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.motion-card-border-flow {
+  position: relative;
+}
+.motion-card-border-flow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-flow-angle, 0deg),
+    transparent 0deg, transparent 100deg,
+    var(--primary) 160deg,
+    var(--accent) 200deg,
+    transparent 260deg, transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: motion-border-flow calc(var(--motion-duration, 3s) * 1.333) linear infinite;
+  pointer-events: none;
+}
+@keyframes motion-border-flow {
+  to {
+    --border-flow-angle: 360deg;
+  }
+}
+
+/* 入场:从下方 24px + 透明 → 原位,0.6s(基础时长 ×0.2)
+ * 配合容器上的 .motion-stagger,子元素按序获得递增 --motion-delay */
+.motion-card-float-in {
+  animation: motion-card-float-in calc(var(--motion-duration, 3s) * 0.2) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+  animation-delay: var(--motion-delay, 0s);
+}
+@keyframes motion-card-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(24px * var(--motion-intensity, 1)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 交错入场:容器挂 .motion-stagger,子元素按序 +0.07s 延迟
+ * 子元素自身的入场动画需读取 var(--motion-delay, 0s) */
+.motion-stagger > *:nth-child(1) { --motion-delay: 0s; }
+.motion-stagger > *:nth-child(2) { --motion-delay: 0.07s; }
+.motion-stagger > *:nth-child(3) { --motion-delay: 0.14s; }
+.motion-stagger > *:nth-child(4) { --motion-delay: 0.21s; }
+.motion-stagger > *:nth-child(5) { --motion-delay: 0.28s; }
+.motion-stagger > *:nth-child(6) { --motion-delay: 0.35s; }
+.motion-stagger > *:nth-child(7) { --motion-delay: 0.42s; }
+.motion-stagger > *:nth-child(8) { --motion-delay: 0.49s; }
+.motion-stagger > *:nth-child(9) { --motion-delay: 0.56s; }
+.motion-stagger > *:nth-child(10) { --motion-delay: 0.63s; }
+
+/* ============ 无障碍:尊重系统"减少动态效果" ============
+ * 全库统一:任一文件被单独引入时也保证动画/过渡被禁用。
+ * 伪元素与子元素的动画需要单独点名,父级 animation: none 不会停止它们。 */
+@media (prefers-reduced-motion: reduce) {
+  .motion-bob, .motion-bob-fast, .motion-ear-tip, .motion-tail-wag, .motion-blink, .motion-wobble,
+  .motion-card-lift, .motion-card-tilt, .motion-card-sheen, .motion-card-border-flow, .motion-card-float-in,
+  .motion-topbar-gradient, .motion-topbar-shrink, .motion-nav-underline, .motion-float-slow, .motion-spin-slow,
+  .motion-pulse-soft, .motion-marquee, .motion-scroll-hint,
+  .motion-card-sheen::after, .motion-card-border-flow::before, .motion-marquee > *, .motion-stagger > * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

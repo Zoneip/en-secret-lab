@@ -1,66 +1,101 @@
 ---
 /**
- * 首页:hero 问候 + 最新文章卡片流 + 分类速览
+ * 首页:内容鸟瞰版
+ * Hero(角色全家福)→ 公告 → 四栏目鸟瞰 → OC 展示 → 最新消息 → 技术栈
+ * 区块开关与动效由控制台"站点设置 → 主页"调控
  */
-import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { featured } from '../lib/content/posts'
-import { aggregateByKey } from '../lib/content/taxonomy'
 import { getSiteConfig } from '../lib/config'
-import { formatDate } from '../lib/utils'
 import { getAllPosts } from '../lib/content/data'
+import { getSiteColumns, getSiteOcs, getSiteAbout } from '../lib/content/site-content'
+import { getTheme } from '../lib/theme/presets'
+import { wallpaperCss } from '../lib/theme/engine'
 import Mascot from '../components/mascot/Mascot.astro'
 import PostCard from '../components/blog/PostCard.astro'
-import TagCloud from '../components/blog/TagCloud.astro'
 
 const config = getSiteConfig()
+const hp = config.homepage
 const visible = await getAllPosts()
 const featuredPosts = featured(visible)
 const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
-const categories = aggregateByKey(visible, 'category')
+const columns = await getSiteColumns()
+const ocs = (await getSiteOcs()).sort(
+  (a, b) => ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) - ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
+)
+const about = await getSiteAbout()
 const themeIds = ['gray', 'yellow', 'purple', 'white']
-const [about] = await getCollection('about')
+
+const techStack = [
+  { name: 'Astro', desc: '内容驱动的网站框架', color: '#ff5d01' },
+  { name: 'React', desc: '控制台与交互组件', color: '#61dafb' },
+  { name: 'Tailwind CSS', desc: '控制台样式体系', color: '#38bdf8' },
+  { name: 'SQLite', desc: '配置与下载计数存储', color: '#3fae6a' },
+  { name: 'Pagefind', desc: '全站离线搜索', color: '#8b5cf6' },
+  { name: 'Node.js', desc: '动态版运行时', color: '#4a90d9' },
+]
+
+const countByCategory = (cat: string) => visible.filter((p) => p.category === cat).length
+const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', purple: '葡萄', white: '棉花糖' }
+const THEME_COLORS: Record<string, string> = { gray: '#5c677d', yellow: '#e59b2e', purple: '#8b5cf6', white: '#8fa3b8' }
+const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
+const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
 ---
 
 <BaseLayout title={config.title} description={config.description}>
   <div class="page-enter container">
+    <!-- Hero:角色全家福 -->
     <section class="hero">
       <div class="hero-text">
-        {
-          about?.data.avatar ? (
-            <img src={about.data.avatar} alt={about.data.nickname} class="hero-avatar" />
-          ) : (
-            <p class="hero-greet">这里的主人回来啦</p>
-          )
-        }
+        {about?.avatar ? (
+          <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
+        ) : (
+          <p class="hero-greet">这里的主人回来啦</p>
+        )}
         <h1>{config.title}</h1>
         <p class="hero-desc">{config.description}</p>
         <div class="hero-actions">
           <a class="btn" href="/blog">看文章</a>
-          <a class="btn btn-ghost" href="/about">认识一下</a>
+          <a class="btn btn-ghost" href="/about">认识伙伴们</a>
         </div>
       </div>
-      <div class="hero-mascot">
+      <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
         {
           themeIds.map((t) => (
-            <div class="mascot-group" data-mascot-group={t}>
-              <Mascot role="furry" theme={t} pixel={10} />
-              <Mascot role="boy" theme={t} pixel={8} />
+            <div class="hero-mascot-item" key={t}>
+              <Mascot role="furry" theme={t} pixel={7} />
+              <span class="hero-mascot-name">{themeNames[t]}</span>
             </div>
           ))
         }
       </div>
     </section>
 
+    <!-- 公告 -->
     {
-      featuredPosts.length > 0 && (
-        <section class="featured card">
-          <h2 class="section-title">精选</h2>
-          <div class="featured-list">
-            {featuredPosts.map((p) => (
-              <a href={`/blog/${p.slug}`} class="featured-item underline-tail">
-                <span class="featured-title">{p.title}</span>
-                <time datetime={p.pubDate.toISOString()}>{formatDate(p.pubDate)}</time>
+      hp.showAnnouncement && hp.announcement && (
+        <section class="announcement" data-motion-group="ambient">
+          <span class="ann-badge motion-pulse-soft">公告</span>
+          <p class="ann-text">{hp.announcement}</p>
+        </section>
+      )
+    }
+
+    <!-- 四栏目鸟瞰 -->
+    {
+      hp.showColumnOverview && columns.length > 0 && (
+        <section class="section">
+          <h2 class="section-title">探索实验室</h2>
+          <div class="column-grid" data-motion-group="cards">
+            {columns.map((c) => (
+              <a class="column-card" href={`/${c.id}`} key={c.id} style={`--oc-color:${col(c.theme)}`}>
+                <div class="column-card-head">
+                  <Mascot role="furry" theme={c.theme} pixel={5} />
+                  <span class="column-count">{countByCategory(c.category)} 篇</span>
+                </div>
+                <p class="column-name">{c.title}</p>
+                <p class="column-sub">{c.subtitle}</p>
+                <p class="column-desc">{c.description}</p>
               </a>
             ))}
           </div>
@@ -68,9 +103,39 @@ const [about] = await getCollection('about')
       )
     }
 
-    <section class="recent">
+    <!-- OC 展示:四角色风格卡 -->
+    {
+      hp.showOcSection && ocs.length > 0 && (
+        <section class="section">
+          <h2 class="section-title">实验室的伙伴们</h2>
+          <div class="oc-grid" data-motion-group="cards">
+            {ocs.map((oc) => (
+              <div class="oc-card" data-oc-theme={oc.theme} style={`--oc-bg:${ocBg(oc.theme)}`} key={oc.id}>
+                <div class="oc-card-top">
+                  <Mascot role="boy" theme={oc.theme} pixel={6} />
+                  <Mascot role="furry" theme={oc.theme} pixel={5} />
+                </div>
+                <p class="oc-card-name">{oc.name}</p>
+                <p class="oc-card-sub">{oc.subtitle}</p>
+                <div class="oc-card-traits">
+                  {oc.traits.slice(0, 3).map((t) => (
+                    <span class="oc-card-trait" key={t}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                {oc.quote && <p class="oc-card-quote">「{oc.quote}」</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 最新消息 -->
+    <section class="section">
       <h2 class="section-title">
-        最新文章
+        最新消息
         <a class="more underline-tail" href="/blog">全部文章</a>
       </h2>
       <div class="grid">
@@ -83,32 +148,72 @@ const [about] = await getCollection('about')
             category={p.category}
             tags={p.tags}
             cover={p.cover}
-           
+            key={p.slug}
           />
         ))}
       </div>
     </section>
 
-    <section class="taxonomy card">
-      <h2 class="section-title">逛逛</h2>
-      <div class="cats">
-        {categories.map((c) => (
-          <a class="chip" href={`/categories/${encodeURIComponent(c.name)}`}>
-            {c.name} · {c.count}
-          </a>
-        ))}
-      </div>
-      <TagCloud posts={visible} />
-    </section>
+    <!-- 技术栈 -->
+    {
+      hp.showTechStack && (
+        <section class="section tech-section">
+          <h2 class="section-title">驱动本站的技术</h2>
+          <div class="tech-grid">
+            {techStack.map((t) => (
+              <div class="tech-card" key={t.name} style={`--tc:${t.color}`}>
+                <span class="tech-dot" aria-hidden="true"></span>
+                <span class="tech-name">{t.name}</span>
+                <span class="tech-desc">{t.desc}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
+
+<script>
+  // 按控制台预设为各元素挂载动效类
+  const groups: Record<string, string> = {
+    mascot: document.body.dataset.motionMascot ?? 'none',
+    cards: document.body.dataset.motionCards ?? 'none',
+    ambient: document.body.dataset.motionAmbient ?? 'none',
+    hero: document.body.dataset.motionHero ?? 'none',
+  }
+  const classNameByGroup: Record<string, Record<string, string>> = {
+    mascot: { bob: 'motion-bob', 'ear-tip': 'motion-ear-tip', 'tail-wag': 'motion-tail-wag', wobble: 'motion-wobble' },
+    cards: {
+      'card-lift': 'motion-card-lift',
+      'card-tilt': 'motion-card-tilt',
+      'card-sheen': 'motion-card-sheen',
+      'card-border-flow': 'motion-card-border-flow',
+      'card-float-in': 'motion-card-float-in',
+    },
+    ambient: { 'pulse-soft': 'motion-pulse-soft', 'scroll-hint': 'motion-scroll-hint', 'float-slow': 'motion-float-slow' },
+    hero: { 'float-slow': 'motion-float-slow', 'spin-slow': 'motion-spin-slow' },
+  }
+  const apply = (group: string, effect: string, direct?: HTMLElement) => {
+    const cls = classNameByGroup[group]?.[effect]
+    if (!cls) return
+    const targets = direct
+      ? [direct]
+      : [...document.querySelectorAll<HTMLElement>(`[data-motion-group="${group}"]`)]
+    targets.forEach((el) => el.classList.add(cls))
+  }
+  apply('mascot', groups.mascot)
+  apply('cards', groups.cards)
+  apply('ambient', groups.ambient)
+  apply('hero', groups.hero, document.querySelector('.hero-mascots') as HTMLElement)
+</script>
 
 <style>
   .hero {
     display: flex;
     align-items: center;
     gap: 48px;
-    padding: 88px 0 56px;
+    padding: 72px 0 48px;
     flex-wrap: wrap;
   }
   .hero-text {
@@ -142,47 +247,60 @@ const [about] = await getCollection('about')
     gap: 12px;
     margin-top: 22px;
   }
-  .hero-mascot {
+  .hero-mascots {
     display: flex;
-    gap: 4px;
-    padding: 12px;
+    gap: 10px;
+    padding: 14px;
     border-radius: 24px;
     background: var(--surface);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
   }
-  .mascot-group {
-    display: none;
-  }
-  :root[data-theme='gray'] .hero-mascot [data-mascot-group='gray'],
-  :root[data-theme='yellow'] .hero-mascot [data-mascot-group='yellow'],
-  :root[data-theme='purple'] .hero-mascot [data-mascot-group='purple'],
-  :root[data-theme='white'] .hero-mascot [data-mascot-group='white'] {
+  .hero-mascot-item {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 4px;
   }
-  .hero-mascot :global(.pixel-sprite) {
-    animation: bob 3.5s ease-in-out infinite;
-  }
-  .hero-mascot :global(.pixel-sprite:last-child) {
-    animation-delay: -1.7s;
-  }
-  @keyframes bob {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-7px);
-    }
+  .hero-mascot-name {
+    font-size: 0.68rem;
+    color: var(--fg-subtle);
   }
 
+  /* 公告 */
+  .announcement {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-radius: 14px;
+    background: var(--primary-soft);
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .ann-badge {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  .ann-text {
+    font-size: 0.92rem;
+    color: var(--fg);
+  }
+
+  .section {
+    margin-top: 44px;
+  }
   .section-title {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     font-size: 1.4rem;
-    margin: 40px 0 18px;
+    margin-bottom: 18px;
     color: var(--fg);
   }
   .more {
@@ -191,52 +309,164 @@ const [about] = await getCollection('about')
     color: var(--fg-subtle);
   }
 
-  .featured {
-    padding: 20px 24px;
+  /* 四栏目鸟瞰 */
+  .column-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
   }
-  .featured .section-title {
-    margin-top: 0;
-  }
-  .featured-list {
+  .column-card {
     display: flex;
     flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--fg);
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
   }
-  .featured-item {
+  .column-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--oc-color);
+  }
+  .column-card-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--border);
-    color: var(--fg);
   }
-  .featured-item:last-child {
-    border-bottom: none;
-  }
-  .featured-item time {
-    font-size: 0.8rem;
+  .column-count {
+    font-size: 0.75rem;
     color: var(--fg-subtle);
-    white-space: nowrap;
+  }
+  .column-name {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--oc-color);
+  }
+  .column-sub {
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+  }
+  .column-desc {
+    font-size: 0.82rem;
+    color: var(--fg-subtle);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
+  /* OC 展示卡 */
+  .oc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .oc-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 18px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .oc-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--oc-bg);
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .oc-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  .oc-card-top {
+    display: flex;
+    gap: 2px;
+  }
+  .oc-card-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--primary);
+  }
+  .oc-card-sub {
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+  }
+  .oc-card-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .oc-card-trait {
+    font-size: 0.72rem;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-muted);
+  }
+  .oc-card-quote {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--primary);
+  }
+
+  /* 最新消息 */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 22px;
   }
 
-  .taxonomy {
-    margin-top: 40px;
-    padding: 20px 24px 28px;
+  /* 技术栈 */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
   }
-  .taxonomy .section-title {
-    margin-top: 0;
-  }
-  .cats {
+  .tech-card {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .tech-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tc);
+    margin-bottom: 6px;
+  }
+  .tech-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .tech-desc {
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
   }
 
   @media (max-width: 640px) {
@@ -254,18 +484,8 @@ const [about] = await getCollection('about')
     .hero h1 {
       font-size: 2rem;
     }
-    .hero-mascot {
+    .hero-mascots {
       transform: scale(0.85);
-    }
-  }
-
-  @media (min-width: 641px) and (max-width: 1024px) {
-    .hero {
-      padding: 64px 0 36px;
-      gap: 32px;
-    }
-    .hero-mascot {
-      transform: scale(0.92);
     }
   }
 </style>

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "defaults": { "duration": "3s", "intensity": 1 },
+  "groups": {
+    "mascot": {
+      "label": "吉祥物",
+      "options": [
+        { "id": "none", "label": "无", "className": "" },
+        { "id": "bob", "label": "呼吸漂浮", "className": "motion-bob" },
+        { "id": "bob-fast", "label": "快速漂浮", "className": "motion-bob-fast" },
+        { "id": "ear-tip", "label": "耳朵抖动", "className": "motion-ear-tip" },
+        { "id": "tail-wag", "label": "尾巴摆动", "className": "motion-tail-wag" },
+        { "id": "blink", "label": "眨眼", "className": "motion-blink" },
+        { "id": "wobble", "label": "呆萌摇摆", "className": "motion-wobble" }
+      ]
+    },
+    "cards": {
+      "label": "卡片",
+      "options": [
+        { "id": "none", "label": "无", "className": "" },
+        { "id": "card-lift", "label": "悬浮浮起", "className": "motion-card-lift" },
+        { "id": "card-tilt", "label": "3D 倾斜", "className": "motion-card-tilt" },
+        { "id": "card-sheen", "label": "光泽扫过", "className": "motion-card-sheen" },
+        { "id": "card-border-flow", "label": "边框流光", "className": "motion-card-border-flow" },
+        { "id": "card-float-in", "label": "交错入场", "className": "motion-card-float-in" }
+      ]
+    },
+    "topbar": {
+      "label": "顶部栏",
+      "options": [
+        { "id": "none", "label": "无", "className": "" },
+        { "id": "topbar-gradient", "label": "渐变流动", "className": "motion-topbar-gradient" },
+        { "id": "topbar-shrink", "label": "滚动收缩", "className": "motion-topbar-shrink" },
+        { "id": "nav-underline", "label": "导航下划线", "className": "motion-nav-underline" }
+      ]
+    },
+    "ambient": {
+      "label": "环境",
+      "options": [
+        { "id": "none", "label": "无", "className": "" },
+        { "id": "float-slow", "label": "大漂浮", "className": "motion-float-slow" },
+        { "id": "spin-slow", "label": "缓慢旋转", "className": "motion-spin-slow" },
+        { "id": "pulse-soft", "label": "柔和脉冲", "className": "motion-pulse-soft" },
+        { "id": "marquee", "label": "公告跑马灯", "className": "motion-marquee" },
+        { "id": "scroll-hint", "label": "滚动提示", "className": "motion-scroll-hint" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,126 @@
+/* ============ 动效资产 · 吉祥物(keyframes/mascot.css) ============
+ * 版本:v1.0.0
+ * 说明:像素吉祥物常驻动效。
+ *   - 所有时长以 --motion-duration(默认 3s)为唯一旋钮,各动效用 calc 取倍率;
+ *   - 所有幅度以 --motion-intensity(默认 1)为系数,px/deg 均经 calc() 相乘;
+ *   - 每个元素只挂一个动效类(animation 同名属性会互相覆盖)。
+ * 用法:.motion-bob、.motion-ear-tip … + 可选行内覆盖 --motion-duration / --motion-intensity
+ */
+
+:root {
+  --motion-duration: 3s; /* 基础时长:全库唯一旋钮 */
+  --motion-intensity: 1; /* 强度系数:1 = 设计默认幅度 */
+}
+
+/* 呼吸漂浮:上下 ±6px,ease 缓动(基础时长 ×1 ≈ 3s) */
+.motion-bob {
+  animation: motion-bob var(--motion-duration, 3s) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+@keyframes motion-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-6px * var(--motion-intensity, 1)));
+  }
+}
+
+/* 快版呼吸(复用 motion-bob 关键帧,基础时长 ×0.4 ≈ 1.2s) */
+.motion-bob-fast {
+  animation: motion-bob calc(var(--motion-duration, 3s) * 0.4) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+}
+
+/* 耳朵抖动:transform-origin 底部,两次快速小幅 rotate 后停顿(模拟挠耳)
+ * (基础时长 ×1 ≈ 3s,每周期 62% ~ 80% 完成一次抖动,其余时间静止) */
+.motion-ear-tip {
+  transform-origin: 50% 100%;
+  animation: motion-ear-tip var(--motion-duration, 3s) var(--ease-in-out, ease-in-out) infinite;
+}
+@keyframes motion-ear-tip {
+  0%,
+  62%,
+  100% {
+    transform: rotate(0deg);
+  }
+  64% {
+    transform: rotate(calc(7deg * var(--motion-intensity, 1)));
+  }
+  68% {
+    transform: rotate(calc(-6deg * var(--motion-intensity, 1)));
+  }
+  72% {
+    transform: rotate(calc(6deg * var(--motion-intensity, 1)));
+  }
+  76% {
+    transform: rotate(calc(-4deg * var(--motion-intensity, 1)));
+  }
+  80% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 尾巴摆动:rotate 摇摆 + 轻微 translateX(基础时长 ×1 ≈ 3s)
+ * 如需只摆尾巴,请把本类挂在尾巴子元素/分组上 */
+.motion-tail-wag {
+  transform-origin: 50% 100%;
+  animation: motion-tail-wag var(--motion-duration, 3s) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) infinite;
+}
+@keyframes motion-tail-wag {
+  0%,
+  100% {
+    transform: translateX(calc(-2px * var(--motion-intensity, 1))) rotate(calc(-8deg * var(--motion-intensity, 1)));
+  }
+  50% {
+    transform: translateX(calc(2px * var(--motion-intensity, 1))) rotate(calc(8deg * var(--motion-intensity, 1)));
+  }
+}
+
+/* 眨眼:scaleY 压到 0.1,0.15s 内完成,间隔 4s(基础时长 ×1.333 ≈ 4s)
+ * 整身挂载时表现为"压扁",建议挂在眼部/面部子元素上 */
+.motion-blink {
+  transform-origin: 50% 50%;
+  animation: motion-blink calc(var(--motion-duration, 3s) * 1.333) linear infinite;
+}
+@keyframes motion-blink {
+  0%,
+  96%,
+  100% {
+    transform: scaleY(1);
+  }
+  96.5% {
+    transform: scaleY(calc(0.1 * var(--motion-intensity, 1)));
+  }
+  98.5% {
+    transform: scaleY(calc(0.1 * var(--motion-intensity, 1)));
+  }
+}
+
+/* 呆萌摇摆:左右 rotate ±3deg,脚部为轴(基础时长 ×1 ≈ 3s) */
+.motion-wobble {
+  transform-origin: 50% 100%;
+  animation: motion-wobble var(--motion-duration, 3s) var(--ease-in-out, ease-in-out) infinite;
+}
+@keyframes motion-wobble {
+  0%,
+  100% {
+    transform: rotate(calc(-3deg * var(--motion-intensity, 1)));
+  }
+  50% {
+    transform: rotate(calc(3deg * var(--motion-intensity, 1)));
+  }
+}
+
+/* ============ 无障碍:尊重系统"减少动态效果" ============
+ * 全库统一:任一文件被单独引入时也保证动画/过渡被禁用。
+ * 伪元素与子元素的动画需要单独点名,父级 animation: none 不会停止它们。 */
+@media (prefers-reduced-motion: reduce) {
+  .motion-bob, .motion-bob-fast, .motion-ear-tip, .motion-tail-wag, .motion-blink, .motion-wobble,
+  .motion-card-lift, .motion-card-tilt, .motion-card-sheen, .motion-card-border-flow, .motion-card-float-in,
+  .motion-topbar-gradient, .motion-topbar-shrink, .motion-nav-underline, .motion-float-slow, .motion-spin-slow,
+  .motion-pulse-soft, .motion-marquee, .motion-scroll-hint,
+  .motion-card-sheen::after, .motion-card-border-flow::before, .motion-marquee > *, .motion-stagger > * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
