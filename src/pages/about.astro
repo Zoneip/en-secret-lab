@@ -82,7 +82,7 @@ const themeNames: Record<string, string> = {
             class="snap-section oc-screen"
             data-screen
             data-oc-theme={oc.theme}
-            style={`--oc-index:${i}; --oc-bg:${wallpaperCss(getTheme(oc.theme).wallpaper.light)}; --oc-overlay:${getTheme(oc.theme).palette.light['wallpaper-overlay']}`}
+            style={`--oc-index:${i}; --oc-bg-light:${wallpaperCss(getTheme(oc.theme).wallpaper.light)}; --oc-bg-dark:${wallpaperCss(getTheme(oc.theme).wallpaper.dark)}; --oc-overlay-light:${getTheme(oc.theme).palette.light['wallpaper-overlay']}; --oc-overlay-dark:${getTheme(oc.theme).palette.dark['wallpaper-overlay']}`}
           >
             <div class="oc-bg" aria-hidden="true"></div>
             <div class="oc-inner">
@@ -260,15 +260,21 @@ const themeNames: Record<string, string> = {
   .oc-bg {
     position: absolute;
     inset: 0;
-    background: var(--oc-bg, var(--bg));
+    background: var(--oc-bg-dark, var(--bg));
     transition: background 0.2s;
     z-index: -1;
+  }
+  :root[data-mode='light'] .oc-bg {
+    background: var(--oc-bg-light, var(--bg));
   }
   .oc-bg::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--oc-overlay, var(--wallpaper-overlay));
+    background: var(--oc-overlay-dark, var(--wallpaper-overlay));
+  }
+  :root[data-mode='light'] .oc-bg::after {
+    background: var(--oc-overlay-light, var(--wallpaper-overlay));
   }
   .oc-inner {
     position: relative;

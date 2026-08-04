@@ -40,6 +40,8 @@ const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', p
 const THEME_COLORS: Record<string, string> = { gray: '#5c677d', yellow: '#e59b2e', purple: '#8b5cf6', white: '#8fa3b8' }
 const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
 const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
+const ocBgDark = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.dark)
+const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode]['wallpaper-overlay']
 ---
 
 <BaseLayout title={config.title} description={config.description}>
@@ -110,7 +112,13 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
           <h2 class="section-title">实验室的伙伴们</h2>
           <div class="oc-grid">
             {ocs.map((oc) => (
-              <div class="oc-card" data-motion-group="cards" data-oc-theme={oc.theme} style={`--oc-bg:${ocBg(oc.theme)}`} key={oc.id}>
+              <div
+                class="oc-card"
+                data-motion-group="cards"
+                data-oc-theme={oc.theme}
+                style={`--oc-bg-light:${ocBg(oc.theme)}; --oc-bg-dark:${ocBgDark(oc.theme)}; --oc-overlay-light:${ocOverlay(oc.theme, 'light')}; --oc-overlay-dark:${ocOverlay(oc.theme, 'dark')}`}
+                key={oc.id}
+              >
                 <div class="oc-card-top">
                   <Mascot role="boy" theme={oc.theme} pixel={6} />
                   <Mascot role="furry" theme={oc.theme} pixel={5} />
@@ -357,10 +365,13 @@ const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--oc-bg);
+    background: var(--oc-bg-dark);
     opacity: 0.3;
     z-index: 0;
     pointer-events: none;
+  }
+  :root[data-mode='light'] .oc-card::after {
+    background: var(--oc-bg-light);
   }
   .oc-card > * {
     position: relative;
