@@ -3,7 +3,7 @@
  * 运行时通过 middleware 的 /uploads/* 静态路由提供访问
  */
 import { randomUUID } from 'node:crypto'
-import { mkdirSync, writeFileSync, statSync } from 'node:fs'
+import { mkdirSync, writeFileSync, statSync, unlinkSync } from 'node:fs'
 import { join, dirname, extname } from 'node:path'
 import { loadEnv } from '../env'
 import { getDb } from './db'
@@ -73,6 +73,22 @@ export function listAssets(kind?: string): SavedAsset[] {
     ? getDb().prepare('SELECT * FROM assets WHERE kind = ? ORDER BY created_at DESC').all(kind)
     : getDb().prepare('SELECT * FROM assets ORDER BY created_at DESC').all()
   return rows as unknown as SavedAsset[]
+}
+
+export function deleteAsset(id: string): boolean {
+  const row = getDb().prepare('SELECT path FROM assets WHERE id = ?').get(id) as { path: string } | undefined
+  if (!row) return false
+  getDb().prepare('DELETE FROM assets WHERE id = ?').run(id)
+  // 清理磁盘文件
+  const file = assetFileOnDisk(row.path)
+  if (file) {
+    try {
+      unlinkSync(file)
+    } catch {
+      /* 文件可能已不存在 */
+    }
+  }
+  return true
 }
 
 export function assetFileOnDisk(path: string): string | null {
