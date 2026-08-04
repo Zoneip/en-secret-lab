@@ -12,8 +12,6 @@ const { enabled = true } = Astro.props
 <div class:list={['friends-wallpaper', { 'friends-wallpaper-hidden': !enabled }]} aria-hidden="true">
   <div class="fw-base" data-fw-light data-fw-static style="background-image:url(/wallpapers/friends-shrine-day-static.svg)"></div>
   <div class="fw-base" data-fw-dark data-fw-static style="background-image:url(/wallpapers/friends-shrine-night-static.svg)"></div>
-  <div class="fw-base fw-anim" data-fw-light data-fw-anim style="background-image:url(/wallpapers/friends-shrine-day.svg)"></div>
-  <div class="fw-base fw-anim" data-fw-dark data-fw-anim style="background-image:url(/wallpapers/friends-shrine-night.svg)"></div>
   <div class="fw-overlay"></div>
 </div>
 
@@ -65,18 +63,4 @@ const { enabled = true } = Astro.props
   }
 </style>
 
-<script is:inline>
-  ;(function () {
-    // 预载当前模式动画帧,就绪后淡入
-    const fw = document.querySelector('.friends-wallpaper')
-    if (fw) {
-      const mode = document.documentElement.dataset.mode === 'dark' ? 'dark' : 'light'
-      const anim = fw.querySelector(`[data-fw-${mode}][data-fw-anim]`)
-      if (anim) {
-        const img = new Image()
-        img.onload = () => fw.setAttribute('data-fw-ready', '')
-        img.src = anim.style.backgroundImage.replace(/url\(["']?(.*?)["']?\)/, '$1')
-      }
-    }
-  })()
-</script>
+

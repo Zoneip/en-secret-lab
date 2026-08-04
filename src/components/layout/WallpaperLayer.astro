@@ -28,11 +28,9 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
     <Fragment>
       <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-light>
         <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'light', false)})`}></div>
-        <div class="wl-anim" data-wl-anim style={`background-image:url(/wallpapers/${sceneFile(id, 'light', true)})`}></div>
       </div>
       <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-dark>
         <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'dark', false)})`}></div>
-        <div class="wl-anim" data-wl-anim style={`background-image:url(/wallpapers/${sceneFile(id, 'dark', true)})`}></div>
       </div>
     </Fragment>
   ))}
@@ -112,38 +110,4 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
   }
 </style>
 
-<script is:inline>
-  ;(function () {
-    if (window.__wallpaperCleanup) window.__wallpaperCleanup()
-    const findLayer = (theme, mode) => {
-      return document.querySelector(
-        `.wallpaper-base[data-wallpaper-theme="${theme}"][data-wallpaper-${mode === 'dark' ? 'dark' : 'light'}]`
-      )
-    }
-    const activate = () => {
-      const theme = document.documentElement.dataset.theme || 'gray'
-      const mode = document.documentElement.dataset.mode || 'light'
-      const layer = findLayer(theme, mode)
-      if (!layer) return
-      if (layer.dataset.wlReady === '1') return
-      const img = new Image()
-      img.onload = () => {
-        layer.setAttribute('data-wl-ready', '')
-        layer.dataset.wlReady = '1'
-      }
-      img.onerror = () => {
-        layer.dataset.wlReady = '1'
-      }
-      const anim = layer.querySelector('.wl-anim')
-      if (anim) img.src = anim.style.backgroundImage.replace(/url\(["']?(.*?)["']?\)/, '$1')
-    }
-    const onTheme = () => activate()
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', activate)
-    else activate()
-    window.addEventListener('enlab:theme-change', onTheme)
-    window.__wallpaperCleanup = () => {
-      window.removeEventListener('enlab:theme-change', onTheme)
-      window.__wallpaperCleanup = undefined
-    }
-  })()
-</script>
+
