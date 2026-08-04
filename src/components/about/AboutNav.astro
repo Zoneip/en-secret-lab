@@ -1,27 +1,20 @@
 ---
-/** 关于页导航:圆点链接 + 进度条 + 滚轮/键盘翻页(客户端 View Transitions) */
+/** 关于页 v4 - 圆点导航 + 进度条(点击跳屏,无滚轮劫持) */
 interface Props {
-  current: number
-  total: number
+  count: number
 }
 
-const { current, total } = Astro.props
-const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/${i + 1}`)]
+const { count } = Astro.props
+const n = Math.max(1, count)
 ---
 
 <nav class="about-dots" aria-label="页面导航">
-  {hrefs.map((href, i) => (
-    <a
-      class:list={['about-dot', { active: i === current }]}
-      href={href}
-      aria-label={`第 ${i + 1} 屏`}
-      aria-current={i === current ? 'page' : undefined}
-      data-about-nav
-    ></a>
+  {Array.from({ length: n }, (_, i) => (
+    <button class="about-dot" data-dot={i} aria-label={`第 ${i + 1} 屏`}></button>
   ))}
 </nav>
 <div class="about-track" aria-hidden="true">
-  <div class="about-track-fill" style={`transform:translateX(${(current / (total - 1)) * 400}%)`}></div>
+  <div class="about-track-fill" data-track-fill></div>
 </div>
 
 <style>
@@ -39,17 +32,16 @@ const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/
     height: 9px;
     border-radius: 50%;
     border: none;
-    background: var(--p-border-strong);
+    background: var(--border-strong);
     cursor: pointer;
     transition: all 0.3s var(--ease-spring);
     opacity: 0.6;
-    display: block;
   }
   .about-dot:hover {
     opacity: 1;
   }
   .about-dot.active {
-    background: var(--p-primary);
+    background: var(--primary);
     opacity: 1;
     transform: scale(1.4);
   }
@@ -61,7 +53,7 @@ const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/
     width: 44px;
     height: 3px;
     border-radius: 999px;
-    background: var(--p-border);
+    background: var(--border);
     overflow: hidden;
     z-index: 20;
     opacity: 0.6;
@@ -70,7 +62,7 @@ const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/
     height: 100%;
     width: 20%;
     border-radius: 999px;
-    background: var(--p-primary);
+    background: var(--primary);
     transition: transform 0.35s var(--ease-soft);
   }
   @media (max-width: 760px) {
@@ -83,36 +75,26 @@ const hrefs = ['/about', ...Array.from({ length: total - 1 }, (_, i) => `/about/
   }
 </style>
 
-<script is:inline define:vars={{ total, current }}>
-  // 滚轮/键盘翻页:整页导航(每页独立文档,无脚本残留,动画彻底隔离)
-  let lock = false
-  let lockT = 0
-  const go = (dir) => {
-    const next = current + dir
-    if (next < 0 || next >= total) return
-    const href = next === 0 ? '/about' : `/about/${next}`
-    window.location.href = href
-  }
-  window.addEventListener(
-    'wheel',
-    (e) => {
-      if (e.deltaX && !e.deltaY) return
-      if (lock || !e.deltaY) {
-        e.preventDefault()
-        return
-      }
-      e.preventDefault()
-      lock = true
-      go(e.deltaY > 0 ? 1 : -1)
-      window.clearTimeout(lockT)
-      lockT = window.setTimeout(() => {
-        lock = false
-      }, 600)
-    },
-    { passive: false }
-  )
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') go(1)
-    else if (e.key === 'ArrowLeft') go(-1)
-  })
+<script is:inline>
+  ;(function () {
+    const scroller = document.querySelector('[data-snap-scroller]')
+    const dots = [...document.querySelectorAll('[data-dot]')]
+    const trackFill = document.querySelector('[data-track-fill]')
+    if (!scroller || !dots.length) return
+
+    const update = () => {
+      const idx = Math.round(scroller.scrollLeft / scroller.clientWidth)
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx))
+      const max = scroller.scrollWidth - scroller.clientWidth
+      const ratio = max > 0 ? scroller.scrollLeft / max : 0
+      if (trackFill) trackFill.style.transform = `translateX(${ratio * 400}%)`
+    }
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        scroller.scrollTo({ left: i * scroller.clientWidth, behavior: 'smooth' })
+      })
+    })
+    scroller.addEventListener('scroll', update, { passive: true })
+    update()
+  })()
 </script>
