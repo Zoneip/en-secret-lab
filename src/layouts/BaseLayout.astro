@@ -38,11 +38,13 @@ interface Props {
   forceTheme?: string
   /** 隐藏全局页脚(全屏滑动页使用,页脚内嵌各屏) */
   hideFooter?: boolean
+  /** 内容撑满视口,页脚贴底(内容稀疏的列表页使用) */
+  fillViewport?: boolean
 }
 
 const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
-const { title, description, image, type, forceTheme, hideFooter = false } = Astro.props
+const { title, description, image, type, forceTheme, hideFooter = false, fillViewport = false } = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
 const lightDefault = config.themeByMode.light
 const darkDefault = config.themeByMode.dark
@@ -89,6 +91,7 @@ const meta = buildMeta({
     data-is-server-runtime={String(isServer)}
     data-default-theme-light={lightDefault}
     data-default-theme-dark={darkDefault}
+    {...(fillViewport ? { 'data-fill-viewport': 'true' } : {})}
     data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
     <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
@@ -128,5 +131,15 @@ const meta = buildMeta({
         document.querySelectorAll(`[data-motion-group="${group}"]`).forEach((el) => el.classList.add(cls))
       }
     </script>
+    <style>
+      body[data-fill-viewport='true'] {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      body[data-fill-viewport='true'] main {
+        flex: 1;
+      }
+    </style>
   </body>
 </html>
