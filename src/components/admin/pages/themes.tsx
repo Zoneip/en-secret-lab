@@ -63,7 +63,6 @@ const SWATCH_ORDER: Array<{ key: string; label: string }> = [
 ]
 
 const SAKURA_TAB = { id: 'friends', name: '樱花', description: '巫女孤岛 · 专属壁纸主题(不出现在访客主题切换栏)' }
-const SAKURA_TINT = '#F2A8C4'
 
 export default function ThemeEditorPage() {
   const [presets, setPresets] = useState<Preset[] | null>(null)
@@ -272,22 +271,18 @@ export default function ThemeEditorPage() {
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold">{isFriends ? SAKURA_TAB.name : current?.name}</h3>
-            <p className="text-xs text-muted-foreground">{isFriends ? SAKURA_TAB.description : current?.description}</p>
+            <h3 className="text-base font-semibold">{current?.name}</h3>
+            <p className="text-xs text-muted-foreground">{current?.description}</p>
           </div>
           <div className="flex gap-2">
-            {!isFriends && (
-              <>
-                <Button variant="outline" onClick={reset}>
-                  <RotateCcw />
-                  重置此主题
-                </Button>
-                <Button onClick={save} disabled={saving}>
-                  <Save />
-                  {saving ? '保存中…' : '保存修改'}
-                </Button>
-              </>
-            )}
+            <Button variant="outline" onClick={reset}>
+              <RotateCcw />
+              重置此主题
+            </Button>
+            <Button onClick={save} disabled={saving}>
+              <Save />
+              {saving ? '保存中…' : '保存修改'}
+            </Button>
           </div>
         </div>
 
@@ -321,8 +316,7 @@ export default function ThemeEditorPage() {
           </Card>
         )}
 
-        {/* 局部作用域实时预览(仅常规主题) */}
-        {!isFriends && (
+        {/* 局部作用域实时预览 */}
         <div
           className="mt-4 flex items-center gap-4 rounded-xl border p-4 transition-colors"
           style={{
@@ -357,7 +351,6 @@ export default function ThemeEditorPage() {
             标签
           </span>
         </div>
-        )}
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-4">
@@ -377,23 +370,10 @@ export default function ThemeEditorPage() {
                 {p.name}
               </TabsTrigger>
             ))}
-            <TabsTrigger
-              value={SAKURA_TAB.id}
-              className="h-11 justify-start gap-2.5 rounded-lg border px-3 data-[state=active]:border-primary/40 data-[state=active]:bg-primary/5 data-[state=active]:shadow-none"
-            >
-              <span className="flex -space-x-1">
-                <span className="size-3.5 rounded-full border border-black/5" style={{ background: SAKURA_TINT }} />
-                <span className="size-3.5 rounded-full border border-black/5" style={{ background: '#E8A8C8' }} />
-                <span className="size-3.5 rounded-full border border-black/5" style={{ background: '#F7D8E6' }} />
-              </span>
-              {SAKURA_TAB.name}
-            </TabsTrigger>
           </TabsList>
         </Tabs>
 
         <div className="grid gap-4 lg:col-span-3">
-          {isFriends ? null : (
-          <div className="contents">
           <Card className="p-5 sm:p-6">
             <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold">
               <Settings2 className="size-4" />
@@ -556,8 +536,6 @@ export default function ThemeEditorPage() {
               )}
             </DialogContent>
           </Dialog>
-          </div>
-          )}
         </div>
       </div>
     </div>

@@ -1,0 +1,57 @@
+{
+  "id": "friends",
+  "name": "樱花",
+  "description": "纯净、清冽的雪白色,像踩进刚落的初雪",
+  "mascot": {
+    "primary": "#D96A9A",
+    "secondary": "#F2A8C4"
+  },
+  "wallpaper": {
+    "light": "url:/wallpapers/friends-shrine-day.svg",
+    "dark": "url:/wallpapers/friends-shrine-night.svg"
+  },
+  "palette": {
+    "light": {
+      "bg": "#FBF5F8",
+      "surface": "#FFFFFF",
+      "elevated": "#FFFFFF",
+      "fg": "#4A3644",
+      "fg-muted": "#8A6E7E",
+      "fg-subtle": "#B49AA8",
+      "border": "#F0DCE6",
+      "border-strong": "#E4C4D4",
+      "primary": "#D96A9A",
+      "primary-soft": "#FBE3EE",
+      "primary-fg": "#FFFFFF",
+      "accent": "#A78BFA",
+      "accent-soft": "#F1EBFD",
+      "accent-fg": "#FFFFFF",
+      "wallpaper-overlay": "rgba(252, 246, 250, 0.55)",
+      "shadow": "0 10px 30px rgba(217, 106, 154, 0.14)"
+    },
+    "dark": {
+      "bg": "#241A28",
+      "surface": "#33253A",
+      "elevated": "#3D2C46",
+      "fg": "#F0E4EA",
+      "fg-muted": "#B79CAE",
+      "fg-subtle": "#8E7488",
+      "border": "#4E3A50",
+      "border-strong": "#5E4662",
+      "primary": "#F2A8C4",
+      "primary-soft": "#4E3A4A",
+      "primary-fg": "#2A1B2A",
+      "accent": "#B9A6F5",
+      "accent-soft": "#3A2E4E",
+      "accent-fg": "#F4EEFF",
+      "wallpaper-overlay": "rgba(22, 14, 26, 0.66)",
+      "shadow": "0 10px 30px rgba(0, 0, 0, 0.4)"
+    }
+  },
+  "topbar": {
+    "style": "glass",
+    "accent": true,
+    "ornament": "leaf",
+    "height": 56
+  }
+}

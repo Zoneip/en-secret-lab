@@ -2,10 +2,11 @@ import gray from '../../themes/presets/gray.json'
 import yellow from '../../themes/presets/yellow.json'
 import purple from '../../themes/presets/purple.json'
 import white from '../../themes/presets/white.json'
+import friends from '../../themes/presets/friends.json'
 import { isThemeId } from './engine'
 import type { ThemePreset } from './engine'
 
-export const themes: ThemePreset[] = [gray, yellow, purple, white]
+export const themes: ThemePreset[] = [gray, yellow, purple, white, friends]
 
 export const DEFAULT_THEME = 'gray'
 
