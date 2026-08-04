@@ -62,7 +62,6 @@ const SWATCH_ORDER: Array<{ key: string; label: string }> = [
   { key: 'shadow', label: '阴影' },
 ]
 
-const SAKURA_TAB = { id: 'friends', name: '樱花', description: '巫女孤岛 · 专属壁纸主题(不出现在访客主题切换栏)' }
 
 export default function ThemeEditorPage() {
   const [presets, setPresets] = useState<Preset[] | null>(null)
@@ -98,7 +97,6 @@ export default function ThemeEditorPage() {
       .catch((e) => toast.error(e.message))
   }, [])
 
-  const isFriends = active === SAKURA_TAB.id
   const current = useMemo(() => presets?.find((p) => p.id === active), [presets, active])
 
   useEffect(() => {
@@ -286,9 +284,8 @@ export default function ThemeEditorPage() {
           </div>
         </div>
 
-        {/* 樱花主题:壁纸管理与预览 */}
-        {isFriends && (
-          <Card className="mt-4 p-5 sm:p-6">
+        {/* 友链页专属壁纸(樱花主题,仅友链页展示) */}
+        <Card className="mt-4 p-5 sm:p-6">
             <div className="flex items-center justify-between gap-3">
               <h4 className="flex items-center gap-2 text-sm font-semibold">
                 <ImageIcon className="size-4" />
@@ -314,7 +311,6 @@ export default function ThemeEditorPage() {
               </div>
             </div>
           </Card>
-        )}
 
         {/* 局部作用域实时预览 */}
         <div
