@@ -40,6 +40,7 @@ const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', p
   style={`--oc-index:${index}; --oc-bg-light:url(/wallpapers/${scene.light}-static.svg); --oc-bg-dark:url(/wallpapers/${scene.dark}-static.svg); --oc-bg-light-anim:url(/wallpapers/${scene.light}.svg); --oc-bg-dark-anim:url(/wallpapers/${scene.dark}.svg); --oc-overlay-light:${palette.light['wallpaper-overlay']}; --oc-overlay-dark:${palette.dark['wallpaper-overlay']}`}
 >
   <div class="oc-bg" aria-hidden="true"></div>
+  <div class="oc-bg-anim" aria-hidden="true"></div>
   <div class="oc-inner">
     <div class="oc-art" data-motion-group="mascot" aria-hidden="true">
       {oc.art ? (
