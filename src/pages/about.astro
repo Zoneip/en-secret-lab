@@ -7,9 +7,11 @@
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
-import PixelDivider from '../components/mascot/PixelDivider.astro'
+import { getSiteConfig } from '../lib/config'
 
 const [about] = await getCollection('about')
+const siteConfig = getSiteConfig()
+const siteAuthor = siteConfig.author
 const ocs = (await getCollection('ocs')).sort(
   (a, b) =>
     ['gray', 'yellow', 'purple', 'white'].indexOf(a.data.theme) -
@@ -24,7 +26,7 @@ const themeNames: Record<string, string> = {
 }
 ---
 
-<BaseLayout title="关于" description="关于这个站点和它的主人">
+<BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
   <div class="snap-wrap">
     <div class="snap-scroller" data-snap-scroller>
       <!-- 屏1:hero -->
@@ -65,6 +67,10 @@ const themeNames: Record<string, string> = {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l-5 6 5 6M19 6l-5 6 5 6" /></svg>
           </div>
         </div>
+        <footer class="screen-footer">
+          <span>© {new Date().getFullYear()} {siteAuthor} · 秘密实验室</span>
+          <a href="/rss.xml">RSS</a>
+        </footer>
       </section>
 
       <!-- 屏2-5:四个 OC -->
@@ -101,7 +107,10 @@ const themeNames: Record<string, string> = {
                 {oc.data.quote && <p class="oc-quote">「{oc.data.quote}」</p>}
               </div>
             </div>
-            <PixelDivider theme={oc.data.theme} />
+            <footer class="screen-footer">
+              <span>© {new Date().getFullYear()} {siteAuthor} · 秘密实验室</span>
+              <a href="/rss.xml">RSS</a>
+            </footer>
           </section>
         ))
       }
@@ -344,10 +353,34 @@ const themeNames: Record<string, string> = {
     color: var(--primary);
   }
 
+  /* ===== 屏内页脚(随滑动同步) ===== */
+  .screen-footer {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.72rem;
+    color: var(--fg-subtle);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .screen-footer a {
+    pointer-events: auto;
+    color: var(--fg-subtle);
+    text-decoration: none;
+  }
+  .screen-footer a:hover {
+    color: var(--primary);
+  }
+
   /* ===== 底部指示条(横向) ===== */
   .snap-dots {
     position: fixed;
-    bottom: 22px;
+    bottom: 44px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

@@ -31,11 +31,13 @@ interface Props {
   type?: 'website' | 'article'
   /** 强制主题(栏目页使用,锁定该主题配色) */
   forceTheme?: string
+  /** 隐藏全局页脚(全屏滑动页使用,页脚内嵌各屏) */
+  hideFooter?: boolean
 }
 
 const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
-const { title, description, image, type, forceTheme } = Astro.props
+const { title, description, image, type, forceTheme, hideFooter = false } = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
 const siteUrl = Astro.site?.toString() ?? 'http://localhost:4321'
 const pageUrl = absoluteUrl(siteUrl, Astro.url.pathname)
@@ -80,7 +82,7 @@ const meta = buildMeta({
     <main id="main">
       <slot />
     </main>
-    <SiteFooter />
+    {!hideFooter && <SiteFooter />}
     <ThemeSwitcher />
   </body>
 </html>
