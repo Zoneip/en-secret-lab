@@ -2,13 +2,22 @@
 /** 友链页:展示 + 申请登记(动态版实时,静态版 mailto 降级) */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import EmptyState from '../components/ui/EmptyState.astro'
+import FriendsWallpaper from '../components/layout/FriendsWallpaper.astro'
 import { getSiteFriends } from '../lib/content/site-friends'
+import { getSiteConfig } from '../lib/config'
 
 const friends = await getSiteFriends()
+const config = getSiteConfig()
 ---
 
 <BaseLayout fillViewport title="友链" description="交换友链的伙伴们">
+  <FriendsWallpaper enabled={config.features.friendsWallpaper} />
   <div class="page-enter container">
+    <div class="shrine-quote" aria-hidden="true">
+      <span>「</span>
+      <p>巫女静静地在孤岛上守望,樱花萌芽,几度轮回春?</p>
+      <span>」</span>
+    </div>
     <header class="page-head">
       <h1>友链</h1>
       <p>目前有 {friends.length} 位伙伴</p>
@@ -213,6 +222,36 @@ const friends = await getSiteFriends()
   .apply-submit {
     width: 100%;
     justify-content: center;
+  }
+  .shrine-quote {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin: 26px auto 0;
+    max-width: 560px;
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+    font-family: var(--font-display);
+    letter-spacing: 1px;
+  }
+  .shrine-quote span {
+    color: var(--primary);
+    font-size: 1.2rem;
+    opacity: 0.7;
+  }
+  .shrine-quote p {
+    text-align: center;
+    animation: quote-float 3.2s ease-in-out infinite;
+  }
+  @keyframes quote-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
   }
   .page-head h1 {
     font-size: 2rem;

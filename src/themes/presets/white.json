@@ -47,5 +47,11 @@
       "wallpaper-overlay": "rgba(10, 20, 36, 0.64)",
       "shadow": "0 8px 24px rgba(0, 0, 0, 0.45)"
     }
+  },
+  "topbar": {
+    "style": "glass",
+    "accent": false,
+    "ornament": "wave",
+    "height": 56
   }
 }

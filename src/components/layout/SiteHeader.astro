@@ -50,15 +50,37 @@ const current = active ?? Astro.url.pathname
     position: sticky;
     top: 0;
     z-index: 30;
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: blur(12px);
+    background: var(--topbar-bg, color-mix(in srgb, var(--bg) 82%, transparent));
+    backdrop-filter: blur(var(--topbar-blur, 12px));
     border-bottom: 1px solid var(--border);
+    /* 装饰层(主题绑定):accent 渐变线 + ornament 像素装饰 */
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--topbar-line, none);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--topbar-ornament-src, none);
+    background-repeat: repeat-x;
+    background-position: bottom 5px left;
+    opacity: 0.55;
   }
   .header-inner {
     display: flex;
     align-items: center;
     gap: 16px;
-    height: var(--header-h);
+    height: var(--topbar-height, var(--header-h));
   }
   .brand {
     display: inline-flex;

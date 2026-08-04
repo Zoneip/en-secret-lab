@@ -40,6 +40,8 @@ export interface ThemeOverride {
   palette?: Partial<ColorTokens> & Partial<Record<'wallpaper-overlay' | 'shadow', string>>
   /** 覆盖壁纸源,支持 gradient: / url: */
   wallpaper?: { light?: string; dark?: string }
+  /** 顶部栏美化:style=glass/solid/gradient,accent=主题渐变线,ornament=none/dots/wave/leaf,height 像素 */
+  topbar?: { style?: 'glass' | 'solid' | 'gradient'; accent?: boolean; ornament?: 'none' | 'dots' | 'wave' | 'leaf'; height?: number }
 }
 
 /** 访客偏好(L3) */

@@ -30,6 +30,7 @@ export const siteConfigSchema = z.object({
       wallpapers: z.boolean().default(true),
       admin: z.boolean().default(false),
       resources: z.boolean().default(false),
+      friendsWallpaper: z.boolean().default(true),
     })
     .default({
       search: true,
@@ -38,6 +39,7 @@ export const siteConfigSchema = z.object({
       wallpapers: true,
       admin: false,
       resources: false,
+      friendsWallpaper: true,
     }),
   /** 壁纸跟随主题渲染时是否使用图片(站长关闭则纯色/渐变) */
   wallpaperEnabled: z.boolean().default(true),

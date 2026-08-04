@@ -1,0 +1,80 @@
+---
+/** 友链页专属壁纸:巫女孤岛樱花树(独立主题,不进入主题切换栏)
+ *  静态帧立即显示 + 动画帧预载淡入,深浅模式切换
+ */
+interface Props {
+  enabled?: boolean
+}
+
+const { enabled = true } = Astro.props
+---
+
+<div class:list={['friends-wallpaper', { 'friends-wallpaper-hidden': !enabled }]} aria-hidden="true">
+  <div class="fw-base" data-fw-light data-fw-static style="background-image:url(/wallpapers/friends-shrine-day-static.svg)"></div>
+  <div class="fw-base" data-fw-dark data-fw-static style="background-image:url(/wallpapers/friends-shrine-night-static.svg)"></div>
+  <div class="fw-base fw-anim" data-fw-light data-fw-anim style="background-image:url(/wallpapers/friends-shrine-day.svg)"></div>
+  <div class="fw-base fw-anim" data-fw-dark data-fw-anim style="background-image:url(/wallpapers/friends-shrine-night.svg)"></div>
+  <div class="fw-overlay"></div>
+</div>
+
+<style is:global>
+  .friends-wallpaper {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    transition: opacity 0.4s var(--ease-soft);
+  }
+  .friends-wallpaper-hidden {
+    opacity: 0;
+  }
+  .fw-base {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    visibility: hidden;
+  }
+  .fw-base.fw-anim {
+    opacity: 0;
+    display: none;
+  }
+  html[data-mode='light'] .friends-wallpaper[data-fw-ready] .fw-anim[data-fw-light],
+  html[data-mode='dark'] .friends-wallpaper[data-fw-ready] .fw-anim[data-fw-dark] {
+    display: block;
+    animation: wallpaper-fade-in 0.5s var(--ease-soft) forwards;
+  }
+  html[data-mode='light'] .fw-base[data-fw-light] {
+    visibility: visible;
+  }
+  html[data-mode='dark'] .fw-base[data-fw-dark] {
+    visibility: visible;
+  }
+  @keyframes wallpaper-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .fw-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--wallpaper-overlay);
+  }
+</style>
+
+<script is:inline>
+  // 预载当前模式动画帧,就绪后淡入
+  const fw = document.querySelector('.friends-wallpaper')
+  if (fw) {
+    const mode = document.documentElement.dataset.mode === 'dark' ? 'dark' : 'light'
+    const anim = fw.querySelector(`[data-fw-${mode}][data-fw-anim]`)
+    if (anim) {
+      const img = new Image()
+      img.onload = () => fw.setAttribute('data-fw-ready', '')
+      img.src = anim.style.backgroundImage.replace(/url\(["']?(.*?)["']?\)/, '$1')
+    }
+  }
+</script>
