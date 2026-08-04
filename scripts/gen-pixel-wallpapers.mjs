@@ -14,6 +14,18 @@ const Rd = (x, y, w, h, rx, fill, anim = '') =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"${anim ? ` class="${anim}"` : ''} fill="${fill}"/>`
 const G = (anim = '') => `<g${anim ? ` class="${anim}"` : ''}>`
 
+/** 后处理:整图放大 k 倍(坐标/尺寸/位移/原点 ×k),提升像素密度 */
+function scaleSvg(svg, k) {
+  const scaleAttr = (attr) => {
+    const re = new RegExp(`${attr}="(-?\\d+(?:\\.\\d+)?)"`, 'g')
+    return svg.replace(re, (m, v) => `${attr}="${(parseFloat(v) * k).toFixed(2).replace(/\\.?0+$/, '')}"`)
+  }
+  for (const a of ['x', 'y', 'width', 'height', 'rx', 'cx', 'cy', 'r']) svg = scaleAttr(a)
+  svg = svg.replace(/(-?\d+(?:\.\d+)?)px/g, (m, v) => `${parseFloat(v) * k}px`)
+  svg = svg.replace(/viewBox="0 0 320 180"/, `viewBox="0 0 ${320 * k} ${180 * k}"`)
+  return svg
+}
+
 const CSS = (rules) => `<style>${rules}</style>`
 
 const stars = (ys, color, count, animBase = 'tw') =>
@@ -801,7 +813,8 @@ const specs = [
 
 for (const [name, label, { css, body }] of specs) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" shape-rendering="crispEdges">\n${css}\n${body}\n</svg>`
-  writeFileSync(join(outDir, name), svg)
+  const out = scaleSvg(svg, 2)
+  writeFileSync(join(outDir, name), out)
   console.log(`✓ ${name}  (${label}, ${Math.round(svg.length / 1024)}KB)`)
 }
 console.log('v2 细化版生成完成 →', outDir)

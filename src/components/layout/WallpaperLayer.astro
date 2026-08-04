@@ -1,35 +1,36 @@
 ---
-/** 固定背景壁纸层:渲染 4 主题 × 深浅,由客户端 data-theme/data-mode 切换显隐 */
+/** 固定背景壁纸层:
+ *  静态帧(visibility 显隐,8 层全部随页面加载进缓存)→ 首帧即时显示
+ *  动画帧(display 显隐 + JS 预加载)→ 加载完成后淡入覆盖,滚动/切主题无加载缺口
+ */
 import { getTheme } from '../../lib/theme/presets'
 import { wallpaperCss } from '../../lib/theme/engine'
 
 interface Props {
-  /** 兜底主题(JS 禁用时显示的默认壁纸) */
   theme: string
-  /** 站长关闭壁纸时只保留纯背景色 */
   enabled?: boolean
 }
 
 const { theme: fallbackTheme, enabled = true } = Astro.props
 const themeIds = ['gray', 'yellow', 'purple', 'white'] as const
+const SCENE: Record<string, string> = { gray: 'gray-tech', yellow: 'yellow-field', purple: 'purple-library', white: 'white-sea' }
 const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
+const modeOf = (m: 'light' | 'dark') => (m === 'light' ? 'light' : 'dark')
+const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
+  `${SCENE[id]}-${modeOf(m)}${anim ? '' : '-static'}.svg`
 ---
 
 <div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true" data-wallpaper-fallback={fallbackTheme}>
-  {presets.map(({ id, preset }) => (
+  {presets.map(({ id }) => (
     <Fragment>
-      <div
-        class="wallpaper-base"
-        data-wallpaper-theme={id}
-        data-wallpaper-light
-        style={`background-image:${wallpaperCss(preset.wallpaper.light)}`}
-      ></div>
-      <div
-        class="wallpaper-base"
-        data-wallpaper-theme={id}
-        data-wallpaper-dark
-        style={`background-image:${wallpaperCss(preset.wallpaper.dark)}`}
-      ></div>
+      <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-light>
+        <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'light', false)})`}></div>
+        <div class="wl-anim" data-wl-anim style={`background-image:url(/wallpapers/${sceneFile(id, 'light', true)})`}></div>
+      </div>
+      <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-dark>
+        <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'dark', false)})`}></div>
+        <div class="wl-anim" data-wl-anim style={`background-image:url(/wallpapers/${sceneFile(id, 'dark', true)})`}></div>
+      </div>
     </Fragment>
   ))}
   <div class="wallpaper-overlay"></div>
@@ -46,21 +47,35 @@ const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
   .wallpaper-hidden {
     opacity: 0;
   }
-  /* 仅当前主题+模式的壁纸层参与渲染(其余 display:none,不绘制不跑动画),
-     解决多主题壁纸常驻导致的滚动卡顿;可见层每次淡入 */
+  /* 只有当前主题+模式的层参与渲染;静态帧立即显示,动画帧由 JS 预载后淡入 */
   .wallpaper-base {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+  }
+  .wallpaper-base .wl-static {
     position: absolute;
     inset: 0;
     background-size: cover;
     background-position: center;
+  }
+  .wallpaper-base .wl-anim {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
     display: none;
   }
-  /* 默认兜底:JS 未运行或未设主题时,显示 SSR 兜底主题的浅色壁纸 */
+  .wallpaper-base[data-wl-ready] .wl-anim {
+    display: block;
+    animation: wallpaper-fade-in 0.5s var(--ease-soft) forwards;
+  }
+  /* 默认兜底:JS 未运行或未设主题时,显示 SSR 兜底主题的浅色静态帧 */
   html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
   html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
   html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
-    display: block;
-    animation: wallpaper-fade-in 0.45s var(--ease-soft);
+    visibility: visible;
   }
   /* 按客户端实际主题 + 模式显隐 */
   html[data-theme='gray'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
@@ -71,8 +86,7 @@ const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
   html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
   html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
   html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark] {
-    display: block;
-    animation: wallpaper-fade-in 0.45s var(--ease-soft);
+    visibility: visible;
   }
   @keyframes wallpaper-fade-in {
     from {
@@ -90,3 +104,35 @@ const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
     transition: background 0.4s var(--ease-soft);
   }
 </style>
+
+<script is:inline>
+  // 预载当前主题+模式的动画帧,就绪后淡入;主题/模式切换时重新预载
+  function wallpaperFindLayer(theme, mode) {
+    return document.querySelector(
+      `.wallpaper-base[data-wallpaper-theme="${theme}"][data-wallpaper-${mode === 'dark' ? 'dark' : 'light'}]`
+    )
+  }
+  function wallpaperActivate() {
+    const theme = document.documentElement.dataset.theme || 'gray'
+    const mode = document.documentElement.dataset.mode || 'light'
+    const layer = wallpaperFindLayer(theme, mode)
+    if (!layer) return
+    if (layer.dataset.wlReady === '1') return
+    const img = new Image()
+    img.onload = () => {
+      layer.setAttribute('data-wl-ready', '')
+      layer.dataset.wlReady = '1'
+    }
+    img.onerror = () => {
+      layer.dataset.wlReady = '1'
+    }
+    const anim = layer.querySelector('.wl-anim')
+    if (anim) img.src = anim.style.backgroundImage.replace(/url\\(["']?(.*?)["']?\\)/, '$1')
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wallpaperActivate)
+  } else {
+    wallpaperActivate()
+  }
+  window.addEventListener('enlab:theme-change', wallpaperActivate)
+</script>

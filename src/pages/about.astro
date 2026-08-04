@@ -26,6 +26,8 @@ const siteAuthor = siteConfig.author
 const pgTheme = getTheme(siteConfig.defaultTheme)
 const pgTokens = pgTheme.palette.light
 const pgTokensDark = pgTheme.palette.dark
+const pgV = (k: string) => pgTokens[k]
+const pgVd = (k: string) => pgTokensDark[k]
 const ocs = (await getSiteOcs()).sort(
   (a, b) =>
     ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
@@ -43,7 +45,7 @@ const themeNames: Record<string, string> = {
 <BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
   <div
     class="snap-wrap"
-    style={`--pg-bg:${pgTokens.bg}; --pg-surface:${pgTokens.surface}; --pg-elevated:${pgTokens.elevated}; --pg-fg:${pgTokens.fg}; --pg-fg-muted:${pgTokens['fg-muted']}; --pg-fg-subtle:${pgTokens['fg-subtle']}; --pg-primary:${pgTokens.primary}; --pg-primary-soft:${pgTokens['primary-soft']}; --pg-primary-fg:${pgTokens['primary-fg']}; --pg-accent:${pgTokens.accent}; --pg-accent-soft:${pgTokens['accent-soft']}; --pg-border:${pgTokens.border}; --pg-border-strong:${pgTokens['border-strong']}; --pg-overlay:${pgTokens['wallpaper-overlay']}; --pg-shadow:${pgTokens.shadow}; --pg-bg-dark:${pgTokensDark.bg}; --pg-overlay-dark:${pgTokensDark['wallpaper-overlay']}`}
+    style={`--pg-bg:${pgV('bg')}; --pg-surface:${pgV('surface')}; --pg-elevated:${pgV('elevated')}; --pg-fg:${pgV('fg')}; --pg-fg-muted:${pgV('fg-muted')}; --pg-fg-subtle:${pgV('fg-subtle')}; --pg-primary:${pgV('primary')}; --pg-primary-soft:${pgV('primary-soft')}; --pg-primary-fg:${pgV('primary-fg')}; --pg-accent:${pgV('accent')}; --pg-accent-soft:${pgV('accent-soft')}; --pg-border:${pgV('border')}; --pg-border-strong:${pgV('border-strong')}; --pg-overlay:${pgV('wallpaper-overlay')}; --pg-shadow:${pgV('shadow')}; --pg-bg-dark:${pgVd('bg')}; --pg-surface-dark:${pgVd('surface')}; --pg-elevated-dark:${pgVd('elevated')}; --pg-fg-dark:${pgVd('fg')}; --pg-fg-muted-dark:${pgVd('fg-muted')}; --pg-fg-subtle-dark:${pgVd('fg-subtle')}; --pg-primary-dark:${pgVd('primary')}; --pg-primary-soft-dark:${pgVd('primary-soft')}; --pg-primary-fg-dark:${pgVd('primary-fg')}; --pg-accent-dark:${pgVd('accent')}; --pg-accent-soft-dark:${pgVd('accent-soft')}; --pg-border-dark:${pgVd('border')}; --pg-border-strong-dark:${pgVd('border-strong')}; --pg-overlay-dark:${pgVd('wallpaper-overlay')}; --pg-shadow-dark:${pgVd('shadow')}`}
   >
     <!-- hero 屏背景(独立快照,不随用户主题) -->
     <div class="hero-bg" aria-hidden="true"></div>
@@ -157,6 +159,41 @@ const themeNames: Record<string, string> = {
 </BaseLayout>
 
 <style>
+  /* 深浅色间接层:深色默认,浅色覆盖(快照全部注入 dark 版本) */
+  .snap-wrap {
+    --p-bg: var(--pg-bg-dark, var(--pg-bg));
+    --p-surface: var(--pg-surface-dark, var(--pg-surface));
+    --p-elevated: var(--pg-elevated-dark, var(--pg-elevated));
+    --p-fg: var(--pg-fg-dark, var(--pg-fg));
+    --p-fg-muted: var(--pg-fg-muted-dark, var(--pg-fg-muted));
+    --p-fg-subtle: var(--pg-fg-subtle-dark, var(--pg-fg-subtle));
+    --p-primary: var(--pg-primary-dark, var(--pg-primary));
+    --p-primary-soft: var(--pg-primary-soft-dark, var(--pg-primary-soft));
+    --p-primary-fg: var(--pg-primary-fg-dark, var(--pg-primary-fg));
+    --p-accent: var(--pg-accent-dark, var(--pg-accent));
+    --p-accent-soft: var(--pg-accent-soft-dark, var(--pg-accent-soft));
+    --p-border: var(--pg-border-dark, var(--pg-border));
+    --p-border-strong: var(--pg-border-strong-dark, var(--pg-border-strong));
+    --p-overlay: var(--pg-overlay-dark, var(--pg-overlay));
+    --p-shadow: var(--pg-shadow-dark, var(--pg-shadow));
+  }
+  :root[data-mode='light'] .snap-wrap {
+    --p-bg: var(--pg-bg);
+    --p-surface: var(--pg-surface);
+    --p-elevated: var(--pg-elevated);
+    --p-fg: var(--pg-fg);
+    --p-fg-muted: var(--pg-fg-muted);
+    --p-fg-subtle: var(--pg-fg-subtle);
+    --p-primary: var(--pg-primary);
+    --p-primary-soft: var(--pg-primary-soft);
+    --p-primary-fg: var(--pg-primary-fg);
+    --p-accent: var(--pg-accent);
+    --p-accent-soft: var(--pg-accent-soft);
+    --p-border: var(--pg-border);
+    --p-border-strong: var(--pg-border-strong);
+    --p-overlay: var(--pg-overlay);
+    --p-shadow: var(--pg-shadow);
+  }
   .snap-wrap {
     position: fixed;
     inset: 0;
@@ -197,12 +234,12 @@ const themeNames: Record<string, string> = {
     position: fixed;
     inset: 0;
     top: var(--header-h);
-    background: var(--pg-bg-dark, var(--pg-bg));
+    background: var(--p-bg-dark, var(--p-bg));
     z-index: -2;
     transition: background 0.3s;
   }
   :root[data-mode='light'] .hero-bg {
-    background: var(--pg-bg);
+    background: var(--p-bg);
   }
   .hero-inner {
     max-width: 640px;
@@ -227,32 +264,32 @@ const themeNames: Record<string, string> = {
     height: 132px;
     border-radius: 36px;
     object-fit: cover;
-    border: 3px solid var(--pg-surface);
-    box-shadow: var(--pg-shadow);
+    border: 3px solid var(--p-surface);
+    box-shadow: var(--p-shadow);
   }
   .hero-mascots {
     display: flex;
     gap: 2px;
     padding: 10px;
     border-radius: 22px;
-    background: var(--pg-surface);
-    border: 1px solid var(--pg-border);
-    box-shadow: var(--pg-shadow);
+    background: var(--p-surface);
+    border: 1px solid var(--p-border);
+    box-shadow: var(--p-shadow);
   }
   .hero-nickname {
     font-family: var(--font-display);
     font-size: 2.6rem;
-    color: var(--pg-primary);
+    color: var(--p-primary);
   }
   .hero-tagline {
-    color: var(--pg-fg-muted);
+    color: var(--p-fg-muted);
   }
   .hero-intro {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    color: var(--pg-fg);
+    color: var(--p-fg);
     font-size: 0.92rem;
   }
   .hero-links {
@@ -265,7 +302,7 @@ const themeNames: Record<string, string> = {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: var(--pg-fg-subtle);
+    color: var(--p-fg-subtle);
     font-size: 0.8rem;
     margin-top: 24px;
     animation: hint-bob 2s ease-in-out infinite;
@@ -288,19 +325,19 @@ const themeNames: Record<string, string> = {
   .oc-bg {
     position: absolute;
     inset: 0;
-    background: var(--oc-bg-dark, var(--pg-bg));
+    background: var(--oc-bg-dark, var(--p-bg));
     transition: background 0.2s;
     z-index: -1;
   }
   :root[data-mode='light'] .oc-bg {
-    background: var(--oc-bg-light, var(--pg-bg));
+    background: var(--oc-bg-light, var(--p-bg));
   }
   /* 当前屏激活:换成动画版壁纸(其余屏静态帧,减少滚动开销) */
   .oc-screen[data-anim-active] .oc-bg {
-    background: var(--oc-bg-dark-anim, var(--oc-bg-dark, var(--pg-bg)));
+    background: var(--oc-bg-dark-anim, var(--oc-bg-dark, var(--p-bg)));
   }
   :root[data-mode='light'] .oc-screen[data-anim-active] .oc-bg {
-    background: var(--oc-bg-light-anim, var(--oc-bg-light, var(--pg-bg)));
+    background: var(--oc-bg-light-anim, var(--oc-bg-light, var(--p-bg)));
   }
   .oc-bg::after {
     content: '';
@@ -331,9 +368,9 @@ const themeNames: Record<string, string> = {
     flex-shrink: 0;
     padding: 18px;
     border-radius: 28px;
-    background: var(--pg-surface);
-    border: 1px solid var(--pg-border);
-    box-shadow: var(--pg-shadow);
+    background: var(--p-surface);
+    border: 1px solid var(--p-border);
+    box-shadow: var(--p-shadow);
     animation: bob 4s ease-in-out infinite;
   }
   .oc-art-img {
@@ -359,23 +396,23 @@ const themeNames: Record<string, string> = {
     font-size: 0.78rem;
     padding: 2px 12px;
     border-radius: 999px;
-    background: var(--pg-primary-soft);
-    color: var(--pg-primary);
+    background: var(--p-primary-soft);
+    color: var(--p-primary);
     margin-bottom: 12px;
   }
   .oc-name {
     font-size: 3rem;
-    color: var(--pg-primary);
+    color: var(--p-primary);
     line-height: 1.1;
   }
   .oc-subtitle {
     font-family: var(--font-display);
     font-size: 1.25rem;
-    color: var(--pg-fg);
+    color: var(--p-fg);
     margin: 6px 0 14px;
   }
   .oc-desc {
-    color: var(--pg-fg-muted);
+    color: var(--p-fg-muted);
     max-width: 46ch;
     line-height: 1.9;
   }
@@ -389,14 +426,14 @@ const themeNames: Record<string, string> = {
     font-size: 0.82rem;
     padding: 3px 14px;
     border-radius: 999px;
-    border: 1.5px solid var(--pg-border-strong);
-    color: var(--pg-fg-muted);
+    border: 1.5px solid var(--p-border-strong);
+    color: var(--p-fg-muted);
   }
   .oc-quote {
     margin-top: 18px;
     font-family: var(--font-display);
     font-size: 1.05rem;
-    color: var(--pg-primary);
+    color: var(--p-primary);
   }
   /* ===== 名言动效 ===== */
   .quote-caret {
@@ -471,17 +508,17 @@ const themeNames: Record<string, string> = {
     justify-content: center;
     gap: 12px;
     font-size: 0.72rem;
-    color: var(--pg-fg-subtle);
+    color: var(--p-fg-subtle);
     z-index: 5;
     pointer-events: none;
   }
   .screen-footer a {
     pointer-events: auto;
-    color: var(--pg-fg-subtle);
+    color: var(--p-fg-subtle);
     text-decoration: none;
   }
   .screen-footer a:hover {
-    color: var(--pg-primary);
+    color: var(--p-primary);
   }
 
   /* ===== 底部指示条(横向) ===== */
@@ -499,7 +536,7 @@ const themeNames: Record<string, string> = {
     height: 9px;
     border-radius: 50%;
     border: none;
-    background: var(--pg-border-strong);
+    background: var(--p-border-strong);
     cursor: pointer;
     transition: all 0.3s var(--ease-spring);
     opacity: 0.6;
@@ -508,7 +545,7 @@ const themeNames: Record<string, string> = {
     opacity: 1;
   }
   .snap-dot.active {
-    background: var(--pg-primary);
+    background: var(--p-primary);
     opacity: 1;
     transform: scale(1.4);
   }
@@ -520,7 +557,7 @@ const themeNames: Record<string, string> = {
     width: 44px;
     height: 3px;
     border-radius: 999px;
-    background: var(--pg-border);
+    background: var(--p-border);
     overflow: hidden;
     z-index: 20;
     opacity: 0.6;
@@ -529,7 +566,7 @@ const themeNames: Record<string, string> = {
     height: 100%;
     width: 20%;
     border-radius: 999px;
-    background: var(--pg-primary);
+    background: var(--p-primary);
     transition: transform 0.35s var(--ease-soft);
   }
 
