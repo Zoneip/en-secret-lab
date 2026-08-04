@@ -13,7 +13,7 @@
     @keyframes fl5 { from { transform: translate(318px, 128px) } to { transform: translate(0, 128px) } }
     @keyframes tx1 { from { transform: translateX(0) } to { transform: translateX(-68px) } }
     @keyframes tx2 { from { transform: translateX(0) } to { transform: translateX(-112px) } }
-    @keyframes pulse { 0%, 100% { opacity: .9 } 50% { opacity: .3 } }
+    @keyframes pulse { 0%, 100% { opacity: .9 } 25% { opacity: .6 } 50% { opacity: .3 } 75% { opacity: .65 } }
     @keyframes cursor { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
     @keyframes shoot { from { transform: translate(0, 0); opacity: 1 } to { transform: translate(-30px, 18px); opacity: 0 } }
     @keyframes satfly { from { transform: translate(0, 0) } to { transform: translate(26px, 3px) } }

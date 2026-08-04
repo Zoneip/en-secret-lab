@@ -46,19 +46,21 @@ const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
   .wallpaper-hidden {
     opacity: 0;
   }
+  /* 仅当前主题+模式的壁纸层参与渲染(其余 display:none,不绘制不跑动画),
+     解决多主题壁纸常驻导致的滚动卡顿;可见层每次淡入 */
   .wallpaper-base {
     position: absolute;
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0;
-    transition: opacity 0.4s var(--ease-soft);
+    display: none;
   }
   /* 默认兜底:JS 未运行或未设主题时,显示 SSR 兜底主题的浅色壁纸 */
   html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
   html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
   html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
-    opacity: 1;
+    display: block;
+    animation: wallpaper-fade-in 0.45s var(--ease-soft);
   }
   /* 按客户端实际主题 + 模式显隐 */
   html[data-theme='gray'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
@@ -69,7 +71,16 @@ const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
   html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
   html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
   html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark] {
-    opacity: 1;
+    display: block;
+    animation: wallpaper-fade-in 0.45s var(--ease-soft);
+  }
+  @keyframes wallpaper-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   .wallpaper-overlay {
     position: absolute;

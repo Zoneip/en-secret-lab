@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" shape-rendering="crispEdges">
 <style>
-    @keyframes mbeam { 0%, 100% { opacity: .45 } 50% { opacity: .9 } }
-    @keyframes lglow { 0%, 100% { opacity: .45 } 50% { opacity: .95 } }
-    @keyframes lamp { 0%, 100% { opacity: .6 } 50% { opacity: 1 } }
+    @keyframes mbeam { 0%, 100% { opacity: .45 } 25% { opacity: .66 } 50% { opacity: .9 } 75% { opacity: .62 } }
+    @keyframes lglow { 0%, 100% { opacity: .45 } 25% { opacity: .7 } 50% { opacity: .95 } 75% { opacity: .62 } }
+    @keyframes lamp { 0%, 100% { opacity: .6 } 30% { opacity: .9 } 60% { opacity: 1 } 80% { opacity: .75 } }
     @keyframes tail { from { transform: rotate(0deg) } to { transform: rotate(24deg) } }
     @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes tw0 { 0%, 60% { opacity: 1 } 61%, 100% { opacity: .2 } }

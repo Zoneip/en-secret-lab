@@ -4,7 +4,7 @@
     @keyframes s2 { from { transform: translateX(-34px) } to { transform: translateX(8px) } }
     @keyframes f1 { from { transform: translateX(0); opacity: .95 } 50% { opacity: .6 } to { transform: translateX(-40px); opacity: .95 } }
     @keyframes f2 { from { transform: translateX(-34px); opacity: .75 } 50% { opacity: 1 } to { transform: translateX(8px); opacity: .75 } }
-    @keyframes boat { from { transform: rotate(-2.5deg) translateY(0) } 50% { transform: rotate(2.5deg) translateY(1px) } to { transform: rotate(-2.5deg) translateY(0) } }
+    @keyframes boat { 0% { transform: rotate(-2.5deg) translateY(0) } 25% { transform: rotate(-1deg) translateY(1px) } 50% { transform: rotate(2.5deg) translateY(1px) } 75% { transform: rotate(1deg) translateY(0) } 100% { transform: rotate(-2.5deg) translateY(0) } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-32px) } to { transform: translateX(12px) } }
     @keyframes gl1 { from { transform: translate(0, 0) } to { transform: translate(10px, -5px) } }

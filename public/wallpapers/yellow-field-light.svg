@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" shape-rendering="crispEdges">
 <style>
-    @keyframes w1 { from { transform: translateX(0) } to { transform: translateX(-26px) } }
-    @keyframes w2 { from { transform: translateX(-22px) } to { transform: translateX(6px) } }
+    @keyframes w1 { 0% { transform: translateX(0) } 25% { transform: translateX(-7px) } 50% { transform: translateX(-14px) } 75% { transform: translateX(-20px) } 100% { transform: translateX(-26px) } }
+    @keyframes w2 { 0% { transform: translateX(-22px) } 25% { transform: translateX(-15px) } 50% { transform: translateX(-7px) } 75% { transform: translateX(0px) } 100% { transform: translateX(6px) } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-34px) } to { transform: translateX(10px) } }
     @keyframes bf1 { from { transform: translate(0, 0) } to { transform: translate(14px, -6px) } }

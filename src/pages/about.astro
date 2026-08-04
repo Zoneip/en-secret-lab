@@ -14,6 +14,11 @@ import { wallpaperCss } from '../lib/theme/engine'
 
 const about = await getSiteAbout()
 const siteConfig = getSiteConfig()
+const SCENE_PREFIX: Record<string, string> = { gray: 'gray-tech', yellow: 'yellow-field', purple: 'purple-library', white: 'white-sea' }
+const ocBg = (theme: string, mode: 'light' | 'dark') =>
+  `url(/wallpapers/${SCENE_PREFIX[theme]}-${mode === 'light' ? 'light' : 'dark'}-static.svg)`
+const ocBgAnim = (theme: string, mode: 'light' | 'dark') =>
+  `url(/wallpapers/${SCENE_PREFIX[theme]}-${mode === 'light' ? 'light' : 'dark'}.svg)`
 const siteAuthor = siteConfig.author
 
 // 关于页主题色 = 当前主题色板快照(内联具体色值,不再引用 CSS 变量;
@@ -94,7 +99,7 @@ const themeNames: Record<string, string> = {
             class="snap-section oc-screen"
             data-screen
             data-oc-theme={oc.theme}
-            style={`--oc-index:${i}; --oc-bg-light:${wallpaperCss(getTheme(oc.theme).wallpaper.light)}; --oc-bg-dark:${wallpaperCss(getTheme(oc.theme).wallpaper.dark)}; --oc-overlay-light:${getTheme(oc.theme).palette.light['wallpaper-overlay']}; --oc-overlay-dark:${getTheme(oc.theme).palette.dark['wallpaper-overlay']}`}
+            style={`--oc-index:${i}; --oc-bg-light:${ocBg(oc.theme, 'light')}; --oc-bg-dark:${ocBg(oc.theme, 'dark')}; --oc-bg-light-anim:${ocBgAnim(oc.theme, 'light')}; --oc-bg-dark-anim:${ocBgAnim(oc.theme, 'dark')}; --oc-overlay-light:${getTheme(oc.theme).palette.light['wallpaper-overlay']}; --oc-overlay-dark:${getTheme(oc.theme).palette.dark['wallpaper-overlay']}`}
           >
             <div class="oc-bg" aria-hidden="true"></div>
             <div class="oc-inner">
@@ -289,6 +294,13 @@ const themeNames: Record<string, string> = {
   }
   :root[data-mode='light'] .oc-bg {
     background: var(--oc-bg-light, var(--pg-bg));
+  }
+  /* 当前屏激活:换成动画版壁纸(其余屏静态帧,减少滚动开销) */
+  .oc-screen[data-anim-active] .oc-bg {
+    background: var(--oc-bg-dark-anim, var(--oc-bg-dark, var(--pg-bg)));
+  }
+  :root[data-mode='light'] .oc-screen[data-anim-active] .oc-bg {
+    background: var(--oc-bg-light-anim, var(--oc-bg-light, var(--pg-bg)));
   }
   .oc-bg::after {
     content: '';
@@ -661,3 +673,20 @@ const themeNames: Record<string, string> = {
     }
   })
 </script>
+<script is:inline>
+  // 性能:仅当前屏挂载动画壁纸,其余屏用静态帧(减少合成层与动画开销)
+  const ocScreens = document.querySelectorAll('.oc-screen')
+  const ocIo = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const active = entry.isIntersecting && entry.intersectionRatio > 0.55
+        if (active) entry.target.setAttribute('data-anim-active', '')
+        else entry.target.removeAttribute('data-anim-active')
+      }
+    },
+    { threshold: [0, 0.3, 0.55, 0.8, 1] }
+  )
+  ocScreens.forEach((sc) => ocIo.observe(sc))
+</script>
+  </body>
+</html>

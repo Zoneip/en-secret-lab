@@ -246,7 +246,7 @@ function techDark() {
     @keyframes fl5 { from { transform: translate(318px, 128px) } to { transform: translate(0, 128px) } }
     @keyframes tx1 { from { transform: translateX(0) } to { transform: translateX(-68px) } }
     @keyframes tx2 { from { transform: translateX(0) } to { transform: translateX(-112px) } }
-    @keyframes pulse { 0%, 100% { opacity: .9 } 50% { opacity: .3 } }
+    @keyframes pulse { 0%, 100% { opacity: .9 } 25% { opacity: .6 } 50% { opacity: .3 } 75% { opacity: .65 } }
     @keyframes cursor { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
     @keyframes shoot { from { transform: translate(0, 0); opacity: 1 } to { transform: translate(-30px, 18px); opacity: 0 } }
     @keyframes satfly { from { transform: translate(0, 0) } to { transform: translate(26px, 3px) } }
@@ -339,8 +339,8 @@ function fieldLight() {
   const bt1 = G('bfly1') + R(96, 78, 2, 2, '#E8922E', 'wing') + R(98, 78, 2, 2, '#C86A1E', 'wing') + R(97, 79, 1, 1, '#5A3A1A') + '</g>'
   const bt2 = G('bfly2') + R(140, 66, 2, 2, '#7A6AB8', 'wing') + R(142, 66, 2, 2, '#5A4A96', 'wing') + R(141, 67, 1, 1, '#3A2A5A') + '</g>'
   const css = CSS(`
-    @keyframes w1 { from { transform: translateX(0) } to { transform: translateX(-26px) } }
-    @keyframes w2 { from { transform: translateX(-22px) } to { transform: translateX(6px) } }
+    @keyframes w1 { 0% { transform: translateX(0) } 25% { transform: translateX(-7px) } 50% { transform: translateX(-14px) } 75% { transform: translateX(-20px) } 100% { transform: translateX(-26px) } }
+    @keyframes w2 { 0% { transform: translateX(-22px) } 25% { transform: translateX(-15px) } 50% { transform: translateX(-7px) } 75% { transform: translateX(0px) } 100% { transform: translateX(6px) } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-34px) } to { transform: translateX(10px) } }
     @keyframes bf1 { from { transform: translate(0, 0) } to { transform: translate(14px, -6px) } }
@@ -418,11 +418,11 @@ function fieldDark() {
   const grass = G('w2') + [8, 30, 52, 74, 96, 118, 140, 162, 184, 206, 228, 250, 272, 294].map((x, i) =>
     R(x, 168, 2, 6, i % 2 ? '#2E2410' : '#3A2C14')).join('') + '</g>'
   const css = CSS(`
-    @keyframes w1 { from { transform: translateX(0) } to { transform: translateX(-20px) } }
-    @keyframes w2 { from { transform: translateX(-18px) } to { transform: translateX(4px) } }
-    @keyframes glow { 0%, 100% { opacity: .25 } 50% { opacity: 1 } }
-    @keyframes halo { 0%, 100% { opacity: 0 } 50% { opacity: .5 } }
-    @keyframes warm { 0%, 100% { opacity: .6 } 50% { opacity: 1 } }
+    @keyframes w1 { 0% { transform: translateX(0) } 25% { transform: translateX(-5px) } 50% { transform: translateX(-11px) } 75% { transform: translateX(-16px) } 100% { transform: translateX(-20px) } }
+    @keyframes w2 { 0% { transform: translateX(-18px) } 25% { transform: translateX(-12px) } 50% { transform: translateX(-6px) } 75% { transform: translateX(-1px) } 100% { transform: translateX(4px) } }
+    @keyframes glow { 0%, 100% { opacity: .25 } 25% { opacity: .7 } 50% { opacity: 1 } 75% { opacity: .55 } }
+    @keyframes halo { 0%, 100% { opacity: 0 } 30% { opacity: .3 } 50% { opacity: .5 } 70% { opacity: .3 } }
+    @keyframes warm { 0%, 100% { opacity: .6 } 30% { opacity: .95 } 60% { opacity: 1 } 80% { opacity: .8 } }
     @keyframes scarf { from { transform: rotate(-3deg) translateX(0) } to { transform: rotate(3deg) translateX(2px) } }
     @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
@@ -430,7 +430,7 @@ function fieldDark() {
     @keyframes bg0 { 0% { transform: translate(0, 0); opacity: .2 } 25% { opacity: 1 } 50% { transform: translate(4px, -14px); opacity: .4 } 75% { opacity: 1 } 100% { transform: translate(9px, 2px); opacity: .2 } }
     @keyframes bg1 { 0% { transform: translate(0, 0); opacity: .5 } 30% { transform: translate(-5px, -10px); opacity: 1 } 70% { transform: translate(-2px, 6px); opacity: .3 } 100% { transform: translate(5px, -4px); opacity: .5 } }
     @keyframes bg2 { 0% { transform: translate(0, 0); opacity: 1 } 40% { transform: translate(6px, 8px); opacity: .25 } 80% { transform: translate(-4px, -6px); opacity: .8 } 100% { transform: translate(0, 0); opacity: 1 } }
-    @keyframes bg3 { 0% { transform: translate(0, 0); opacity: .35 } 35% { transform: translate(-7px, -8px); opacity: 1 } 70% { transform: translate(3px, 4px); opacity: .5 } 100% { transform: translate(0, 0); opacity: .35 } }
+    @keyframes bg3 { 0% { transform: translate(0, 0); opacity: .35 } 25% { transform: translate(-4px, -5px); opacity: .8 } 50% { transform: translate(-7px, -8px); opacity: 1 } 75% { transform: translate(-2px, 0px); opacity: .6 } 100% { transform: translate(3px, 4px); opacity: .5 } }
     .w1 { animation: w1 4.8s ease-in-out infinite alternate }
     .w2 { animation: w2 5.6s ease-in-out infinite alternate }
     .glow { animation: glow 1.6s ease-in-out infinite }
@@ -528,8 +528,8 @@ function libraryDay() {
   const clock = `<g class="clockspin"><rect x="46" y="58" width="16" height="16" fill="#4A3A78"/><rect x="48" y="60" width="12" height="12" fill="#F3EDFF"/><rect x="53" y="62" width="2" height="6" fill="#4A3A78"/><rect x="55" y="64" width="3" height="2" fill="#4A3A78"/><rect x="50" y="63" width="1" height="1" fill="#4A3A78"/><rect x="57" y="63" width="1" height="1" fill="#4A3A78"/></g>`
   const grad = `<defs><linearGradient id="wlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A78BFA" stop-opacity="0.5"/><stop offset="1" stop-color="#7C5CE0" stop-opacity="0.28"/></linearGradient></defs>`
   const css = CSS(`
-    @keyframes beam { 0%, 100% { opacity: .5 } 50% { opacity: .95 } }
-    @keyframes sheen { 0%, 100% { opacity: .15 } 50% { opacity: .6 } }
+    @keyframes beam { 0%, 100% { opacity: .5 } 25% { opacity: .75 } 50% { opacity: .95 } 75% { opacity: .72 } }
+    @keyframes sheen { 0%, 100% { opacity: .15 } 25% { opacity: .4 } 50% { opacity: .6 } 75% { opacity: .35 } }
     @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes dust0 { from { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(3px, -8px); opacity: .9 } to { transform: translate(0, 0); opacity: .3 } }
     @keyframes dust1 { from { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(-3px, -6px); opacity: 1 } to { transform: translate(0, 0); opacity: .5 } }
@@ -597,9 +597,9 @@ function libraryNight() {
   const art = R(52, 36, 16, 14, '#241A44') + R(54, 38, 12, 10, '#3E2E66') + R(56, 42, 8, 4, '#4C3A7A') + R(58, 40, 4, 2, '#5A3E8A')
   const grad = `<defs><linearGradient id="nlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5CF6" stop-opacity="0.22"/><stop offset="1" stop-color="#6D3FD6" stop-opacity="0.1"/></linearGradient></defs>`
   const css = CSS(`
-    @keyframes mbeam { 0%, 100% { opacity: .45 } 50% { opacity: .9 } }
-    @keyframes lglow { 0%, 100% { opacity: .45 } 50% { opacity: .95 } }
-    @keyframes lamp { 0%, 100% { opacity: .6 } 50% { opacity: 1 } }
+    @keyframes mbeam { 0%, 100% { opacity: .45 } 25% { opacity: .66 } 50% { opacity: .9 } 75% { opacity: .62 } }
+    @keyframes lglow { 0%, 100% { opacity: .45 } 25% { opacity: .7 } 50% { opacity: .95 } 75% { opacity: .62 } }
+    @keyframes lamp { 0%, 100% { opacity: .6 } 30% { opacity: .9 } 60% { opacity: 1 } 80% { opacity: .75 } }
     @keyframes tail { from { transform: rotate(0deg) } to { transform: rotate(24deg) } }
     @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes tw0 { 0%, 60% { opacity: 1 } 61%, 100% { opacity: .2 } }
@@ -678,7 +678,7 @@ function seaDay() {
     @keyframes s2 { from { transform: translateX(-34px) } to { transform: translateX(8px) } }
     @keyframes f1 { from { transform: translateX(0); opacity: .95 } 50% { opacity: .6 } to { transform: translateX(-40px); opacity: .95 } }
     @keyframes f2 { from { transform: translateX(-34px); opacity: .75 } 50% { opacity: 1 } to { transform: translateX(8px); opacity: .75 } }
-    @keyframes boat { from { transform: rotate(-2.5deg) translateY(0) } 50% { transform: rotate(2.5deg) translateY(1px) } to { transform: rotate(-2.5deg) translateY(0) } }
+    @keyframes boat { 0% { transform: rotate(-2.5deg) translateY(0) } 25% { transform: rotate(-1deg) translateY(1px) } 50% { transform: rotate(2.5deg) translateY(1px) } 75% { transform: rotate(1deg) translateY(0) } 100% { transform: rotate(-2.5deg) translateY(0) } }
     @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-40px) } }
     @keyframes cf2 { from { transform: translateX(-32px) } to { transform: translateX(12px) } }
     @keyframes gl1 { from { transform: translate(0, 0) } to { transform: translate(10px, -5px) } }
@@ -756,15 +756,15 @@ function seaDark() {
     @keyframes f2 { from { transform: translateX(-30px); opacity: .7 } 50% { opacity: .35 } to { transform: translateX(8px); opacity: .7 } }
     @keyframes lantern { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
     @keyframes sweep { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
-    @keyframes mp0 { 0%, 100% { opacity: .3 } 50% { opacity: .8 } }
-    @keyframes mp1 { 0%, 100% { opacity: .7 } 50% { opacity: .25 } }
+    @keyframes mp0 { 0%, 100% { opacity: .3 } 25% { opacity: .55 } 50% { opacity: .8 } 75% { opacity: .5 } }
+    @keyframes mp1 { 0%, 100% { opacity: .7 } 25% { opacity: .45 } 50% { opacity: .25 } 75% { opacity: .5 } }
     @keyframes warm { 0%, 100% { opacity: .5 } 50% { opacity: 1 } }
     @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
     @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
     @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
-    @keyframes jelly0 { 0% { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(0, -14px); opacity: 1 } 100% { transform: translate(0, 0); opacity: .5 } }
-    @keyframes jelly1 { 0% { transform: translate(0, 0); opacity: .7 } 50% { transform: translate(0, -10px); opacity: .35 } 100% { transform: translate(0, 0); opacity: .7 } }
-    @keyframes jelly2 { 0% { transform: translate(0, 0); opacity: .4 } 50% { transform: translate(0, -16px); opacity: 1 } 100% { transform: translate(0, 0); opacity: .4 } }
+    @keyframes jelly0 { 0% { transform: translate(0, 0); opacity: .5 } 25% { transform: translate(0, -7px); opacity: .8 } 50% { transform: translate(0, -14px); opacity: 1 } 75% { transform: translate(0, -7px); opacity: .75 } 100% { transform: translate(0, 0); opacity: .5 } }
+    @keyframes jelly1 { 0% { transform: translate(0, 0); opacity: .7 } 25% { transform: translate(0, -5px); opacity: .5 } 50% { transform: translate(0, -10px); opacity: .35 } 75% { transform: translate(0, -5px); opacity: .55 } 100% { transform: translate(0, 0); opacity: .7 } }
+    @keyframes jelly2 { 0% { transform: translate(0, 0); opacity: .4 } 25% { transform: translate(0, -8px); opacity: .75 } 50% { transform: translate(0, -16px); opacity: 1 } 75% { transform: translate(0, -8px); opacity: .7 } 100% { transform: translate(0, 0); opacity: .4 } }
     @keyframes jglow { 0%, 100% { opacity: .4 } 50% { opacity: .95 } }
     .s1 { animation: s1 10s linear infinite }
     .s2 { animation: s2 12s linear infinite }

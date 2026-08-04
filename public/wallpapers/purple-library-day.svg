@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" shape-rendering="crispEdges">
 <style>
-    @keyframes beam { 0%, 100% { opacity: .5 } 50% { opacity: .95 } }
-    @keyframes sheen { 0%, 100% { opacity: .15 } 50% { opacity: .6 } }
+    @keyframes beam { 0%, 100% { opacity: .5 } 25% { opacity: .75 } 50% { opacity: .95 } 75% { opacity: .72 } }
+    @keyframes sheen { 0%, 100% { opacity: .15 } 25% { opacity: .4 } 50% { opacity: .6 } 75% { opacity: .35 } }
     @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(2px) } }
     @keyframes dust0 { from { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(3px, -8px); opacity: .9 } to { transform: translate(0, 0); opacity: .3 } }
     @keyframes dust1 { from { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(-3px, -6px); opacity: 1 } to { transform: translate(0, 0); opacity: .5 } }
