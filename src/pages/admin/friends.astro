@@ -1,0 +1,12 @@
+---
+/** 友链管理:申请审核 + 展示管理 */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import FriendsPage from '../../components/admin/friends-page'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="友链管理" active="friends">
+  <FriendsPage client:only="react" />
+</AdminLayout>

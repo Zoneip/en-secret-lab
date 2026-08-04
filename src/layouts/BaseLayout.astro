@@ -18,6 +18,7 @@ import '../assets/motion/keyframes/topbar.css'
 import '../assets/motion/keyframes/ambient.css'
 
 import { getSiteConfig, getThemeOverrides } from '../lib/config'
+import { isServer } from '../lib/utils'
 import { buildMeta } from '../lib/seo'
 import { absoluteUrl } from '../lib/utils'
 import { bootScript } from '../lib/theme/prefs'
@@ -82,7 +83,7 @@ const meta = buildMeta({
       })
     </script>
   </head>
-  <body data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
+  <body data-is-server-runtime={String(isServer)} data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
     <SkipLink />
     <WallpaperLayer theme={config.defaultTheme} enabled={config.features.wallpapers} />
     <SiteHeader />

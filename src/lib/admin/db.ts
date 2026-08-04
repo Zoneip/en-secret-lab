@@ -32,6 +32,18 @@ function migrate(d: Database.Database): void {
       expires_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS friend_requests (
+      id         TEXT PRIMARY KEY,
+      name       TEXT NOT NULL,
+      url        TEXT NOT NULL,
+      avatar     TEXT,
+      description TEXT,
+      email      TEXT,
+      status     TEXT NOT NULL DEFAULT 'pending',
+      ip         TEXT,
+      created_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS assets (
       id        TEXT PRIMARY KEY,
       kind      TEXT NOT NULL,             -- wallpaper | font | mascot | blog
