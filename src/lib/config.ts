@@ -51,6 +51,9 @@ export const siteConfigSchema = z.object({
       { label: '关于', url: '/about' },
       { label: '友链', url: '/friends' },
     ]),
+  /** 备案信息 */
+  icp: z.string().default(''),
+  police: z.string().default(''),
   /** 控制台导入的字体 */
   fonts: z
     .array(

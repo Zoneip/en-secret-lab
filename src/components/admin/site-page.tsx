@@ -20,6 +20,8 @@ interface Site {
   defaultTheme: string
   features: Record<string, boolean>
   nav: Array<{ label: string; url: string }>
+  icp: string
+  police: string
   homepage: {
     announcement: string
     showAnnouncement: boolean
@@ -275,6 +277,29 @@ export default function SitePage() {
             <Plus />
             添加导航项
           </Button>
+        </div>
+      </Card>
+
+      <Card className="gap-5 p-5 sm:p-6">
+        <h3 className="text-sm font-semibold">备案信息</h3>
+        <p className="text-xs text-muted-foreground">填写后显示在站点底部,未填写则不显示。</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-1.5">
+            <Label>ICP 备案号</Label>
+            <Input
+              value={site.icp}
+              onChange={(e) => setSite({ ...site, icp: e.target.value })}
+              placeholder="如:京ICP备12345678号"
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label>公安备案号(可选)</Label>
+            <Input
+              value={site.police}
+              onChange={(e) => setSite({ ...site, police: e.target.value })}
+              placeholder="如:京公网安备 11000000000000 号"
+            />
+          </div>
         </div>
       </Card>
 

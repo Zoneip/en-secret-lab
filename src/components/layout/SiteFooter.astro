@@ -1,51 +1,99 @@
 ---
-/** 站尾:爪印分隔 + 版权 + 社交链接 */
+/**
+ * 站尾(低调版):细爪印分隔 + 小字版权 + RSS + 备案信息
+ * 备案信息由控制台"站点设置 → 备案信息"录入
+ */
 import { getSiteConfig } from '../../lib/config'
-import PixelDivider from '../mascot/PixelDivider.astro'
 
 const config = getSiteConfig()
 const year = new Date().getFullYear()
+const hasIcp = Boolean(config.icp.trim())
+const hasPolice = Boolean(config.police.trim())
 ---
 
 <footer class="site-footer">
   <div class="container">
-    <PixelDivider />
-    <div class="footer-row">
-      <p class="copyright">
-        © {year} {config.author} · {config.title}
-      </p>
-      <p class="meta">
-        <a href="/rss.xml" class="underline-tail">RSS</a>
-        <span aria-hidden="true">·</span>
-        <span>用爱和像素搭的</span>
-      </p>
+    <div class="footer-line" aria-hidden="true">
+      <span class="line"></span>
+      <svg class="paw" viewBox="0 0 32 16" width="40" height="20" aria-hidden="true">
+        <g fill="currentColor" opacity="0.35">
+          <circle cx="4" cy="6" r="2.2" />
+          <circle cx="11" cy="4" r="2.2" />
+          <circle cx="18" cy="4" r="2.2" />
+          <circle cx="25" cy="6" r="2.2" />
+          <path d="M8 11c2-1.6 4.5-1.8 6.5-.8l3 1.4c1 .5 1 2 .1 2.8l-1 1c-.7.7-1.8.9-2.7.4L8 14c-1.8-.9-2-3.3 0-3z" transform="translate(1 0) scale(0.9)" />
+        </g>
+      </svg>
+      <span class="line"></span>
     </div>
+    <p class="copyright">
+      © {year} {config.author} · {config.title}
+    </p>
+    <p class="meta">
+      <a href="/rss.xml" class="meta-link">RSS</a>
+      {hasIcp && (
+        <>
+          <span aria-hidden="true">·</span>
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="meta-link">
+            {config.icp}
+          </a>
+        </>
+      )}
+      {hasPolice && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span class="meta-plain">{config.police}</span>
+        </>
+      )}
+      <span aria-hidden="true">·</span>
+      <span class="meta-plain">用爱和像素搭的</span>
+    </p>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 0 40px;
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    padding: 28px 0 36px;
   }
-  .footer-row {
+  .footer-line {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    font-size: 0.85rem;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .paw {
+    color: var(--fg-subtle);
+  }
+  .copyright {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
     color: var(--fg-subtle);
   }
   .meta {
     display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 8px;
-    align-items: center;
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: var(--fg-subtle);
+    opacity: 0.9;
   }
-  .copyright {
-    font-family: var(--font-display);
-    letter-spacing: 0.03em;
-    color: var(--fg-muted);
+  .meta-link {
+    color: var(--fg-subtle);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .meta-link:hover {
+    color: var(--primary);
+  }
+  .meta-plain {
+    color: var(--fg-subtle);
   }
 </style>
