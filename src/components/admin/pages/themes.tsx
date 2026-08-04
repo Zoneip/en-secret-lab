@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ImagePlus, RotateCcw, Save } from 'lucide-react'
+import { FolderOpen, ImagePlus, RotateCcw, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { api } from '../lib/api'
 import { Button } from '../ui/button'
@@ -10,6 +10,16 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Skeleton } from '../ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+
+interface Asset {
+  id: string
+  kind: string
+  themeId: string | null
+  fileName: string
+  path: string
+  size: number
+}
 
 interface Preset {
   id: string
@@ -49,6 +59,8 @@ export default function ThemeEditorPage() {
   const [edits, setEdits] = useState<Record<string, string>>({})
   const [wallpaper, setWallpaper] = useState<{ light: string; dark: string }>({ light: '', dark: '' })
   const [saving, setSaving] = useState(false)
+  const [pickerMode, setPickerMode] = useState<'light' | 'dark' | null>(null)
+  const [assets, setAssets] = useState<Asset[]>([])
   const [isDark, setIsDark] = useState(false)
 
   // 跟随控制台暗色模式:预览使用对应色板
@@ -66,6 +78,7 @@ export default function ThemeEditorPage() {
       .then((d) => {
         setPresets(d.presets)
         setActive(d.presets[0].id)
+        setAssets((d.assets ?? []).filter((a: Asset) => a.kind === 'wallpaper'))
       })
       .catch((e) => toast.error(e.message))
   }, [])
@@ -318,16 +331,78 @@ export default function ThemeEditorPage() {
                       value={wallpaper[mode]}
                       onChange={(e) => setWallpaper((w) => ({ ...w, [mode]: e.target.value }))}
                       className="font-mono text-xs"
-                      placeholder="渐变 CSS 或留空"
+                      placeholder="渐变 CSS 或 url:/uploads/…"
                     />
-                    <Button type="button" variant="outline" size="icon" title="上传图片" onClick={() => uploadWallpaper(mode)}>
+                    <Button type="button" variant="outline" size="icon" title="从资产库选择" onClick={() => setPickerMode(mode)}>
+                      <FolderOpen />
+                    </Button>
+                    <Button type="button" variant="outline" size="icon" title="上传新壁纸" onClick={() => uploadWallpaper(mode)}>
                       <ImagePlus />
                     </Button>
                   </div>
+                  {wallpaper[mode].startsWith('url:') && (
+                    <div className="mt-1 h-16 overflow-hidden rounded-lg border bg-muted/40">
+                      <img
+                        src={wallpaper[mode].slice(4)}
+                        alt=""
+                        className="size-full object-cover"
+                        onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              建议流程:先在「资产」页上传壁纸 → 回到这里用文件夹按钮从资产库选中,更稳定。
+            </p>
           </Card>
+
+          {/* 壁纸资产选择器 */}
+          <Dialog open={pickerMode !== null} onOpenChange={(o) => !o && setPickerMode(null)}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>从资产库选择壁纸</DialogTitle>
+                <DialogDescription>选择一张已上传的壁纸(pickerMode ? 浅色 : 深色)</DialogDescription>
+              </DialogHeader>
+              {assets.length === 0 ? (
+                <div className="py-10 text-center text-sm text-muted-foreground">
+                  资产库还没有壁纸,先到「资产」页上传,或点上传按钮直接上传
+                </div>
+              ) : (
+                <div className="grid max-h-[380px] grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3">
+                  {assets.map((a) => (
+                    <button
+                      key={a.id}
+                      type="button"
+                      onClick={() => {
+                        if (pickerMode) setWallpaper((w) => ({ ...w, [pickerMode]: `url:${a.path}` }))
+                        setPickerMode(null)
+                      }}
+                      className="group overflow-hidden rounded-xl border text-left transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
+                    >
+                      <div className="h-20 overflow-hidden bg-muted/40">
+                        <img
+                          src={a.path}
+                          alt={a.fileName}
+                          className="size-full object-cover transition-transform group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="p-2">
+                        <p className="truncate text-xs font-medium" title={a.fileName}>
+                          {a.fileName}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {a.themeId ?? '通用'} · {Math.round(a.size / 1024)}KB
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
