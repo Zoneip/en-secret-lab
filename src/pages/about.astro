@@ -1,136 +1,442 @@
 ---
-/** 关于页:自我介绍 + 吉祥物 + 外部链接 */
+/**
+ * 关于页:全屏滑动结构
+ * 屏1 = hero(自我介绍) 屏2-5 = 四个 OC(DCH/FWB/Coulyer/Zoneip)
+ * 右侧圆点导航 + 每屏滚动入场动画
+ */
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
 import PixelDivider from '../components/mascot/PixelDivider.astro'
-import EmptyState from '../components/ui/EmptyState.astro'
 
 const [about] = await getCollection('about')
+const ocs = (await getCollection('ocs')).sort(
+  (a, b) =>
+    ['gray', 'yellow', 'purple', 'white'].indexOf(a.data.theme) -
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.data.theme)
+)
+
+const themeNames: Record<string, string> = {
+  gray: '灰糖',
+  yellow: '蜜糖',
+  purple: '葡萄',
+  white: '棉花糖',
+}
 ---
 
 <BaseLayout title="关于" description="关于这个站点和它的主人">
-  <div class="page-enter container">
-    {!about && <EmptyState title="关于页还没写" description="主人还没想好怎么自我介绍" />}
-    {about && (
-      <>
-        <header class="page-head">
-          <h1>关于</h1>
-        </header>
-
-        <div class="card profile">
-          <div class="mascots" aria-hidden="true">
-            {about.data.avatar ? (
-              <img src={about.data.avatar} alt={about.data.nickname} class="avatar-img" />
-            ) : (
-              <>
-                <Mascot role="furry" pixel={9} />
-                <Mascot role="boy" pixel={7} />
-              </>
-            )}
-          </div>
-          <div class="profile-text">
-            <p class="nickname">{about.data.nickname}</p>
-            <p class="tagline">{about.data.tagline}</p>
-            <ul class="intro">
-              {about.data.intro.map((line) => (
-                <li>{line}</li>
-              ))}
-            </ul>
-            {about.data.links.length > 0 && (
-              <div class="links">
-                {about.data.links.map((link) => (
-                  <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
-                    {link.label}
-                  </a>
-                ))}
+  <div class="snap-wrap">
+    <div class="snap-scroller" data-snap-scroller>
+      <!-- 屏1:hero -->
+      <section class="snap-section hero-screen" data-screen>
+        <div class="hero-inner">
+          {about && (
+            <>
+              <div class="hero-avatar-wrap">
+                {about.data.avatar ? (
+                  <img src={about.data.avatar} alt={about.data.nickname} class="hero-avatar" />
+                ) : (
+                  <div class="hero-mascots" aria-hidden="true">
+                    <Mascot role="furry" pixel={7} />
+                    <Mascot role="boy" pixel={6} />
+                  </div>
+                )}
               </div>
-            )}
+              <p class="hero-nickname">{about.data.nickname}</p>
+              <p class="hero-tagline">{about.data.tagline}</p>
+              <ul class="hero-intro">
+                {about.data.intro.map((line) => (
+                  <li>{line}</li>
+                ))}
+              </ul>
+              {about.data.links.length > 0 && (
+                <div class="hero-links">
+                  {about.data.links.map((link) => (
+                    <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          <div class="hero-scroll-hint" aria-hidden="true">
+            <span>下滑看看四位伙伴</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14m0 0 5-5m-5 5-5-5" /></svg>
           </div>
         </div>
+      </section>
 
-        <div class="card story">
-          <PixelDivider />
-          <slot />
-        </div>
-      </>
-    )}
+      <!-- 屏2-5:四个 OC -->
+      {
+        ocs.map((oc, i) => (
+          <section
+            class="snap-section oc-screen"
+            data-screen
+            data-oc-theme={oc.data.theme}
+            style={`--oc-index:${i}`}
+          >
+            <div class="oc-bg" aria-hidden="true"></div>
+            <div class="oc-inner">
+              <div class="oc-art" aria-hidden="true">
+                {oc.data.art ? (
+                  <img src={oc.data.art} alt="" class="oc-art-img" />
+                ) : (
+                  <>
+                    <Mascot role="furry" theme={oc.data.theme} pixel={9} />
+                    <Mascot role="boy" theme={oc.data.theme} pixel={7} />
+                  </>
+                )}
+              </div>
+              <div class="oc-text">
+                <p class="oc-theme-tag">主题 · {themeNames[oc.data.theme]}</p>
+                <h2 class="oc-name">{oc.data.name}</h2>
+                <p class="oc-subtitle">{oc.data.subtitle}</p>
+                <p class="oc-desc">{oc.data.description}</p>
+                <div class="oc-traits">
+                  {oc.data.traits.map((t) => (
+                    <span class="oc-trait">{t}</span>
+                  ))}
+                </div>
+                {oc.data.quote && <p class="oc-quote">「{oc.data.quote}」</p>}
+              </div>
+            </div>
+            <PixelDivider theme={oc.data.theme} />
+          </section>
+        ))
+      }
+    </div>
+
+    <!-- 圆点导航 -->
+    <nav class="snap-dots" aria-label="页面导航">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <button class="snap-dot" data-dot={i} aria-label={`跳转到第 ${i + 1} 屏`}></button>
+      ))}
+    </nav>
   </div>
 </BaseLayout>
 
 <style>
-  .page-head {
-    padding: 40px 0 24px;
+  .snap-wrap {
+    position: fixed;
+    inset: 0;
+    top: var(--header-h);
+    bottom: 0;
+  }
+  .snap-scroller {
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  .snap-section {
+    min-height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 48px 24px;
+  }
+
+  /* ===== 屏1 hero ===== */
+  .hero-screen {
     text-align: center;
   }
-  .page-head h1 {
-    font-size: 2rem;
-  }
-  .profile {
+  .hero-inner {
+    max-width: 640px;
     display: flex;
-    gap: 32px;
-    padding: 36px;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s var(--ease-soft), transform 0.7s var(--ease-soft);
+  }
+  .snap-section.active .hero-inner {
+    opacity: 1;
+    transform: none;
+  }
+  .hero-avatar-wrap {
+    display: flex;
     justify-content: center;
   }
-  .mascots {
-    display: flex;
-    gap: 2px;
-  }
-  .avatar-img {
-    width: 160px;
-    height: 160px;
-    border-radius: 32px;
+  .hero-avatar {
+    width: 132px;
+    height: 132px;
+    border-radius: 36px;
     object-fit: cover;
     border: 3px solid var(--surface);
     box-shadow: var(--shadow);
   }
-  .profile-text {
-    min-width: 260px;
-    max-width: 480px;
+  .hero-mascots {
+    display: flex;
+    gap: 2px;
+    padding: 10px;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
   }
-  .nickname {
+  .hero-nickname {
     font-family: var(--font-display);
-    font-size: 1.7rem;
+    font-size: 2.6rem;
     color: var(--primary);
   }
-  .tagline {
+  .hero-tagline {
     color: var(--fg-muted);
-    margin: 6px 0 14px;
   }
-  .intro {
+  .hero-intro {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     color: var(--fg);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
-  .intro li {
-    position: relative;
-    padding-left: 18px;
+  .hero-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
   }
-  .intro li::before {
+  .hero-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--fg-subtle);
+    font-size: 0.8rem;
+    margin-top: 24px;
+    animation: hint-bob 2s ease-in-out infinite;
+  }
+  .hero-scroll-hint svg {
+    width: 20px;
+    height: 20px;
+  }
+  @keyframes hint-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(6px);
+    }
+  }
+
+  /* ===== OC 屏 ===== */
+  .oc-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    transition: background 0.2s;
+    z-index: -1;
+  }
+  :root[data-theme='gray'] .oc-screen[data-oc-theme='gray'] .oc-bg,
+  :root[data-theme='yellow'] .oc-screen[data-oc-theme='yellow'] .oc-bg,
+  :root[data-theme='purple'] .oc-screen[data-oc-theme='purple'] .oc-bg,
+  :root[data-theme='white'] .oc-screen[data-oc-theme='white'] .oc-bg {
+    background: var(--wallpaper-light-src);
+  }
+  .oc-bg::after {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0.62em;
-    width: 9px;
-    height: 9px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    background: var(--accent);
-    opacity: 0.8;
+    inset: 0;
+    background: var(--wallpaper-overlay);
   }
-  .links {
+  .oc-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 56px;
+    max-width: 860px;
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s var(--ease-soft) 0.1s, transform 0.7s var(--ease-soft) 0.1s;
+  }
+  .snap-section.active .oc-inner {
+    opacity: 1;
+    transform: none;
+  }
+  .oc-art {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 18px;
+    border-radius: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    animation: bob 4s ease-in-out infinite;
+  }
+  .oc-art-img {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .oc-text {
+    min-width: 0;
+  }
+  .oc-theme-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 2px 12px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+  .oc-name {
+    font-size: 3rem;
+    color: var(--primary);
+    line-height: 1.1;
+  }
+  .oc-subtitle {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--fg);
+    margin: 6px 0 14px;
+  }
+  .oc-desc {
+    color: var(--fg-muted);
+    max-width: 46ch;
+    line-height: 1.9;
+  }
+  .oc-traits {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 18px;
   }
-  .story {
-    margin-top: 24px;
-    padding: 28px 32px 36px;
+  .oc-trait {
+    font-size: 0.82rem;
+    padding: 3px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-strong);
+    color: var(--fg-muted);
+  }
+  .oc-quote {
+    margin-top: 18px;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--primary);
+  }
+
+  /* ===== 圆点导航 ===== */
+  .snap-dots {
+    position: fixed;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 20;
+  }
+  .snap-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: var(--border-strong);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    opacity: 0.6;
+  }
+  .snap-dot:hover {
+    opacity: 1;
+  }
+  .snap-dot.active {
+    background: var(--primary);
+    opacity: 1;
+    transform: scale(1.45);
+  }
+
+  .snap-section > :global(.pixel-divider) {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 760px) {
+    .snap-wrap {
+      top: var(--header-h);
+    }
+    .oc-inner {
+      flex-direction: column;
+      gap: 28px;
+      text-align: center;
+    }
+    .oc-art {
+      transform: scale(0.85);
+    }
+    .oc-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .oc-name {
+      font-size: 2.4rem;
+    }
+    .oc-desc {
+      max-width: 36ch;
+    }
+    .oc-traits {
+      justify-content: center;
+    }
+    .snap-dots {
+      right: 10px;
+    }
+    .hero-nickname {
+      font-size: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .snap-scroller {
+      scroll-behavior: auto;
+    }
   }
 </style>
+
+<script>
+  const scroller = document.querySelector<HTMLElement>('[data-snap-scroller]')!
+  const screens = [...document.querySelectorAll<HTMLElement>('[data-screen]')]
+  const dots = [...document.querySelectorAll<HTMLButtonElement>('[data-dot]')]
+
+  // 圆点点击跳转
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      screens[i]?.scrollIntoView({ behavior: 'smooth' })
+    })
+  })
+
+  // 滚动高亮当前屏 + 触发入场动画
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const idx = screens.indexOf(entry.target as HTMLElement)
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active')
+          dots.forEach((d, i) => d.classList.toggle('active', i === idx))
+        } else {
+          entry.target.classList.remove('active')
+        }
+      }
+    },
+    { root: scroller, threshold: 0.5 }
+  )
+  screens.forEach((s) => observer.observe(s))
+</script>

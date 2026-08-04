@@ -43,4 +43,17 @@ const about = defineCollection({
   }),
 })
 
-export const collections = { posts, friends, about }
+const ocs = defineCollection({
+  type: 'data',
+  schema: z.object({
+    name: z.string(),
+    theme: z.enum(['gray', 'yellow', 'purple', 'white']),
+    subtitle: z.string(),
+    description: z.string(),
+    traits: z.array(z.string()).default([]),
+    quote: z.string().optional(),
+    art: z.string().optional(),
+  }),
+})
+
+export const collections = { posts, friends, about, ocs }
