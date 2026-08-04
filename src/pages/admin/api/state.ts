@@ -19,6 +19,13 @@ export const GET: APIRoute = async ({ cookies }) => {
     getCollection('posts').catch(() => []),
     getCollection('friends').catch(() => []),
   ])
+  const allTags = new Set<string>()
+  const allCats = new Set<string>()
+  for (const p of posts) {
+    for (const t of p.data.tags) allTags.add(t)
+    allCats.add(p.data.category)
+  }
+  const assets = listAssets()
   return new Response(
     JSON.stringify({
       authed,
@@ -35,8 +42,18 @@ export const GET: APIRoute = async ({ cookies }) => {
       stats: {
         posts: posts.length,
         published: posts.filter((p) => !p.data.draft).length,
+        drafts: posts.filter((p) => p.data.draft).length,
+        tags: allTags.size,
+        categories: allCats.size,
         friends: friends.length,
         themes: themes.length,
+        assets: assets.length,
+      },
+      system: {
+        mode: 'server',
+        node: process.version,
+        uploads: assets.length,
+        uploadBytes: assets.reduce((n, a) => n + a.size, 0),
       },
       presets: themes.map((t) => ({
         id: t.id,
@@ -47,7 +64,7 @@ export const GET: APIRoute = async ({ cookies }) => {
         mascot: t.mascot,
         override: siteConfig.themeOverrides[t.id] ?? null,
       })),
-      assets: authed ? listAssets() : [],
+      assets: authed ? assets : [],
     }),
     { headers: { 'Content-Type': 'application/json' } }
   )

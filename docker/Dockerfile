@@ -23,6 +23,8 @@ RUN npm install --omit=dev --no-audit --no-fund
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
+# 内容目录:控制台写的文章落于此(生产用卷挂载覆盖)
+COPY --from=builder /app/src/content ./src/content
 
 RUN mkdir -p /app/data
 

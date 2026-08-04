@@ -1,0 +1,14 @@
+---
+/** 文章编辑器入口:编辑已有文章 */
+import { isServer } from '../../../lib/utils'
+import PostEditor from '../../../components/admin/PostEditor.astro'
+
+export const prerender = !isServer
+
+/** 静态构建占位:不生成任何路径(admin 为 server 专属) */
+export function getStaticPaths() {
+  return []
+}
+---
+
+<PostEditor />

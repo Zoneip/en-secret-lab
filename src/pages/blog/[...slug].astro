@@ -1,52 +1,72 @@
 ---
 /**
  * 文章详情页:标题区 + 排版正文 + 目录 + 上下篇
+ * 静态版走 astro:content 渲染,动态版实时读文件 + markdown-it
  */
+import type { GetStaticPaths, MarkdownHeading } from 'astro'
+// @ts-expect-error import 路径在运行时存在
+import type { AstroComponentFactory } from "astro/dist/runtime/server/index.js"
 import { getCollection, render } from 'astro:content'
-import type { GetStaticPaths } from 'astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { formatDate, readingTime } from '../../lib/utils'
-import { published } from '../../lib/content/posts'
+import { isServer } from '../../lib/utils'
+import { getAllPosts, getPostContent } from '../../lib/content/data'
+import { renderBody } from '../../lib/content/render'
 import PixelDivider from '../../components/mascot/PixelDivider.astro'
 import TableOfContents from '../../components/blog/TableOfContents.astro'
 import Chip from '../../components/ui/Chip.astro'
 
 export const getStaticPaths = (async () => {
+  if (isServer) return []
+  const { getCollection } = await import('astro:content')
   const posts = await getCollection('posts')
   return posts
     .filter((p) => !p.data.draft)
     .map((post) => ({ params: { slug: post.slug }, props: { post } }))
 }) satisfies GetStaticPaths
 
-const { post } = Astro.props
-const { Content, headings } = await render(post)
-const words = post.body ?? ''
-const related = published(await getCollection('posts'))
-const idx = related.findIndex((p) => p.slug === post.slug)
-const prev = idx > 0 ? related[idx - 1] : undefined
-const next = idx >= 0 && idx < related.length - 1 ? related[idx + 1] : undefined
+const slug = Astro.params.slug!
+const content = await getPostContent(slug)
+
+if (!content) {
+  return Astro.redirect('/404', 302)
+}
+
+const post = content.post
+const all = await getAllPosts()
+const idx = all.findIndex((p) => p.slug === slug)
+const prev = idx > 0 ? all[idx - 1] : undefined
+const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : undefined
+
+// 正文渲染:静态版用 astro:content,动态版用 markdown-it(实时文件)
+let contentHtml = ''
+let contentHeadings: MarkdownHeading[]
+let ContentComponent: AstroComponentFactory | null = null
+if (isServer) {
+  const r = renderBody(content.body)
+  contentHtml = r.html
+  contentHeadings = r.headings
+} else {
+  const entry = (await getCollection('posts')).find((p) => p.slug === slug)!
+  const rendered = await render(entry)
+  ContentComponent = rendered.Content
+  contentHeadings = rendered.headings
+}
+const words = content.body
 ---
 
-<BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  type="article"
-  image={post.data.cover ? `/assets/blog/${post.slug}/${post.data.cover}` : undefined}
->
+<BaseLayout title={post.title} description={post.description} type="article">
   <article class="post page-enter container">
     <header class="post-head">
       <div class="post-meta">
-        <Chip href={`/categories/${encodeURIComponent(post.data.category)}`}>{post.data.category}</Chip>
-        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-        {post.data.updatedDate && (
-          <span class="updated">更新于 {formatDate(post.data.updatedDate)}</span>
-        )}
+        <Chip href={`/categories/${encodeURIComponent(post.category)}`}>{post.category}</Chip>
+        <time datetime={post.pubDate.toISOString()}>{formatDate(post.pubDate)}</time>
         <span class="reading">{readingTime(words)} 分钟阅读</span>
       </div>
-      <h1>{post.data.title}</h1>
-      {post.data.description && <p class="subtitle">{post.data.description}</p>}
+      <h1>{post.title}</h1>
+      {post.description && <p class="subtitle">{post.description}</p>}
       <div class="tags">
-        {post.data.tags.map((tag) => (
+        {post.tags.map((tag) => (
           <a class="chip" href={`/tags/${encodeURIComponent(tag)}`}>
             #{tag}
           </a>
@@ -58,32 +78,34 @@ const next = idx >= 0 && idx < related.length - 1 ? related[idx + 1] : undefined
 
     <div class="post-body">
       <div class="toc-wrap">
-        <TableOfContents headings={headings} />
+        <TableOfContents headings={contentHeadings ?? []} />
       </div>
       <div class="prose">
-        <Content />
+        {ContentComponent ? <ContentComponent /> : <Fragment set:html={contentHtml} />}
       </div>
     </div>
   </article>
 
-  <nav class="adjacent" aria-label="上下篇文章">
-    {prev ? (
-      <a class="adj card" href={`/blog/${prev.slug}`}>
-        <span class="adj-label">上一篇</span>
-        <span class="adj-title">{prev.title}</span>
-      </a>
-    ) : (
-      <span />
-    )}
-    {next ? (
-      <a class="adj card adj-next" href={`/blog/${next.slug}`}>
-        <span class="adj-label">下一篇</span>
-        <span class="adj-title">{next.title}</span>
-      </a>
-    ) : (
-      <span />
-    )}
-  </nav>
+  <div class="container">
+    <nav class="adjacent" aria-label="上下篇文章">
+      {prev ? (
+        <a class="adj card" href={`/blog/${prev.slug}`}>
+          <span class="adj-label">上一篇</span>
+          <span class="adj-title">{prev.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <a class="adj card adj-next" href={`/blog/${next.slug}`}>
+          <span class="adj-label">下一篇</span>
+          <span class="adj-title">{next.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  </div>
 </BaseLayout>
 
 <style>

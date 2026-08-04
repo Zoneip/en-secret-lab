@@ -2,9 +2,9 @@
 /**
  * 首页:hero 问候 + 最新文章卡片流 + 分类速览
  */
-import { getCollection } from 'astro:content'
+import { getAllPosts } from '../lib/content/data'
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { published, featured } from '../lib/content/posts'
+import { featured } from '../lib/content/posts'
 import { aggregateByKey } from '../lib/content/taxonomy'
 import { getSiteConfig } from '../lib/config'
 import { formatDate } from '../lib/utils'
@@ -13,8 +13,7 @@ import PostCard from '../components/blog/PostCard.astro'
 import TagCloud from '../components/blog/TagCloud.astro'
 
 const config = getSiteConfig()
-const posts = await getCollection('posts')
-const visible = published(posts)
+const visible = await getAllPosts()
 const featuredPosts = featured(visible)
 const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
 const categories = aggregateByKey(visible, 'category')

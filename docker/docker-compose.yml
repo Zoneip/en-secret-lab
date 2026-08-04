@@ -12,8 +12,11 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       SESSION_SECRET: ${SESSION_SECRET}
       DATABASE_PATH: /app/data/enlab.db
+      CONTENT_DIR: /app/content
     volumes:
       - enlab-data:/app/data
+      - enlab-content:/app/content
 
 volumes:
   enlab-data:
+  enlab-content:

@@ -1,10 +1,12 @@
 ---
 /**
- * 全站搜索:Pagefind 静态索引
- * 构建后需运行 pagefind --site dist(postbuild 已配置)
+ * 全站搜索
+ * 静态版:Pagefind(构建时索引)
+ * 动态版:实时索引 + 前端过滤(控制台新文章立即可搜)
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getSiteConfig } from '../lib/config'
+import { isServer } from '../lib/utils'
 
 const config = getSiteConfig()
 ---
@@ -16,19 +18,80 @@ const config = getSiteConfig()
       <p>在 {config.title} 里找点什么</p>
     </header>
 
-    <div class="search-wrap card">
-      <div id="search"></div>
-    </div>
+    {isServer ? (
+      <div class="search-wrap card">
+        <input type="search" class="live-input" data-live-input placeholder="输入关键词搜索…" />
+        <div class="live-results" data-live-results></div>
+      </div>
+    ) : (
+      <div class="search-wrap card">
+        <div id="search"></div>
+      </div>
+    )}
   </div>
 </BaseLayout>
+
+<script is:inline>
+  // 动态版实时搜索
+  const liveInput = document.querySelector('[data-live-input]')
+  if (liveInput) {
+    const results = document.querySelector('[data-live-results]')
+    let index = null
+
+    const loadIndex = () =>
+      fetch('/api/search-index.json')
+        .then((r) => r.json())
+        .then((d) => {
+          index = d
+        })
+
+    const render = (list) => {
+      if (list.length === 0) {
+        results.innerHTML = '<p class="empty">没有找到相关内容</p>'
+        return
+      }
+      results.innerHTML = list
+        .map(
+          (p) => `
+          <a class="result card" href="/blog/${p.slug}">
+            <span class="result-title">${p.title}</span>
+            <span class="result-meta">${p.tags.map((t) => `#${t}`).join(' ')}</span>
+          </a>`
+        )
+        .join('')
+    }
+
+    liveInput.addEventListener('input', async () => {
+      const q = liveInput.value.trim().toLowerCase()
+      if (!q) {
+        results.innerHTML = ''
+        return
+      }
+      index ??= await loadIndex()
+      const hits = index
+        .filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            (p.description ?? '').toLowerCase().includes(q) ||
+            p.body.toLowerCase().includes(q) ||
+            p.tags.some((t) => t.toLowerCase().includes(q))
+        )
+        .slice(0, 12)
+      render(hits)
+    })
+    loadIndex()
+  }
+</script>
 
 <script>
   import { PagefindUI } from '@pagefind/default-ui'
   import '@pagefind/default-ui/css/ui.css'
 
-  const container = document.getElementById('search')
-  if (container) {
-    new PagefindUI({ element: '#search', showSubResults: true, showImages: false })
+  if (!document.querySelector('[data-live-input]')) {
+    const container = document.getElementById('search')
+    if (container) {
+      new PagefindUI({ element: '#search', showSubResults: true, showImages: false })
+    }
   }
 </script>
 
@@ -48,14 +111,55 @@ const config = getSiteConfig()
   .search-wrap {
     padding: 28px;
   }
+  .live-input {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--fg);
+  }
+  .live-input:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -1px;
+  }
+  .live-results {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    color: var(--fg);
+  }
+  .result:hover {
+    transform: translateY(-2px);
+  }
+  .result-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--primary);
+  }
+  .result-meta {
+    font-size: 0.75rem;
+    color: var(--fg-subtle);
+  }
+  .empty {
+    color: var(--fg-subtle);
+    text-align: center;
+    padding: 24px 0;
+  }
   .search-wrap :global(.pagefind-ui__search-input) {
     border-radius: var(--radius-pill) !important;
     border: 1.5px solid var(--border) !important;
     background: var(--surface) !important;
     font-family: var(--font-body);
-  }
-  .search-wrap :global(.pagefind-ui__result-link) {
-    color: var(--primary);
-    font-family: var(--font-display);
   }
 </style>

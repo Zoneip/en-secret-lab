@@ -1,6 +1,7 @@
 ---
 /**
- * 控制台仪表盘:站点概览
+ * 控制台仪表盘:统计卡片 + 主题速览 + 最近文章 + 系统状态
+ * 布局借鉴 fuwari 的卡片网格风格:留白、圆角、信息分层
  */
 import { isServer } from '../../lib/utils'
 import AdminLayout from '../../layouts/AdminLayout.astro'
@@ -9,109 +10,376 @@ export const prerender = !isServer
 ---
 
 <AdminLayout title="仪表盘" active="dashboard">
+  <div class="welcome card">
+    <div class="welcome-text">
+      <h2 data-greet>你好,站长</h2>
+      <p data-today>–</p>
+    </div>
+    <a class="btn btn-primary" href="/admin/posts/new">写新文章</a>
+  </div>
+
   <div class="stat-grid">
     <div class="stat card">
-      <p class="stat-num" data-stat-posts>–</p>
-      <p class="stat-label">全部文章</p>
+      <span class="stat-icon" data-icon="📄"></span>
+      <div>
+        <p class="stat-num" data-stat-posts>–</p>
+        <p class="stat-label">全部文章</p>
+      </div>
     </div>
     <div class="stat card">
-      <p class="stat-num" data-stat-published>–</p>
-      <p class="stat-label">已发布</p>
+      <span class="stat-icon" data-icon="✅"></span>
+      <div>
+        <p class="stat-num" data-stat-published>–</p>
+        <p class="stat-label">已发布</p>
+      </div>
     </div>
     <div class="stat card">
-      <p class="stat-num" data-stat-friends>–</p>
-      <p class="stat-label">友链</p>
+      <span class="stat-icon" data-icon="📝"></span>
+      <div>
+        <p class="stat-num" data-stat-drafts>–</p>
+        <p class="stat-label">草稿</p>
+      </div>
     </div>
     <div class="stat card">
-      <p class="stat-num" data-stat-themes>4</p>
-      <p class="stat-label">配色主题</p>
+      <span class="stat-icon" data-icon="🏷️"></span>
+      <div>
+        <p class="stat-num" data-stat-tags>–</p>
+        <p class="stat-label">标签</p>
+      </div>
+    </div>
+    <div class="stat card">
+      <span class="stat-icon" data-icon="🗂️"></span>
+      <div>
+        <p class="stat-num" data-stat-cats>–</p>
+        <p class="stat-label">分类</p>
+      </div>
+    </div>
+    <div class="stat card">
+      <span class="stat-icon" data-icon="🖼️"></span>
+      <div>
+        <p class="stat-num" data-stat-assets>–</p>
+        <p class="stat-label">资产</p>
+      </div>
     </div>
   </div>
 
-  <div class="card site-overview">
-    <h2>站点信息</h2>
-    <dl>
-      <dt>标题</dt>
-      <dd data-site-title>–</dd>
-      <dt>描述</dt>
-      <dd data-site-desc>–</dd>
-      <dt>默认主题</dt>
-      <dd data-site-theme>–</dd>
-    </dl>
+  <div class="main-grid">
+    <section class="card themes-card">
+      <div class="card-head">
+        <h2>主题速览</h2>
+        <a class="link" href="/admin/themes">编辑全部</a>
+      </div>
+      <div class="theme-preview-grid" data-theme-previews></div>
+    </section>
+
+    <section class="card recent-card">
+      <div class="card-head">
+        <h2>最近文章</h2>
+        <a class="link" href="/admin/posts">全部文章</a>
+      </div>
+      <div class="recent-list" data-recent-list></div>
+    </section>
   </div>
 
-  <div class="card quick">
-    <h2>快捷操作</h2>
-    <div class="quick-links">
-      <a class="btn" href="/admin/themes">编辑主题</a>
-      <a class="btn" href="/admin/site">站点设置</a>
-      <a class="btn" href="/admin/assets">资产库</a>
-      <a class="btn" href="/" target="_blank">查看前台</a>
-    </div>
+  <div class="main-grid">
+    <section class="card system-card">
+      <div class="card-head">
+        <h2>系统状态</h2>
+      </div>
+      <dl class="system-list">
+        <dt>运行模式</dt>
+        <dd data-sys-mode>–</dd>
+        <dt>Node 版本</dt>
+        <dd data-sys-node>–</dd>
+        <dt>上传资产</dt>
+        <dd data-sys-uploads>–</dd>
+        <dt>默认主题</dt>
+        <dd data-sys-theme>–</dd>
+      </dl>
+    </section>
+
+    <section class="card quick-card">
+      <div class="card-head">
+        <h2>快捷操作</h2>
+      </div>
+      <div class="quick-links">
+        <a class="btn" href="/admin/posts/new">写文章</a>
+        <a class="btn" href="/admin/themes">主题</a>
+        <a class="btn" href="/admin/site">设置</a>
+        <a class="btn" href="/admin/assets">上传</a>
+        <a class="btn" href="/" target="_blank">查看前台</a>
+      </div>
+    </section>
   </div>
 </AdminLayout>
 
 <script>
+  interface PostLite {
+    slug: string
+    title: string
+    category: string
+    tags: string[]
+    pubDate: string
+    draft: boolean
+  }
+  interface PresetLite {
+    id: string
+    name: string
+    description: string
+    palette: { light: Record<string, string>; dark: Record<string, string> }
+  }
+
   const state = await fetch('/admin/api/state').then((r) => r.json())
+  const posts: PostLite[] = await fetch('/admin/api/posts').then((r) => r.json()).then((d) => d.posts)
+
+  const fmt = (d: string) => new Date(d).toLocaleDateString('zh-CN')
   const set = (sel: string, val: string) => {
     const el = document.querySelector(sel)
     if (el) el.textContent = val
   }
+
+  // 问候与日期
+  const hour = new Date().getHours()
+  set('[data-greet]', hour < 6 ? '夜深了,站长' : hour < 12 ? '早上好,站长' : hour < 18 ? '下午好,站长' : '晚上好,站长')
+  set('[data-today]', new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }))
+
+  // 统计
   set('[data-stat-posts]', String(state.stats.posts))
   set('[data-stat-published]', String(state.stats.published))
-  set('[data-stat-friends]', String(state.stats.friends))
-  set('[data-site-title]', state.site.title)
-  set('[data-site-desc]', state.site.description)
+  set('[data-stat-drafts]', String(state.stats.drafts))
+  set('[data-stat-tags]', String(state.stats.tags))
+  set('[data-stat-cats]', String(state.stats.categories))
+  set('[data-stat-assets]', String(state.stats.assets))
+
+  // 主题速览卡片
+  const themeBox = document.querySelector('[data-theme-previews]')!
+  themeBox.innerHTML = (state.presets as PresetLite[])
+    .map(
+      (t) => `
+      <a class="theme-preview" href="/admin/themes">
+        <span class="tp-swatch">
+          <i style="background:${t.palette.light.bg}"></i>
+          <i style="background:${t.palette.light.primary}"></i>
+          <i style="background:${t.palette.light.accent}"></i>
+        </span>
+        <span class="tp-name">${t.name}</span>
+        ${t.id === state.site.defaultTheme ? '<span class="tp-badge">默认</span>' : ''}
+      </a>`
+    )
+    .join('')
+
+  // 最近文章
+  const recentBox = document.querySelector('[data-recent-list]')!
+  if (posts.length === 0) {
+    recentBox.innerHTML = '<p class="empty">还没有文章,写一篇吧</p>'
+  } else {
+    recentBox.innerHTML = posts
+      .slice(0, 6)
+      .map(
+        (p) => `
+        <a class="recent-item" href="/admin/posts/${p.slug}">
+          <span class="recent-title">${p.title}</span>
+          <span class="recent-meta">
+            ${p.draft ? '<span class="badge badge-draft">草稿</span>' : ''}
+            <time>${fmt(p.pubDate)}</time>
+          </span>
+        </a>`
+      )
+      .join('')
+  }
+
+  // 系统状态
+  set('[data-sys-mode]', state.system.mode)
+  set('[data-sys-node]', state.system.node)
+  set('[data-sys-uploads]', `${state.system.uploads} 个 · ${(state.system.uploadBytes / 1024).toFixed(0)}KB`)
   set(
-    '[data-site-theme]',
-    state.presets.find((p: { id: string }) => p.id === state.site.defaultTheme)?.name ?? state.site.defaultTheme
+    '[data-sys-theme]',
+    (state.presets as PresetLite[]).find((p) => p.id === state.site.defaultTheme)?.name ?? state.site.defaultTheme
   )
 </script>
 
 <style>
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 18px;
+  .welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--a-primary-soft), var(--a-surface));
   }
-  .stat {
-    text-align: center;
-    padding: 18px 12px;
+  .welcome h2 {
+    font-size: 17px;
+    font-weight: 600;
   }
-  .stat-num {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--a-primary);
-  }
-  .stat-label {
+  .welcome p {
     font-size: 12px;
     color: var(--a-fg-subtle);
     margin-top: 2px;
   }
-  .site-overview {
-    margin-bottom: 18px;
-  }
-  .site-overview h2,
-  .quick h2 {
-    font-size: 15px;
-    margin-bottom: 12px;
-  }
-  .site-overview dl {
+  .stat-grid {
     display: grid;
-    grid-template-columns: 72px 1fr;
-    gap: 8px 12px;
-    font-size: 13px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
   }
-  .site-overview dt {
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 14px;
+  }
+  .stat-icon {
+    font-size: 22px;
+    opacity: 0.85;
+  }
+  .stat-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--a-primary);
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 11px;
     color: var(--a-fg-subtle);
   }
-  .site-overview dd {
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .card-head h2 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .link {
+    font-size: 12px;
+    color: var(--a-primary);
+    text-decoration: none;
+  }
+  .theme-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .theme-preview {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--a-border);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--a-fg);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .theme-preview:hover {
+    transform: translateY(-2px);
+    border-color: var(--a-primary);
+  }
+  .tp-swatch {
+    display: flex;
+    gap: 4px;
+  }
+  .tp-swatch i {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .tp-name {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .tp-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--a-primary);
+    color: #fff;
+  }
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 6px;
+    border-bottom: 1px dashed var(--a-border);
+    text-decoration: none;
+    color: var(--a-fg);
+  }
+  .recent-item:last-child {
+    border-bottom: none;
+  }
+  .recent-item:hover .recent-title {
+    color: var(--a-primary);
+  }
+  .recent-title {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .recent-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .recent-meta time {
+    font-size: 11px;
+    color: var(--a-fg-subtle);
+  }
+  .badge {
+    font-size: 10px;
+    padding: 1px 8px;
+    border-radius: 999px;
+  }
+  .badge-draft {
+    background: #fdf4de;
+    color: #9a7b12;
+  }
+  .system-list {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px 12px;
+    font-size: 13px;
+  }
+  .system-list dt {
+    color: var(--a-fg-subtle);
+  }
+  .system-list dd {
     color: var(--a-fg);
   }
   .quick-links {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+  }
+  .empty {
+    color: var(--a-fg-subtle);
+    font-size: 13px;
+    padding: 8px 0;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

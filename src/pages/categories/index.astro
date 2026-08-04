@@ -1,11 +1,11 @@
 ---
 /** 分类总览 */
-import { getCollection } from 'astro:content'
+import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { published } from '../../lib/content/posts'
+
 import { aggregateByKey } from '../../lib/content/taxonomy'
 
-const posts = published(await getCollection('posts'))
+const posts = await getAllPosts()
 const categories = aggregateByKey(posts, 'category')
 ---
 

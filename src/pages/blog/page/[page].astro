@@ -2,9 +2,9 @@
 /**
  * 分页路由:第 2 页起(/blog/page/2 …),第 1 页由 /blog 承担
  */
-import { getCollection } from 'astro:content'
+import { getAllPosts } from '../../../lib/content/data'
 import BaseLayout from '../../../layouts/BaseLayout.astro'
-import { published } from '../../../lib/content/posts'
+
 import { getSiteConfig } from '../../../lib/config'
 import PostCard from '../../../components/blog/PostCard.astro'
 import Pagination from '../../../components/blog/Pagination.astro'
@@ -12,7 +12,7 @@ import EmptyState from '../../../components/ui/EmptyState.astro'
 import { PAGE_SIZE } from '../index.astro'
 
 export async function getStaticPaths() {
-  const all = published(await getCollection('posts'))
+  const all = await getAllPosts()
   const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
   return Array.from({ length: totalPages - 1 }, (_, i) => {
     const page = i + 2

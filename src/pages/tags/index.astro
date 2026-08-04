@@ -1,11 +1,11 @@
 ---
 /** 标签总览:标签云 */
-import { getCollection } from 'astro:content'
+import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { published } from '../../lib/content/posts'
+
 import TagCloud from '../../components/blog/TagCloud.astro'
 
-const posts = published(await getCollection('posts'))
+const posts = await getAllPosts()
 ---
 
 <BaseLayout title="标签" description="全站标签总览">

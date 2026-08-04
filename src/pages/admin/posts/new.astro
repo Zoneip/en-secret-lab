@@ -1,0 +1,9 @@
+---
+/** 文章编辑器入口:新建 */
+import { isServer } from '../../../lib/utils'
+import PostEditor from '../../../components/admin/PostEditor.astro'
+
+export const prerender = !isServer
+---
+
+<PostEditor />
