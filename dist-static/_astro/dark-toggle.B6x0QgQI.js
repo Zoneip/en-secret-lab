@@ -1,0 +1,6 @@
+import{c as s,j as t}from"./cn.6GcI5_NR.js";import{r}from"./index.BRRvCkbw.js";import{i as a,M as i,t as m}from"./command-menu.D16NIK3T.js";import"./index.H43qtFBv.js";import"./index.POsA8jQk.js";import"./index.vafW64Dv.js";import"./Combination.D1Irk7ZA.js";import"./dialog.P327V2CA.js";import"./file-text.CW6Nuzak.js";import"./settings.fQiC5E8-.js";import"./file-plus-corner.Dlw4OZ1N.js";/**
+ * @license lucide-react v1.28.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const n=[["circle",{cx:"12",cy:"12",r:"4",key:"4exip2"}],["path",{d:"M12 2v2",key:"tus03m"}],["path",{d:"M12 20v2",key:"1lh1kg"}],["path",{d:"m4.93 4.93 1.41 1.41",key:"149t6j"}],["path",{d:"m17.66 17.66 1.41 1.41",key:"ptbguv"}],["path",{d:"M2 12h2",key:"1t8f8n"}],["path",{d:"M20 12h2",key:"1q8mjw"}],["path",{d:"m6.34 17.66-1.41 1.41",key:"1m8zz5"}],["path",{d:"m19.07 4.93-1.41 1.41",key:"1shlcs"}]],c=s("sun",n);function M(){const[o,e]=r.useState(!1);return r.useEffect(()=>{e(a())},[]),t.jsx("button",{onClick:()=>e(m()),className:"inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground","aria-label":"切换深色模式",title:"深色模式 (⌘⇧D)",children:o?t.jsx(c,{className:"size-4"}):t.jsx(i,{className:"size-4"})})}export{M as default};

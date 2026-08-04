@@ -21,7 +21,8 @@ ENV ASTRO_MODE=server
 COPY package.json ./
 RUN npm install --omit=dev --no-audit --no-fund
 
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist-server ./dist-server
+RUN rm -rf dist && ln -s dist-server dist
 COPY --from=builder /app/public ./public
 # 内容目录:控制台写的文章落于此(生产用卷挂载覆盖)
 COPY --from=builder /app/src/content ./src/content
@@ -30,4 +31,4 @@ RUN mkdir -p /app/data
 
 EXPOSE 4321
 USER node
-CMD ["node", "dist/server/entry.mjs"]
+CMD ["node", "dist-server/server/entry.mjs"]

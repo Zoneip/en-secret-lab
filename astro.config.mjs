@@ -12,6 +12,8 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://example.com',
   output: mode === 'server' ? 'server' : 'static',
   adapter: mode === 'server' ? node({ mode: 'standalone' }) : undefined,
+  // 双构建模式输出目录隔离,避免互相覆盖(静态:dist-static / 动态:dist-server)
+  outDir: mode === 'server' ? './dist-server' : './dist-static',
   integrations: [mdx(), sitemap(), react()],
   vite: {
     plugins: [tailwindcss()],

@@ -5,7 +5,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const targets = ['dist/admin']
+const targets = ['dist-static/admin']
 for (const t of targets) {
   rmSync(join(root, t), { recursive: true, force: true })
   console.log(`cleaned ${t}`)
