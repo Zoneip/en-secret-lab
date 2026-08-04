@@ -29,7 +29,7 @@ const posts = (await getAllPosts()).filter((p) => p.category === category)
 <BaseLayout title={title} description={description} forceTheme={theme}>
   <div class="page-enter container">
     <section class="column-hero">
-      <div class="column-mascot" aria-hidden="true">
+      <div class="column-mascot" data-motion-group="mascot" aria-hidden="true">
         <Mascot role="furry" theme={theme} pixel={9} />
       </div>
       <div class="column-text">
@@ -44,7 +44,7 @@ const posts = (await getAllPosts()).filter((p) => p.category === category)
     </section>
 
     {posts.length > 0 ? (
-      <div class="grid">
+      <div class="grid" data-motion-group="cards">
         {posts.map((p) => (
           <PostCard
             slug={p.slug}

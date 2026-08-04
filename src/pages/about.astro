@@ -38,7 +38,7 @@ const themeNames: Record<string, string> = {
                 {about.avatar ? (
                   <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
                 ) : (
-                  <div class="hero-mascots" aria-hidden="true">
+                  <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
                     <Mascot role="furry" pixel={7} />
                     <Mascot role="boy" pixel={6} />
                   </div>
@@ -84,7 +84,7 @@ const themeNames: Record<string, string> = {
           >
             <div class="oc-bg" aria-hidden="true"></div>
             <div class="oc-inner">
-              <div class="oc-art" aria-hidden="true">
+              <div class="oc-art" data-motion-group="mascot" aria-hidden="true">
                 {oc.art ? (
                   <img src={oc.art} alt="" class="oc-art-img" />
                 ) : (

@@ -35,7 +35,7 @@ const { page, totalPages, posts } = Astro.props
     </header>
 
     {posts.length > 0 ? (
-      <div class="grid">
+      <div class="grid" data-motion-group="cards">
         {posts.map((p) => (
           <PostCard
             slug={p.slug}

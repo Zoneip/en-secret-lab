@@ -91,5 +91,35 @@ const meta = buildMeta({
     </main>
     {!hideFooter && <SiteFooter />}
     <ThemeSwitcher />
+
+    <script>
+      // 动效预设应用(控制台"站点设置→主页"调控)
+      const MOTION_CLASSES: Record<string, Record<string, string>> = {
+        mascot: { bob: 'motion-bob', 'ear-tip': 'motion-ear-tip', 'tail-wag': 'motion-tail-wag', wobble: 'motion-wobble' },
+        cards: {
+          'card-lift': 'motion-card-lift',
+          'card-tilt': 'motion-card-tilt',
+          'card-sheen': 'motion-card-sheen',
+          'card-border-flow': 'motion-card-border-flow',
+          'card-float-in': 'motion-card-float-in',
+        },
+        topbar: { 'topbar-gradient': 'motion-topbar-gradient', 'nav-underline': 'motion-nav-underline' },
+        ambient: {
+          'pulse-soft': 'motion-pulse-soft',
+          'scroll-hint': 'motion-scroll-hint',
+          'float-slow': 'motion-float-slow',
+          'spin-slow': 'motion-spin-slow',
+        },
+        hero: { 'float-slow': 'motion-float-slow', 'spin-slow': 'motion-spin-slow' },
+      }
+      const groups = ['mascot', 'cards', 'topbar', 'ambient', 'hero']
+      for (const group of groups) {
+        const key = 'motion' + group.charAt(0).toUpperCase() + group.slice(1)
+        const effect = document.body.dataset[key]
+        const cls = MOTION_CLASSES[group]?.[effect ?? 'none']
+        if (!cls) continue
+        document.querySelectorAll(`[data-motion-group="${group}"]`).forEach((el) => el.classList.add(cls))
+      }
+    </script>
   </body>
 </html>

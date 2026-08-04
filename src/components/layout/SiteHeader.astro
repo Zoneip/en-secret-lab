@@ -11,7 +11,7 @@ const config = getSiteConfig()
 const current = active ?? Astro.url.pathname
 ---
 
-<header class="site-header">
+<header class="site-header" data-motion-group="topbar">
   <div class="container header-inner">
     <a href="/" class="brand underline-tail" aria-label="回到首页">
       <span class="brand-mark" aria-hidden="true"></span>
