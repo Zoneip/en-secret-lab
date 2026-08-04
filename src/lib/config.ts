@@ -43,6 +43,13 @@ export const siteConfigSchema = z.object({
     }),
   /** 壁纸跟随主题渲染时是否使用图片(站长关闭则纯色/渐变) */
   wallpaperEnabled: z.boolean().default(true),
+  /** 文章缺失封面时的像素封面回退 */
+  pixelCover: z
+    .object({
+      enabled: z.boolean().default(true),
+      pattern: z.string().default('knowledge-book'),
+    })
+    .default({ enabled: true, pattern: 'knowledge-book' }),
   /** 主题级覆盖(控制台写入) */
   themeOverrides: z.record(z.string(), z.any()).default({}),
   /** 页脚/导航自定义 */

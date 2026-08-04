@@ -2,6 +2,8 @@
 /** 文章卡片:卡片流单元 */
 import { formatDate } from '../../lib/utils'
 import PixelPaw from '../mascot/PixelPaw.astro'
+import { getSiteConfig } from '../../lib/config'
+import { coverFallback } from '../../lib/cover-fallback'
 
 interface Props {
   slug: string
@@ -17,6 +19,8 @@ interface Props {
 
 const { slug, title, description, pubDate, category, tags = [], cover, dataMotion = false } = Astro.props
 const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
+const pixelCover = getSiteConfig().pixelCover
+const fb = coverFallback(category, pixelCover.pattern)
 ---
 
 <article class="post-card card" {...(dataMotion ? { "data-motion-group": "cards" } : {})}>
@@ -24,6 +28,11 @@ const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
     {coverUrl ? (
       <div class="cover">
         <img src={coverUrl} alt="" loading="lazy" decoding="async" />
+      </div>
+    ) : pixelCover.enabled ? (
+      <div class="cover cover-pixel" aria-hidden="true">
+        <div class="cp-layer cp-light" style={`background-image:url(${fb.light})`}></div>
+        <div class="cp-layer cp-dark" style={`background-image:url(${fb.dark})`}></div>
       </div>
     ) : (
       <div class="cover cover-placeholder">
@@ -63,6 +72,26 @@ const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
     flex-direction: column;
     flex: 1;
     color: inherit;
+  }
+  .cover-pixel {
+    position: relative;
+    background: var(--elevated);
+    image-rendering: pixelated;
+  }
+  .cp-layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .cp-dark {
+    display: none;
+  }
+  :root[data-mode='dark'] .cp-light {
+    display: none;
+  }
+  :root[data-mode='dark'] .cp-dark {
+    display: block;
   }
   .cover {
     aspect-ratio: 16 / 9;

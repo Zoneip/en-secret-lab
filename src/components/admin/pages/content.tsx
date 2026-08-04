@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Save } from 'lucide-react'
+import { ImageIcon, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { api } from '../lib/api'
+import { COVER_PATTERNS } from '../../../lib/cover-fallback'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { Switch } from '../ui/switch'
 import { Textarea } from '../ui/textarea'
 import { Skeleton } from '../ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -76,6 +78,8 @@ export default function ContentPage() {
   const [about, setAbout] = useState<AboutData | null>(null)
   const [resources, setResources] = useState<ResourceData[] | null>(null)
   const [saving, setSaving] = useState(false)
+  const [pixelCover, setPixelCover] = useState<{ enabled: boolean; pattern: string }>({ enabled: true, pattern: 'knowledge-book' })
+  const [pcSaving, setPcSaving] = useState(false)
 
   const load = () =>
     api<{ columns: ColumnData[]; ocs: OcData[]; about: AboutData | null; resources: ResourceData[] }>(
@@ -92,6 +96,11 @@ export default function ContentPage() {
 
   useEffect(() => {
     load()
+    api<{ site: { pixelCover?: { enabled: boolean; pattern: string } } }>('/admin/api/state')
+      .then((d) => {
+        if (d.site?.pixelCover) setPixelCover(d.site.pixelCover)
+      })
+      .catch(() => {})
   }, [])
 
   if (!columns || !ocs || !about || !resources) {
@@ -101,6 +110,20 @@ export default function ContentPage() {
         <Skeleton className="h-96" />
       </div>
     )
+  }
+
+  async function savePixelCover() {
+    setPcSaving(true)
+    try {
+      const state = await api<{ site: { pixelCover?: { enabled: boolean; pattern: string } } }>('/admin/api/state')
+      const site = { ...state.site, pixelCover }
+      await api('/admin/api/config', { method: 'PUT', body: JSON.stringify(site) })
+      toast.success('像素封面设置已保存')
+    } catch (e) {
+      toast.error((e as Error).message)
+    } finally {
+      setPcSaving(false)
+    }
   }
 
   async function save(part: 'columns' | 'ocs' | 'about' | 'resources') {
@@ -130,6 +153,48 @@ export default function ContentPage() {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
+      <Card className="gap-4 p-5">
+        <h3 className="flex items-center gap-2 text-sm font-semibold">
+          <ImageIcon className="size-4" />
+          文章像素封面
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          文章缺少封面图时,用像素资产占位(13 种图案 × 深浅模式);带分类的文章会按分类自动匹配图案。
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-1.5">
+            <Label>启用像素封面</Label>
+            <div className="flex h-9 items-center">
+              <Switch checked={pixelCover.enabled} onCheckedChange={(v) => setPixelCover({ ...pixelCover, enabled: v })} />
+            </div>
+          </div>
+          <div className="grid gap-1.5">
+            <Label>默认图案(未匹配分类时)</Label>
+            <Select value={pixelCover.pattern} onValueChange={(v) => setPixelCover({ ...pixelCover, pattern: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {COVER_PATTERNS.map((p) => (
+                  <SelectItem key={p.slug} value={p.slug}>{p.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {COVER_PATTERNS.filter((p) => p.slug === pixelCover.pattern).map((p) => (
+            <div key={p.slug} className="grid grid-cols-2 gap-2">
+              <img src={`/assets/covers/${p.slug}-light.svg`} alt="" className="h-20 w-36 rounded-lg border object-cover" />
+              <img src={`/assets/covers/${p.slug}-dark.svg`} alt="" className="h-20 w-36 rounded-lg border object-cover" />
+            </div>
+          ))}
+        </div>
+        <div>
+          <Button onClick={savePixelCover} disabled={pcSaving}>
+            <Save />
+            {pcSaving ? '保存中…' : '保存像素封面设置'}
+          </Button>
+        </div>
+      </Card>
       <Tabs defaultValue="columns">
         <TabsList>
           <TabsTrigger value="columns">栏目</TabsTrigger>
