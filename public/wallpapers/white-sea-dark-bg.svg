@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" shape-rendering="crispEdges">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" shape-rendering="crispEdges">
+<style>
+    @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-72px) } }
+    @keyframes s2 { from { transform: translateX(-60px) } to { transform: translateX(16px) } }
+    @keyframes f1 { from { transform: translateX(0); opacity: .4 } 50% { opacity: .9 } to { transform: translateX(-72px); opacity: .4 } }
+    @keyframes f2 { from { transform: translateX(-60px); opacity: .7 } 50% { opacity: .35 } to { transform: translateX(16px); opacity: .7 } }
+    @keyframes lantern { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+    @keyframes sweep { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+    @keyframes mp0 { 0%, 100% { opacity: .3 } 25% { opacity: .55 } 50% { opacity: .8 } 75% { opacity: .5 } }
+    @keyframes mp1 { 0%, 100% { opacity: .7 } 25% { opacity: .45 } 50% { opacity: .25 } 75% { opacity: .5 } }
+    @keyframes warm { 0%, 100% { opacity: .5 } 50% { opacity: 1 } }
+    @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
+    @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
+    @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
+    @keyframes jelly0 { 0% { transform: translate(0, 0); opacity: .5 } 25% { transform: translate(0, -14px); opacity: .8 } 50% { transform: translate(0, -28px); opacity: 1 } 75% { transform: translate(0, -14px); opacity: .75 } 100% { transform: translate(0, 0); opacity: .5 } }
+    @keyframes jelly1 { 0% { transform: translate(0, 0); opacity: .7 } 25% { transform: translate(0, -10px); opacity: .5 } 50% { transform: translate(0, -20px); opacity: .35 } 75% { transform: translate(0, -10px); opacity: .55 } 100% { transform: translate(0, 0); opacity: .7 } }
+    @keyframes jelly2 { 0% { transform: translate(0, 0); opacity: .4 } 25% { transform: translate(0, -16px); opacity: .75 } 50% { transform: translate(0, -32px); opacity: 1 } 75% { transform: translate(0, -16px); opacity: .7 } 100% { transform: translate(0, 0); opacity: .4 } }
+    @keyframes jglow { 0%, 100% { opacity: .4 } 50% { opacity: .95 } }
+    .s1 { animation: s1 10s linear infinite }
+    .s2 { animation: s2 12s linear infinite }
+    .f1 { animation: f1 10s linear infinite }
+    .f2 { animation: f2 12s linear infinite }
+    .lantern { animation: lantern 1.8s steps(1) infinite }
+    .sweep { animation: sweep 8s linear infinite; transform-origin: 64px 198px; transform-box: fill-box }
+    .mp0 { animation: mp0 3.4s ease-in-out infinite }
+    .mp1 { animation: mp1 4.2s ease-in-out infinite }
+    .warm { animation: warm 2.6s ease-in-out infinite }
+    .tw0 { animation: tw0 2.4s steps(1) infinite }
+    .tw1 { animation: tw1 3s steps(1) infinite }
+    .tw2 { animation: tw2 2s steps(1) infinite }
+    .jelly0 { animation: jelly0 7s ease-in-out infinite }
+    .jelly1 { animation: jelly1 8.5s ease-in-out infinite 1.5s }
+    .jelly2 { animation: jelly2 6.5s ease-in-out infinite 3s }
+    .jglow { animation: jglow 2.4s ease-in-out infinite }
+    .moonp { animation: lantern 6s ease-in-out infinite }
+  </style>
+<rect x="0.00" y="0.00" width="640.00" height="36.00" fill="#050F1D"/><rect x="0.00" y="36.00" width="640.00" height="36.00" fill="#081A2C"/><rect x="0.00" y="72.00" width="640.00" height="36.00" fill="#0A1E31"/><rect x="0.00" y="108.00" width="640.00" height="36.00" fill="#0D2540"/><circle cx="1008.00" cy="160.00" r="20.00" fill="#E8F2FF" class="moonp"/><circle cx="1008.00" cy="160.00" r="28.00" fill="#E8F2FF" opacity="0.32" class="moonp"/><circle cx="1008.00" cy="160.00" r="38.00" fill="#E8F2FF" opacity="0.14" class="moonp"/><rect x="498.00" y="74.00" width="4.00" height="4.00" fill="#D2E2F7"/><rect x="510.00" y="84.00" width="4.00" height="4.00" fill="#D2E2F7"/><rect x="500.00" y="90.00" width="2.00" height="2.00" fill="#D2E2F7"/><rect x="0.00" y="136.00" width="640.00" height="40.00" class="s1" fill="#0E2F52"/><rect x="0.00" y="176.00" width="640.00" height="36.00" class="s2" fill="#0C2848"/><rect x="0.00" y="212.00" width="640.00" height="34.00" class="s1" fill="#0A2140"/><rect x="0.00" y="246.00" width="640.00" height="30.00" class="s2" fill="#081C38"/><rect x="0.00" y="276.00" width="640.00" height="26.00" class="s1" fill="#071830"/><g class="mpath">
+    </g><rect x="380.00" y="244.00" width="20.00" height="4.00" fill="#0E1E34"/><rect x="388.00" y="232.00" width="8.00" height="12.00" fill="#0E1E34"/><rect x="384.00" y="236.00" width="4.00" height="8.00" fill="#1E3A5F"/><g><rect x="44.00" y="176.00" width="44.00" height="104.00" fill="#202C44"/><rect x="48.00" y="180.00" width="36.00" height="92.00" fill="#E8E3DA"/><rect x="48.00" y="192.00" width="36.00" height="14.00" fill="#C0392B"/><rect x="48.00" y="216.00" width="36.00" height="14.00" fill="#C0392B"/><rect x="48.00" y="240.00" width="36.00" height="14.00" fill="#C0392B"/><rect x="52.00" y="184.00" width="28.00" height="8.00" fill="#202C44"/><rect x="60.00" y="172.00" width="12.00" height="12.00" fill="#202C44"/><rect x="60.00" y="176.00" width="8.00" height="6.00" fill="#C0392B"/><rect x="64.00" y="236.00" width="8.00" height="8.00" fill="#202C44"/><rect x="48.00" y="256.00" width="36.00" height="4.00" fill="#202C44"/></g><g class="jelly0"><rect x="516.00" y="180.00" width="12.00" height="6.00" class="jglow" fill="#8FD9E8"/><rect x="518.00" y="182.00" width="8.00" height="4.00" fill="#D9F4FF"/><rect x="516.00" y="186.00" width="12.00" height="4.00" fill="#B8E6F5"/><rect x="518.00" y="190.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="522.00" y="190.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="526.00" y="190.00" width="2.00" height="4.00" fill="#B8E6F5"/></g><g class="jelly1"><rect x="544.00" y="220.00" width="12.00" height="6.00" class="jglow" fill="#8FD9E8"/><rect x="546.00" y="222.00" width="8.00" height="4.00" fill="#D9F4FF"/><rect x="544.00" y="226.00" width="12.00" height="4.00" fill="#B8E6F5"/><rect x="546.00" y="230.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="550.00" y="230.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="554.00" y="230.00" width="2.00" height="4.00" fill="#B8E6F5"/></g><g class="jelly2"><rect x="76.00" y="172.00" width="12.00" height="6.00" class="jglow" fill="#8FD9E8"/><rect x="78.00" y="174.00" width="8.00" height="4.00" fill="#D9F4FF"/><rect x="76.00" y="178.00" width="12.00" height="4.00" fill="#B8E6F5"/><rect x="78.00" y="182.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="82.00" y="182.00" width="2.00" height="6.00" fill="#B8E6F5"/><rect x="86.00" y="182.00" width="2.00" height="4.00" fill="#B8E6F5"/></g><rect x="4.00" y="300.00" width="88.00" height="60.00" fill="#0B1826"/><rect x="0.00" y="312.00" width="12.00" height="48.00" fill="#08121E"/><rect x="84.00" y="316.00" width="12.00" height="44.00" fill="#08121E"/><rect x="12.00" y="296.00" width="60.00" height="6.00" fill="#101F30"/><rect x="24.00" y="292.00" width="16.00" height="4.00" fill="#0B1826"/>
+</svg>
+</svg>

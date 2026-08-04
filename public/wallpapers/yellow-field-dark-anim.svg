@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes w1 { 0% { transform: translateX(0) } 25% { transform: translateX(-10px) } 50% { transform: translateX(-22px) } 75% { transform: translateX(-32px) } 100% { transform: translateX(-40px) } }
+    @keyframes w2 { 0% { transform: translateX(-36px) } 25% { transform: translateX(-24px) } 50% { transform: translateX(-12px) } 75% { transform: translateX(-2px) } 100% { transform: translateX(8px) } }
+    @keyframes glow { 0%, 100% { opacity: .25 } 25% { opacity: .7 } 50% { opacity: 1 } 75% { opacity: .55 } }
+    @keyframes halo { 0%, 100% { opacity: 0 } 30% { opacity: .3 } 50% { opacity: .5 } 70% { opacity: .3 } }
+    @keyframes warm { 0%, 100% { opacity: .6 } 30% { opacity: .95 } 60% { opacity: 1 } 80% { opacity: .8 } }
+    @keyframes scarf { from { transform: rotate(-3deg) translateX(0) } to { transform: rotate(3deg) translateX(4px) } }
+    @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
+    @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
+    @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
+    @keyframes bg0 { 0% { transform: translate(0, 0); opacity: .2 } 25% { opacity: 1 } 50% { transform: translate(8px, -28px); opacity: .4 } 75% { opacity: 1 } 100% { transform: translate(18px, 4px); opacity: .2 } }
+    @keyframes bg1 { 0% { transform: translate(0, 0); opacity: .5 } 30% { transform: translate(-10px, -20px); opacity: 1 } 70% { transform: translate(-4px, 12px); opacity: .3 } 100% { transform: translate(10px, -8px); opacity: .5 } }
+    @keyframes bg2 { 0% { transform: translate(0, 0); opacity: 1 } 40% { transform: translate(12px, 16px); opacity: .25 } 80% { transform: translate(-8px, -12px); opacity: .8 } 100% { transform: translate(0, 0); opacity: 1 } }
+    @keyframes bg3 { 0% { transform: translate(0, 0); opacity: .35 } 25% { transform: translate(-8px, -10px); opacity: .8 } 50% { transform: translate(-14px, -16px); opacity: 1 } 75% { transform: translate(-4px, 0px); opacity: .6 } 100% { transform: translate(6px, 8px); opacity: .5 } }
+    .w1 { animation: w1 4.8s ease-in-out infinite alternate }
+    .w2 { animation: w2 5.6s ease-in-out infinite alternate }
+    .glow { animation: glow 1.6s ease-in-out infinite }
+    .halo { animation: halo 1.6s ease-in-out infinite }
+    .warm { animation: warm 2.4s ease-in-out infinite }
+    .scarf { animation: scarf 3.6s ease-in-out infinite alternate; transform-origin: 370px 170px; transform-box: fill-box }
+    .tw0 { animation: tw0 2.4s steps(1) infinite }
+    .tw1 { animation: tw1 3s steps(1) infinite }
+    .tw2 { animation: tw2 2s steps(1) infinite }
+    .bg0 { animation: bg0 5s ease-in-out infinite }
+    .bg1 { animation: bg1 6.5s ease-in-out infinite 1s }
+    .bg2 { animation: bg2 5.5s ease-in-out infinite 2s }
+    .bg3 { animation: bg3 7s ease-in-out infinite .5s }
+    .moonp { animation: glow 5s ease-in-out infinite }
+  </style>
+<g class="warm"><rect x="492.00" y="168.00" width="4.00" height="8.00" class="warm" fill="#FFD98A"/>
+<rect x="480.00" y="164.00" width="4.00" height="8.00" class="warm" fill="#FFD98A"/>
+<rect x="508.00" y="164.00" width="4.00" height="8.00" class="warm" fill="#FFD98A"/></g>
+<g class="glow"><rect x="358.00" y="152.00" width="6.00" height="6.00" class="glow" fill="#FFE066"/>
+<rect x="372.00" y="152.00" width="6.00" height="6.00" class="glow" fill="#FFE066"/></g>
+<g class="halo"><rect x="356.00" y="150.00" width="10.00" height="10.00" class="halo" fill="#FFE066"/>
+<rect x="370.00" y="150.00" width="10.00" height="10.00" class="halo" fill="#FFE066"/></g>
+<g class="bg0"><rect x="40.00" y="112.00" width="4.00" height="4.00" class="bg0" fill="#D8F04C"/>
+<rect x="280.00" y="112.00" width="4.00" height="4.00" class="bg0" fill="#D8F04C"/>
+<rect x="520.00" y="112.00" width="4.00" height="4.00" class="bg0" fill="#D8F04C"/></g>
+<g class="bg1"><rect x="100.00" y="146.00" width="4.00" height="4.00" class="bg1" fill="#D8F04C"/>
+<rect x="340.00" y="146.00" width="4.00" height="4.00" class="bg1" fill="#D8F04C"/>
+<rect x="580.00" y="146.00" width="4.00" height="4.00" class="bg1" fill="#D8F04C"/></g>
+<g class="bg2"><rect x="160.00" y="112.00" width="4.00" height="4.00" class="bg2" fill="#D8F04C"/>
+<rect x="400.00" y="112.00" width="4.00" height="4.00" class="bg2" fill="#D8F04C"/></g>
+<g class="bg3"><rect x="220.00" y="146.00" width="4.00" height="4.00" class="bg3" fill="#D8F04C"/>
+<rect x="460.00" y="146.00" width="4.00" height="4.00" class="bg3" fill="#D8F04C"/></g>
+</svg>

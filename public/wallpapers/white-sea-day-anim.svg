@@ -1,0 +1,306 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes s2 { from { transform: translateX(-68px) } to { transform: translateX(16px) } }
+    @keyframes f1 { from { transform: translateX(0); opacity: .95 } 50% { opacity: .6 } to { transform: translateX(-80px); opacity: .95 } }
+    @keyframes f2 { from { transform: translateX(-68px); opacity: .75 } 50% { opacity: 1 } to { transform: translateX(16px); opacity: .75 } }
+    @keyframes boat { 0% { transform: rotate(-2.5deg) translateY(0) } 25% { transform: rotate(-1deg) translateY(2px) } 50% { transform: rotate(2.5deg) translateY(2px) } 75% { transform: rotate(1deg) translateY(0) } 100% { transform: rotate(-2.5deg) translateY(0) } }
+    @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes cf2 { from { transform: translateX(-64px) } to { transform: translateX(24px) } }
+    @keyframes gl1 { from { transform: translate(0, 0) } to { transform: translate(20px, -10px) } }
+    @keyframes gl2 { from { transform: translate(16px, -8px) } to { transform: translate(0, 0) } }
+    @keyframes wing1 { 0%, 100% { opacity: 1 } 50% { opacity: .1 } }
+    @keyframes wing2 { 0%, 100% { opacity: .1 } 50% { opacity: 1 } }
+    @keyframes jump { 0% { transform: translate(0, 220px) rotate(0deg) } 15% { transform: translate(12px, 192px) rotate(-8deg) } 30% { transform: translate(24px, 176px) rotate(8deg) } 50% { transform: translate(40px, 184px) rotate(0deg) } 100% { transform: translate(80px, 260px) rotate(0deg); opacity: 0 } }
+    .s1 { animation: s1 9s linear infinite }
+    .s2 { animation: s2 11s linear infinite }
+    .f1 { animation: f1 9s linear infinite }
+    .f2 { animation: f2 11s linear infinite }
+    .boat { animation: boat 3.4s ease-in-out infinite; transform-origin: 150px 236px; transform-box: fill-box }
+    .cf1 { animation: cf1 28s linear infinite }
+    .cf2 { animation: cf2 32s linear infinite }
+    .gl1 { animation: gl1 2.6s ease-in-out infinite alternate }
+    .gl2 { animation: gl2 3s ease-in-out infinite alternate }
+    .wing1 { animation: wing1 .7s steps(1) infinite }
+    .wing2 { animation: wing2 .7s steps(1) infinite }
+    .jump { animation: jump 6s ease-in-out infinite }
+  </style>
+<g class="gl1"><rect x="236.00" y="48.00" width="12.00" height="4.00" class="gl1" fill="#4A6A92"/></g>
+<g class="wing1"><rect x="242.00" y="44.00" width="4.00" height="4.00" class="wing1" fill="#4A6A92"/>
+<rect x="282.00" y="40.00" width="4.00" height="4.00" class="wing1" fill="#4A6A92"/>
+<rect x="418.00" y="52.00" width="4.00" height="4.00" class="wing1" fill="#4A6A92"/></g>
+<g class="wing2"><rect x="238.00" y="52.00" width="4.00" height="4.00" class="wing2" fill="#4A6A92"/>
+<rect x="286.00" y="32.00" width="4.00" height="4.00" class="wing2" fill="#4A6A92"/>
+<rect x="414.00" y="60.00" width="4.00" height="4.00" class="wing2" fill="#4A6A92"/>
+<rect x="176.00" y="212.00" width="6.00" height="4.00" class="wing2" fill="#C0482F"/></g>
+<g class="gl2"><rect x="280.00" y="36.00" width="12.00" height="4.00" class="gl2" fill="#4A6A92"/>
+<rect x="412.00" y="56.00" width="12.00" height="4.00" class="gl2" fill="#4A6A92"/></g>
+<g class="f1"><rect x="0.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="12.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="24.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="36.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="48.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="60.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="72.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="84.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="96.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="108.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="120.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="132.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="144.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="156.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="168.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="180.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="192.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="204.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="216.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="228.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="240.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="252.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="264.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="276.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="288.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="300.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="312.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="324.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="336.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="348.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="360.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="372.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="384.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="396.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="408.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="420.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="432.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="444.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="456.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="468.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="480.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="492.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="504.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="516.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="528.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="540.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="552.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="564.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="576.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="588.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="600.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="612.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="624.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="0.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="12.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="24.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="36.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="48.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="60.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="72.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="84.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="96.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="108.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="120.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="132.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="144.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="156.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="168.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="180.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="192.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="204.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="216.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="228.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="240.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="252.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="264.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="276.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="288.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="300.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="312.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="324.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="336.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="348.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="360.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="372.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="384.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="396.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="408.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="420.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="432.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="444.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="456.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="468.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="480.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="492.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="504.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="516.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="528.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="540.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="552.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="564.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="576.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="588.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="600.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="612.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="624.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="0.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="12.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="24.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="36.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="48.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="60.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="72.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="84.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="96.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="108.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="120.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="132.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="144.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="156.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="168.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="180.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="192.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="204.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="216.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="228.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="240.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="252.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="264.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="276.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="288.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="300.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="312.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="324.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="336.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="348.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="360.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="372.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="384.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="396.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="408.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="420.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="432.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="444.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="456.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="468.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="480.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="492.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="504.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="516.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="528.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="540.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="552.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="564.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="576.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="588.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="600.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="612.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#FFFFFF"/>
+<rect x="624.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#FFFFFF"/></g>
+<g class="f2"><rect x="0.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="12.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="24.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="36.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="48.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="60.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="72.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="84.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="96.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="108.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="120.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="132.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="144.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="156.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="168.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="180.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="192.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="204.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="216.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="228.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="240.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="252.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="264.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="276.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="288.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="300.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="312.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="324.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="336.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="348.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="360.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="372.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="384.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="396.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="408.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="420.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="432.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="444.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="456.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="468.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="480.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="492.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="504.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="516.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="528.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="540.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="552.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="564.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="576.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="588.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="600.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="612.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="624.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="0.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="12.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="24.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="36.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="48.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="60.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="72.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="84.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="96.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="108.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="120.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="132.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="144.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="156.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="168.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="180.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="192.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="204.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="216.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="228.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="240.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="252.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="264.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="276.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="288.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="300.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="312.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="324.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="336.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="348.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="360.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="372.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="384.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="396.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="408.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="420.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="432.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="444.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="456.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="468.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="480.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="492.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="504.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="516.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="528.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="540.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="552.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="564.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="576.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="588.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="600.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="612.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#FFFFFF"/>
+<rect x="624.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#FFFFFF"/></g>
+<g class="splash"><rect x="138.00" y="0.00" width="4.00" height="4.00" class="splash" fill="#4A92B8"/></g>
+<g class="jump"><g class="jump"><rect x="128.00" y="0.00" width="10.00" height="4.00" fill="#7AC4E8"/><rect x="126.00" y="0.00" width="2.00" height="4.00" fill="#B8E6FA"/></g></g>
+<g class="boat"><g class="boat"><rect x="124.00" y="232.00" width="52.00" height="6.00" fill="#7A4E2B"/><rect x="124.00" y="228.00" width="52.00" height="4.00" fill="#8A5E33"/><rect x="120.00" y="238.00" width="6.00" height="6.00" fill="#6A4023"/><rect x="174.00" y="238.00" width="6.00" height="6.00" fill="#6A4023"/><rect x="136.00" y="216.00" width="32.00" height="16.00" fill="#F7F3E8"/><rect x="136.00" y="224.00" width="32.00" height="4.00" fill="#EFE9DA"/><rect x="172.00" y="216.00" width="4.00" height="26.00" fill="#7A4E2B"/><rect x="172.00" y="212.00" width="4.00" height="6.00" fill="#8A5E33"/><rect x="140.00" y="220.00" width="20.00" height="4.00" fill="#D9D2BE"/><rect x="148.00" y="214.00" width="4.00" height="16.00" fill="#B8B09A"/></g></g>
+</svg>

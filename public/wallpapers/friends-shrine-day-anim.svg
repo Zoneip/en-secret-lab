@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes s2 { from { transform: translateX(-68px) } to { transform: translateX(16px) } }
+    @keyframes f1 { from { transform: translateX(0); opacity: .9 } 50% { opacity: .6 } to { transform: translateX(-80px); opacity: .9 } }
+    @keyframes f2 { from { transform: translateX(-68px); opacity: .7 } 50% { opacity: 1 } to { transform: translateX(16px); opacity: .7 } }
+    @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes cf2 { from { transform: translateX(-64px) } to { transform: translateX(24px) } }
+    @keyframes halo { 0%, 100% { opacity: .75 } 50% { opacity: 1 } }
+    @keyframes sway { from { transform: rotate(-0.4deg) } 50% { transform: rotate(0.4deg) } to { transform: rotate(-0.4deg) } }
+    @keyframes sleeveL { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(-4deg) translateX(-2px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes sleeveR { from { transform: rotate(0deg) translateX(0) } 50% { transform: rotate(4deg) translateX(2px) } to { transform: rotate(0deg) translateX(0) } }
+    @keyframes pt0 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 8% { opacity: 1 } 30% { transform: translate(-20px, 44px) rotate(60deg) } 55% { transform: translate(-8px, 88px) rotate(120deg) } 80% { transform: translate(-24px, 140px) rotate(200deg); opacity: .9 } 100% { transform: translate(-12px, 192px) rotate(260deg); opacity: 0 } }
+    @keyframes pt1 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 10% { opacity: .95 } 35% { transform: translate(18px, 40px) rotate(-70deg) } 60% { transform: translate(6px, 84px) rotate(-140deg) } 85% { transform: translate(20px, 136px) rotate(-210deg); opacity: .8 } 100% { transform: translate(8px, 184px) rotate(-280deg); opacity: 0 } }
+    @keyframes pt2 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 12% { opacity: .85 } 40% { transform: translate(-12px, 52px) rotate(90deg) } 65% { transform: translate(10px, 100px) rotate(180deg) } 90% { transform: translate(-16px, 152px) rotate(270deg); opacity: .7 } 100% { transform: translate(0, 200px) rotate(340deg); opacity: 0 } }
+    @keyframes pt3 { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0 } 15% { opacity: .9 } 45% { transform: translate(14px, 48px) rotate(-100deg) } 70% { transform: translate(-8px, 96px) rotate(-200deg) } 100% { transform: translate(12px, 180px) rotate(-300deg); opacity: 0 } }
+    @keyframes pf0 { 0% { transform: translate(0, 0); opacity: 0 } 10% { opacity: .9 } 50% { transform: translate(-28px, 80px) rotate(120deg) } 100% { transform: translate(-20px, 220px) rotate(240deg); opacity: 0 } }
+    @keyframes pf1 { 0% { transform: translate(0, 0); opacity: 0 } 12% { opacity: .85 } 55% { transform: translate(24px, 88px) rotate(-140deg) } 100% { transform: translate(16px, 224px) rotate(-280deg); opacity: 0 } }
+    .s1 { animation: s1 9s linear infinite }
+    .s2 { animation: s2 11s linear infinite }
+    .f1 { animation: f1 9s linear infinite }
+    .f2 { animation: f2 11s linear infinite }
+    .cf1 { animation: cf1 28s linear infinite }
+    .cf2 { animation: cf2 32s linear infinite }
+    .halo { animation: halo 4s ease-in-out infinite }
+    .sway { animation: sway 8s ease-in-out infinite; transform-origin: 320px 300px; transform-box: fill-box }
+    .sleeveL { animation: sleeveL 4.2s ease-in-out infinite; transform-origin: 390px 248px; transform-box: fill-box }
+    .sleeveR { animation: sleeveR 4.2s ease-in-out infinite .6s; transform-origin: 418px 248px; transform-box: fill-box }
+    .pt0 { animation: pt0 7s linear infinite }
+    .pt1 { animation: pt1 8.5s linear infinite 1.2s }
+    .pt2 { animation: pt2 9.5s linear infinite 2.4s }
+    .pt3 { animation: pt3 10.5s linear infinite .8s }
+    .pf0 { animation: pf0 6.5s linear infinite 1.8s }
+    .pf1 { animation: pf1 7.5s linear infinite 3s }
+  </style>
+<g class="pt0"><rect x="60.00" y="0.00" width="6.00" height="6.00" class="pt0" fill="#F7B8D4"/>
+<rect x="148.00" y="104.00" width="4.00" height="4.00" class="pt0" fill="#F7B8D4"/>
+<rect x="236.00" y="48.00" width="2.00" height="2.00" class="pt0" fill="#F7B8D4"/>
+<rect x="324.00" y="152.00" width="6.00" height="6.00" class="pt0" fill="#F7B8D4"/>
+<rect x="412.00" y="96.00" width="4.00" height="4.00" class="pt0" fill="#F7B8D4"/>
+<rect x="500.00" y="40.00" width="2.00" height="2.00" class="pt0" fill="#F7B8D4"/>
+<rect x="68.00" y="144.00" width="6.00" height="6.00" class="pt0" fill="#F7B8D4"/></g>
+<g class="pt1"><rect x="82.00" y="26.00" width="4.00" height="4.00" class="pt1" fill="#FBD0E0"/>
+<rect x="170.00" y="130.00" width="2.00" height="2.00" class="pt1" fill="#FBD0E0"/>
+<rect x="258.00" y="74.00" width="6.00" height="6.00" class="pt1" fill="#FBD0E0"/>
+<rect x="346.00" y="18.00" width="4.00" height="4.00" class="pt1" fill="#FBD0E0"/>
+<rect x="434.00" y="122.00" width="2.00" height="2.00" class="pt1" fill="#FBD0E0"/>
+<rect x="522.00" y="66.00" width="6.00" height="6.00" class="pt1" fill="#FBD0E0"/>
+<rect x="90.00" y="10.00" width="4.00" height="4.00" class="pt1" fill="#FBD0E0"/></g>
+<g class="pt2"><rect x="104.00" y="52.00" width="2.00" height="2.00" class="pt2" fill="#F2A8C4"/>
+<rect x="192.00" y="156.00" width="6.00" height="6.00" class="pt2" fill="#F2A8C4"/>
+<rect x="280.00" y="100.00" width="4.00" height="4.00" class="pt2" fill="#F2A8C4"/>
+<rect x="368.00" y="44.00" width="2.00" height="2.00" class="pt2" fill="#F2A8C4"/>
+<rect x="456.00" y="148.00" width="6.00" height="6.00" class="pt2" fill="#F2A8C4"/>
+<rect x="544.00" y="92.00" width="4.00" height="4.00" class="pt2" fill="#F2A8C4"/></g>
+<g class="pt3"><rect x="126.00" y="78.00" width="6.00" height="6.00" class="pt3" fill="#FFE3EE"/>
+<rect x="214.00" y="22.00" width="4.00" height="4.00" class="pt3" fill="#FFE3EE"/>
+<rect x="302.00" y="126.00" width="2.00" height="2.00" class="pt3" fill="#FFE3EE"/>
+<rect x="390.00" y="70.00" width="6.00" height="6.00" class="pt3" fill="#FFE3EE"/>
+<rect x="478.00" y="14.00" width="4.00" height="4.00" class="pt3" fill="#FFE3EE"/>
+<rect x="566.00" y="118.00" width="2.00" height="2.00" class="pt3" fill="#FFE3EE"/></g>
+<g class="pf0"><rect x="60.00" y="0.00" width="8.00" height="8.00" class="pf0" fill="#F7C8DE"/>
+<rect x="276.00" y="104.00" width="8.00" height="8.00" class="pf0" fill="#F7C8DE"/>
+<rect x="492.00" y="48.00" width="8.00" height="8.00" class="pf0" fill="#F7C8DE"/></g>
+<g class="pf1"><rect x="114.00" y="26.00" width="6.00" height="6.00" class="pf1" fill="#F2B8D0"/>
+<rect x="330.00" y="130.00" width="6.00" height="6.00" class="pf1" fill="#F2B8D0"/>
+<rect x="546.00" y="74.00" width="6.00" height="6.00" class="pf1" fill="#F2B8D0"/></g>
+<g class="pf2"><rect x="168.00" y="52.00" width="8.00" height="8.00" class="pf2" fill="#F7C8DE"/>
+<rect x="384.00" y="156.00" width="8.00" height="8.00" class="pf2" fill="#F7C8DE"/></g>
+<g class="pf3"><rect x="222.00" y="78.00" width="6.00" height="6.00" class="pf3" fill="#F2B8D0"/>
+<rect x="438.00" y="22.00" width="6.00" height="6.00" class="pf3" fill="#F2B8D0"/></g>
+</svg>

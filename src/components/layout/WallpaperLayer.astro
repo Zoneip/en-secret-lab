@@ -1,8 +1,12 @@
 ---
-/** 固定背景壁纸层:
- *  静态帧(visibility 显隐,8 层全部随页面加载进缓存)→ 首帧即时显示
- *  动画帧(display 显隐 + JS 预加载)→ 加载完成后淡入覆盖,滚动/切主题无加载缺口
+/** 固定背景壁纸层(精灵分层版):
+ *  静态底图(bg.svg,background-image,一次栅格化零成本)
+ *  + 动画层(anim.svg,SSR 内联 inline SVG,元素级合成,transform 走 GPU)
+ *  仅当前主题+模式渲染(其余 display:none,零动画开销)
  */
+import { readFileSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { getTheme } from '../../lib/theme/presets'
 
 interface Props {
@@ -11,6 +15,7 @@ interface Props {
 }
 
 const { theme: fallbackTheme, enabled = true } = Astro.props
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 const themeIds = ['gray', 'yellow', 'purple', 'white'] as const
 const SCENE: Record<string, { light: string; dark: string }> = {
   gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
@@ -19,18 +24,25 @@ const SCENE: Record<string, { light: string; dark: string }> = {
   white: { light: 'white-sea-day', dark: 'white-sea-dark' },
 }
 const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
-const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
-  `${SCENE[id][m]}${anim ? '' : '-static'}.svg`
+const animSvg = (name: string) => {
+  try {
+    return readFileSync(join(root, 'public', 'wallpapers', `${name}-anim.svg`), 'utf8')
+  } catch {
+    return ''
+  }
+}
 ---
 
 <div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true" data-wallpaper-fallback={fallbackTheme}>
   {presets.map(({ id }) => (
     <Fragment>
       <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-light>
-        <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'light', false)})`}></div>
+        <div class="wl-static" style={`background-image:url(/wallpapers/${SCENE[id].light}-bg.svg)`}></div>
+        <div class="wl-anim-layer" set:html={animSvg(SCENE[id].light)}></div>
       </div>
       <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-dark>
-        <div class="wl-static" style={`background-image:url(/wallpapers/${sceneFile(id, 'dark', false)})`}></div>
+        <div class="wl-static" style={`background-image:url(/wallpapers/${SCENE[id].dark}-bg.svg)`}></div>
+        <div class="wl-anim-layer" set:html={animSvg(SCENE[id].dark)}></div>
       </div>
     </Fragment>
   ))}
@@ -48,41 +60,12 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
   .wallpaper-hidden {
     opacity: 0;
   }
-  /* 全屏页自带主题背景:整体卸载壁纸层(不再播放,释放合成器) */
-  body[data-no-wallpaper='true'] .wallpaper {
-    display: none;
-  }
-  /* 只有当前主题+模式的层参与渲染;静态帧立即显示,动画帧由 JS 预载后淡入 */
+  /* 仅当前主题+模式渲染;其余 display:none(动画层一并移除,零合成开销) */
   .wallpaper-base {
     position: absolute;
     inset: 0;
-    visibility: hidden;
-  }
-  .wallpaper-base .wl-static {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-  }
-  .wallpaper-base .wl-anim {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
     display: none;
   }
-  .wallpaper-base[data-wl-ready] .wl-anim {
-    display: block;
-    animation: wallpaper-fade-in 0.5s var(--ease-soft) forwards;
-  }
-  /* 默认兜底:JS 未运行或未设主题时,显示 SSR 兜底主题的浅色静态帧 */
-  html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
-  html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
-  html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
-    visibility: visible;
-  }
-  /* 按客户端实际主题 + 模式显隐 */
   html[data-theme='gray'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
   html[data-theme='gray'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark],
   html[data-theme='yellow'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-light],
@@ -91,15 +74,37 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
   html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
   html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
   html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark] {
-    visibility: visible;
+    display: block;
+    animation: wl-fade-in 0.45s var(--ease-soft) both;
   }
-  @keyframes wallpaper-fade-in {
+  /* 兜底:JS 未运行 */
+  html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
+    display: block;
+  }
+  @keyframes wl-fade-in {
     from {
       opacity: 0;
     }
     to {
       opacity: 1;
     }
+  }
+  .wl-static {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .wl-anim-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .wl-anim-layer svg {
+    width: 100%;
+    height: 100%;
   }
   .wallpaper-overlay {
     position: absolute;
@@ -109,5 +114,3 @@ const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
     transition: background 0.4s var(--ease-soft);
   }
 </style>
-
-

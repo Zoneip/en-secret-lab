@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes mbeam { 0%, 100% { opacity: .45 } 25% { opacity: .66 } 50% { opacity: .9 } 75% { opacity: .62 } }
+    @keyframes lglow { 0%, 100% { opacity: .45 } 25% { opacity: .7 } 50% { opacity: .95 } 75% { opacity: .62 } }
+    @keyframes lamp { 0%, 100% { opacity: .6 } 30% { opacity: .9 } 60% { opacity: 1 } 80% { opacity: .75 } }
+    @keyframes tail { from { transform: rotate(0deg) } to { transform: rotate(24deg) } }
+    @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(4px) } }
+    @keyframes tw0 { 0%, 60% { opacity: 1 } 61%, 100% { opacity: .2 } }
+    @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
+    @keyframes tw2 { 0%, 70% { opacity: 1 } 71%, 100% { opacity: .3 } }
+    .mbeam { animation: mbeam 6s ease-in-out infinite }
+    .lglow { animation: lglow 3.4s ease-in-out infinite }
+    .lamp { animation: lamp 3s ease-in-out infinite }
+    .tail { animation: tail 3.2s ease-in-out infinite alternate; transform-origin: 372px 214px; transform-box: fill-box }
+    .curtain { animation: curtain 6s ease-in-out infinite alternate }
+    .tw0 { animation: tw0 2.4s steps(1) infinite }
+    .tw1 { animation: tw1 3s steps(1) infinite }
+    .tw2 { animation: tw2 2s steps(1) infinite }
+  </style>
+<g class="tw0"><rect x="26.00" y="64.00" width="2.00" height="2.00" class="tw0" fill="#B9A6F5"/>
+<rect x="248.00" y="100.00" width="2.00" height="2.00" class="tw0" fill="#B9A6F5"/></g>
+<g class="tw1"><rect x="100.00" y="76.00" width="2.00" height="2.00" class="tw1" fill="#B9A6F5"/>
+<rect x="322.00" y="112.00" width="2.00" height="2.00" class="tw1" fill="#B9A6F5"/></g>
+<g class="tw2"><rect x="174.00" y="88.00" width="2.00" height="2.00" class="tw2" fill="#B9A6F5"/>
+<rect x="396.00" y="64.00" width="2.00" height="2.00" class="tw2" fill="#B9A6F5"/></g>
+<g class="mbeam"><rect x="264.00" y="304.00" width="112.00" height="16.00" fill="#C9B9F7" opacity="0.26" class="mbeam"/>
+<g class="mbeam"><rect x="272.00" y="220.00" width="96.00" height="112.00" fill="#B9A6F5" opacity="0.28"/><rect x="308.00" y="220.00" width="28.00" height="112.00" fill="#C9B9F7" opacity="0.36"/><rect x="292.00" y="224.00" width="56.00" height="108.00" fill="#A78BFA" opacity="0.16"/></g></g>
+</svg>

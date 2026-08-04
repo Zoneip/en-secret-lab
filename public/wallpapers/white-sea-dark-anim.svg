@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-72px) } }
+    @keyframes s2 { from { transform: translateX(-60px) } to { transform: translateX(16px) } }
+    @keyframes f1 { from { transform: translateX(0); opacity: .4 } 50% { opacity: .9 } to { transform: translateX(-72px); opacity: .4 } }
+    @keyframes f2 { from { transform: translateX(-60px); opacity: .7 } 50% { opacity: .35 } to { transform: translateX(16px); opacity: .7 } }
+    @keyframes lantern { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+    @keyframes sweep { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+    @keyframes mp0 { 0%, 100% { opacity: .3 } 25% { opacity: .55 } 50% { opacity: .8 } 75% { opacity: .5 } }
+    @keyframes mp1 { 0%, 100% { opacity: .7 } 25% { opacity: .45 } 50% { opacity: .25 } 75% { opacity: .5 } }
+    @keyframes warm { 0%, 100% { opacity: .5 } 50% { opacity: 1 } }
+    @keyframes tw0 { 0%, 55% { opacity: 1 } 56%, 100% { opacity: .2 } }
+    @keyframes tw1 { 0%, 40% { opacity: .2 } 41%, 100% { opacity: 1 } }
+    @keyframes tw2 { 0%, 65% { opacity: 1 } 66%, 100% { opacity: .25 } }
+    @keyframes jelly0 { 0% { transform: translate(0, 0); opacity: .5 } 25% { transform: translate(0, -14px); opacity: .8 } 50% { transform: translate(0, -28px); opacity: 1 } 75% { transform: translate(0, -14px); opacity: .75 } 100% { transform: translate(0, 0); opacity: .5 } }
+    @keyframes jelly1 { 0% { transform: translate(0, 0); opacity: .7 } 25% { transform: translate(0, -10px); opacity: .5 } 50% { transform: translate(0, -20px); opacity: .35 } 75% { transform: translate(0, -10px); opacity: .55 } 100% { transform: translate(0, 0); opacity: .7 } }
+    @keyframes jelly2 { 0% { transform: translate(0, 0); opacity: .4 } 25% { transform: translate(0, -16px); opacity: .75 } 50% { transform: translate(0, -32px); opacity: 1 } 75% { transform: translate(0, -16px); opacity: .7 } 100% { transform: translate(0, 0); opacity: .4 } }
+    @keyframes jglow { 0%, 100% { opacity: .4 } 50% { opacity: .95 } }
+    .s1 { animation: s1 10s linear infinite }
+    .s2 { animation: s2 12s linear infinite }
+    .f1 { animation: f1 10s linear infinite }
+    .f2 { animation: f2 12s linear infinite }
+    .lantern { animation: lantern 1.8s steps(1) infinite }
+    .sweep { animation: sweep 8s linear infinite; transform-origin: 64px 198px; transform-box: fill-box }
+    .mp0 { animation: mp0 3.4s ease-in-out infinite }
+    .mp1 { animation: mp1 4.2s ease-in-out infinite }
+    .warm { animation: warm 2.6s ease-in-out infinite }
+    .tw0 { animation: tw0 2.4s steps(1) infinite }
+    .tw1 { animation: tw1 3s steps(1) infinite }
+    .tw2 { animation: tw2 2s steps(1) infinite }
+    .jelly0 { animation: jelly0 7s ease-in-out infinite }
+    .jelly1 { animation: jelly1 8.5s ease-in-out infinite 1.5s }
+    .jelly2 { animation: jelly2 6.5s ease-in-out infinite 3s }
+    .jglow { animation: jglow 2.4s ease-in-out infinite }
+    .moonp { animation: lantern 6s ease-in-out infinite }
+  </style>
+<g class="mp0"><rect x="292.00" y="144.00" width="20.00" height="6.00" class="mp0" fill="#DFEEFF"/>
+<rect x="300.00" y="188.00" width="20.00" height="6.00" class="mp0" fill="#DFEEFF"/>
+<rect x="308.00" y="232.00" width="20.00" height="6.00" class="mp0" fill="#DFEEFF"/>
+<rect x="316.00" y="276.00" width="20.00" height="6.00" class="mp0" fill="#DFEEFF"/>
+<rect x="292.00" y="184.00" width="6.00" height="2.00" class="mp0" fill="#BFD8F2"/>
+<rect x="316.00" y="240.00" width="6.00" height="2.00" class="mp0" fill="#BFD8F2"/></g>
+<g class="mp1"><rect x="296.00" y="166.00" width="32.00" height="6.00" class="mp1" fill="#DFEEFF"/>
+<rect x="304.00" y="210.00" width="32.00" height="6.00" class="mp1" fill="#DFEEFF"/>
+<rect x="312.00" y="254.00" width="32.00" height="6.00" class="mp1" fill="#DFEEFF"/>
+<rect x="280.00" y="156.00" width="6.00" height="2.00" class="mp1" fill="#BFD8F2"/>
+<rect x="304.00" y="212.00" width="6.00" height="2.00" class="mp1" fill="#BFD8F2"/></g>
+<g class="f1"><rect x="0.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="16.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="36.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="52.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="72.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="88.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="108.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="124.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="144.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="160.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="180.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="196.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="216.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="232.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="252.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="268.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="288.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="304.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="324.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="340.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="360.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="376.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="396.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="412.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="432.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="448.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="468.00" y="136.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="484.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="504.00" y="136.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="520.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="540.00" y="136.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="556.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="576.00" y="136.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="592.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="612.00" y="136.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="0.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="16.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="36.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="52.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="72.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="88.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="108.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="124.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="144.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="160.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="180.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="196.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="216.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="232.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="252.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="268.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="288.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="304.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="324.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="340.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="360.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="376.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="396.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="412.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="432.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="448.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="468.00" y="212.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="484.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="504.00" y="212.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="520.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="540.00" y="212.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="556.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="576.00" y="212.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="592.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="612.00" y="212.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="0.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="16.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="36.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="52.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="72.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="88.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="108.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="124.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="144.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="160.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="180.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="196.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="216.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="232.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="252.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="268.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="288.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="304.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="324.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="340.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="360.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="376.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="396.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="412.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="432.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="448.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="468.00" y="276.00" width="14.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="484.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="504.00" y="276.00" width="10.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="520.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="540.00" y="276.00" width="6.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="556.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="576.00" y="276.00" width="12.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="592.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/>
+<rect x="612.00" y="276.00" width="8.00" height="4.00" class="f1" fill="#D9EFFF"/></g>
+<g class="f2"><rect x="0.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="16.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="36.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="52.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="72.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="88.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="108.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="124.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="144.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="160.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="180.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="196.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="216.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="232.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="252.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="268.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="288.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="304.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="324.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="340.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="360.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="376.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="396.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="412.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="432.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="448.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="468.00" y="176.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="484.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="504.00" y="176.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="520.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="540.00" y="176.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="556.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="576.00" y="176.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="592.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="612.00" y="176.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="0.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="16.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="36.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="52.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="72.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="88.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="108.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="124.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="144.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="160.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="180.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="196.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="216.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="232.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="252.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="268.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="288.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="304.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="324.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="340.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="360.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="376.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="396.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="412.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="432.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="448.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="468.00" y="246.00" width="14.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="484.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="504.00" y="246.00" width="10.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="520.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="540.00" y="246.00" width="6.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="556.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="576.00" y="246.00" width="12.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="592.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/>
+<rect x="612.00" y="246.00" width="8.00" height="4.00" class="f2" fill="#D9EFFF"/></g>
+<g class="warm"><rect x="390.00" y="236.00" width="2.00" height="2.00" class="warm" fill="#FFD98A"/></g>
+<g class="lantern"><rect x="60.00" y="200.00" width="12.00" height="6.00" class="lantern" fill="#FFE98A"/>
+<rect x="60.00" y="206.00" width="4.00" height="4.00" class="lantern" fill="#FFFFFF"/></g>
+<g class="sweep"><g class="sweep"><rect x="64.00" y="196.00" width="68.00" height="6.00" fill="#FFE98A" opacity="0.90"/><rect x="64.00" y="200.00" width="52.00" height="4.00" fill="#FFE98A" opacity="0.60"/></g></g>
+</svg>

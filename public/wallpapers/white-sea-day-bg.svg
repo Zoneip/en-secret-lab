@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" shape-rendering="crispEdges">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" shape-rendering="crispEdges">
+<style>
+    @keyframes s1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes s2 { from { transform: translateX(-68px) } to { transform: translateX(16px) } }
+    @keyframes f1 { from { transform: translateX(0); opacity: .95 } 50% { opacity: .6 } to { transform: translateX(-80px); opacity: .95 } }
+    @keyframes f2 { from { transform: translateX(-68px); opacity: .75 } 50% { opacity: 1 } to { transform: translateX(16px); opacity: .75 } }
+    @keyframes boat { 0% { transform: rotate(-2.5deg) translateY(0) } 25% { transform: rotate(-1deg) translateY(2px) } 50% { transform: rotate(2.5deg) translateY(2px) } 75% { transform: rotate(1deg) translateY(0) } 100% { transform: rotate(-2.5deg) translateY(0) } }
+    @keyframes cf1 { from { transform: translateX(0) } to { transform: translateX(-80px) } }
+    @keyframes cf2 { from { transform: translateX(-64px) } to { transform: translateX(24px) } }
+    @keyframes gl1 { from { transform: translate(0, 0) } to { transform: translate(20px, -10px) } }
+    @keyframes gl2 { from { transform: translate(16px, -8px) } to { transform: translate(0, 0) } }
+    @keyframes wing1 { 0%, 100% { opacity: 1 } 50% { opacity: .1 } }
+    @keyframes wing2 { 0%, 100% { opacity: .1 } 50% { opacity: 1 } }
+    @keyframes jump { 0% { transform: translate(0, 220px) rotate(0deg) } 15% { transform: translate(12px, 192px) rotate(-8deg) } 30% { transform: translate(24px, 176px) rotate(8deg) } 50% { transform: translate(40px, 184px) rotate(0deg) } 100% { transform: translate(80px, 260px) rotate(0deg); opacity: 0 } }
+    .s1 { animation: s1 9s linear infinite }
+    .s2 { animation: s2 11s linear infinite }
+    .f1 { animation: f1 9s linear infinite }
+    .f2 { animation: f2 11s linear infinite }
+    .boat { animation: boat 3.4s ease-in-out infinite; transform-origin: 150px 236px; transform-box: fill-box }
+    .cf1 { animation: cf1 28s linear infinite }
+    .cf2 { animation: cf2 32s linear infinite }
+    .gl1 { animation: gl1 2.6s ease-in-out infinite alternate }
+    .gl2 { animation: gl2 3s ease-in-out infinite alternate }
+    .wing1 { animation: wing1 .7s steps(1) infinite }
+    .wing2 { animation: wing2 .7s steps(1) infinite }
+    .jump { animation: jump 6s ease-in-out infinite }
+  </style>
+<rect x="0.00" y="0.00" width="640.00" height="36.00" fill="#C6ECF9"/><rect x="0.00" y="36.00" width="640.00" height="36.00" fill="#BFE9F8"/><rect x="0.00" y="72.00" width="640.00" height="36.00" fill="#B5E4F6"/><rect x="0.00" y="108.00" width="640.00" height="36.00" fill="#ABDFF4"/><g><rect x="496.00" y="48.00" width="72.00" height="72.00" fill="#FBD75E"/><rect x="512.00" y="64.00" width="40.00" height="40.00" fill="#FFEB9E"/><rect x="520.00" y="72.00" width="24.00" height="24.00" fill="#FFF6CC"/><rect x="484.00" y="78.00" width="6.00" height="12.00" fill="#FFE98A"/><rect x="574.00" y="78.00" width="6.00" height="12.00" fill="#FFE98A"/><rect x="526.00" y="34.00" width="12.00" height="6.00" fill="#FFE98A"/><rect x="526.00" y="128.00" width="12.00" height="6.00" fill="#FFE98A"/></g><g><rect x="56.00" y="76.00" width="40.00" height="8.00" fill="#A9DDF0"/><rect x="56.00" y="72.00" width="40.00" height="8.00" fill="#FFFFFF"/><rect x="62.00" y="68.00" width="28.00" height="6.00" fill="#FFFFFF"/><rect x="68.00" y="64.00" width="16.00" height="6.00" fill="#FFFFFF"/><rect x="300.00" y="92.00" width="40.00" height="8.00" fill="#A9DDF0"/><rect x="300.00" y="88.00" width="40.00" height="8.00" fill="#F7FDFF"/><rect x="306.00" y="84.00" width="28.00" height="6.00" fill="#F7FDFF"/><rect x="312.00" y="80.00" width="16.00" height="6.00" fill="#F7FDFF"/><rect x="192.00" y="44.00" width="40.00" height="8.00" fill="#A9DDF0"/><rect x="192.00" y="40.00" width="40.00" height="8.00" fill="#FFFFFF"/><rect x="198.00" y="36.00" width="28.00" height="6.00" fill="#FFFFFF"/><rect x="204.00" y="32.00" width="16.00" height="6.00" fill="#FFFFFF"/></g><g></g><rect x="456.00" y="120.00" width="52.00" height="16.00" fill="#E8D9B0"/><rect x="452.00" y="132.00" width="60.00" height="8.00" fill="#C9B88E"/><rect x="462.00" y="112.00" width="40.00" height="10.00" fill="#4C9B52"/><rect x="472.00" y="108.00" width="20.00" height="6.00" fill="#5FAE66"/><rect x="468.00" y="104.00" width="6.00" height="16.00" fill="#6A4A2A"/><rect x="472.00" y="96.00" width="4.00" height="4.00" fill="#4C9B52"/><rect x="476.00" y="92.00" width="8.00" height="4.00" fill="#5FAE66"/><rect x="0.00" y="136.00" width="640.00" height="40.00" class="s1" fill="#63C7EA"/><rect x="0.00" y="176.00" width="640.00" height="36.00" class="s2" fill="#54B9E2"/><rect x="0.00" y="212.00" width="640.00" height="34.00" class="s1" fill="#44ABD8"/><rect x="0.00" y="246.00" width="640.00" height="30.00" class="s2" fill="#369DCF"/><rect x="0.00" y="276.00" width="640.00" height="26.00" class="s1" fill="#2B8FC4"/><rect x="0.00" y="140.00" width="640.00" height="2.00" class="s1" fill="#D9F4FF"/><rect x="0.00" y="180.00" width="640.00" height="2.00" class="s2" fill="#C9EEFD"/><rect x="0.00" y="216.00" width="640.00" height="2.00" class="s1" fill="#C9EEFD"/><rect x="0.00" y="250.00" width="640.00" height="2.00" class="s2" fill="#B8E6FA"/><g><rect x="4.00" y="300.00" width="80.00" height="60.00" fill="#8A7A5A"/><rect x="0.00" y="312.00" width="12.00" height="48.00" fill="#7A6A4C"/><rect x="76.00" y="312.00" width="16.00" height="48.00" fill="#7A6A4C"/><rect x="8.00" y="292.00" width="60.00" height="10.00" fill="#9B8B68"/><rect x="20.00" y="288.00" width="16.00" height="6.00" fill="#6FAE59"/><rect x="36.00" y="286.00" width="12.00" height="4.00" fill="#5E9B4C"/><rect x="16.00" y="296.00" width="6.00" height="4.00" fill="#B8D8B0"/></g>
+</svg>
+</svg>

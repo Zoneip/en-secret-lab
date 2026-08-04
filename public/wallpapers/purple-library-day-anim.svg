@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+<style>
+    @keyframes beam { 0%, 100% { opacity: .5 } 25% { opacity: .75 } 50% { opacity: .95 } 75% { opacity: .72 } }
+    @keyframes sheen { 0%, 100% { opacity: .15 } 25% { opacity: .4 } 50% { opacity: .6 } 75% { opacity: .35 } }
+    @keyframes curtain { from { transform: translateX(0) } to { transform: translateX(4px) } }
+    @keyframes dust0 { from { transform: translate(0, 0); opacity: .3 } 50% { transform: translate(6px, -16px); opacity: .9 } to { transform: translate(0, 0); opacity: .3 } }
+    @keyframes dust1 { from { transform: translate(0, 0); opacity: .5 } 50% { transform: translate(-6px, -12px); opacity: 1 } to { transform: translate(0, 0); opacity: .5 } }
+    @keyframes dust2 { from { transform: translate(0, 0); opacity: .2 } 50% { transform: translate(4px, -20px); opacity: .7 } to { transform: translate(0, 0); opacity: .2 } }
+    @keyframes plant { from { transform: rotate(-2deg) } to { transform: rotate(2deg) } }
+    @keyframes clockspin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+    .beam { animation: beam 4s ease-in-out infinite }
+    .sheen { animation: sheen 3.6s ease-in-out infinite }
+    .curtain { animation: curtain 5s ease-in-out infinite alternate }
+    .dust0 { animation: dust0 4.5s ease-in-out infinite }
+    .dust1 { animation: dust1 5.5s ease-in-out infinite 1s }
+    .dust2 { animation: dust2 6.5s ease-in-out infinite 2s }
+    .plant { animation: plant 3.4s ease-in-out infinite alternate; transform-origin: 178px 192px; transform-box: fill-box }
+    .clockspin { animation: clockspin 18s linear infinite; transform-origin: 108px 132px; transform-box: fill-box }
+  </style>
+<g class="sheen"><rect x="256.00" y="70.00" width="40.00" height="2.00" class="sheen" fill="#FFFFFF"/>
+<rect x="380.00" y="120.00" width="4.00" height="48.00" class="sheen" fill="#FFFFFF"/></g>
+<g class="beam"><rect x="248.00" y="300.00" width="144.00" height="20.00" fill="#D9CCF8" opacity="0.60" class="beam"/>
+<g class="beam"><rect x="256.00" y="220.00" width="128.00" height="108.00" fill="#B9A6F5" opacity="0.60"/><rect x="296.00" y="220.00" width="48.00" height="108.00" fill="#C9B9F7" opacity="0.76"/><rect x="276.00" y="224.00" width="88.00" height="104.00" fill="#A78BFA" opacity="0.28"/></g></g>
+<g class="dust0"><rect x="280.00" y="240.00" width="2.00" height="2.00" class="dust0" fill="#F3EDFF"/>
+<rect x="328.00" y="258.00" width="2.00" height="2.00" class="dust0" fill="#F3EDFF"/></g>
+<g class="dust1"><rect x="296.00" y="266.00" width="2.00" height="2.00" class="dust1" fill="#F3EDFF"/>
+<rect x="344.00" y="284.00" width="2.00" height="2.00" class="dust1" fill="#F3EDFF"/></g>
+<g class="dust2"><rect x="312.00" y="292.00" width="2.00" height="2.00" class="dust2" fill="#F3EDFF"/>
+<rect x="360.00" y="250.00" width="2.00" height="2.00" class="dust2" fill="#F3EDFF"/></g>
+</svg>
