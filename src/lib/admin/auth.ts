@@ -36,7 +36,7 @@ export function verifyPassword(plain: string): boolean {
 }
 
 export function changePassword(plain: string): boolean {
-  if (plain.length < 8) return false
+  if (plain.length < 6) return false
   settingSet(PASSWORD_KEY, hashPassword(plain))
   return true
 }

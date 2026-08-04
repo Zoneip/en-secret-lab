@@ -63,7 +63,7 @@ export default function SitePage() {
 
   async function changePassword() {
     if (password.length < 8) {
-      toast.error('密码至少 8 位')
+      toast.error('密码至少 6 位')
       return
     }
     try {
