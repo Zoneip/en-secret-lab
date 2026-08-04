@@ -18,11 +18,11 @@ import {
   Eye,
   Palette,
 } from 'lucide-react'
-import { api, fmtDate, timeAgo } from './lib/api'
-import { Button } from './ui/button'
-import { Badge } from './ui/badge'
-import { Card } from './ui/card'
-import { Skeleton } from './ui/skeleton'
+import { api, fmtDate, timeAgo } from '../lib/api'
+import { Button } from '../ui/button'
+import { Badge } from '../ui/badge'
+import { Card } from '../ui/card'
+import { Skeleton } from '../ui/skeleton'
 
 interface SiteState {
   site: {

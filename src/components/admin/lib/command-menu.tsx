@@ -22,7 +22,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from './ui/command'
+} from '../ui/command'
 
 const NAV = [
   { label: '仪表盘', href: '/admin', icon: LayoutDashboard },

@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { api } from './lib/api'
-import { Button } from './ui/button'
-import { Card } from './ui/card'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
-import { Switch } from './ui/switch'
-import { Skeleton } from './ui/skeleton'
+import { api } from '../lib/api'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
+import { Switch } from '../ui/switch'
+import { Skeleton } from '../ui/skeleton'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +20,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog'
+} from '../ui/alert-dialog'
 
 interface PostDraft {
   slug: string

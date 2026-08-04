@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import { FileText, Upload } from 'lucide-react'
 import { toast } from 'sonner'
-import { api } from './lib/api'
-import { Button } from './ui/button'
-import { Card } from './ui/card'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Skeleton } from './ui/skeleton'
+import { api } from '../lib/api'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Skeleton } from '../ui/skeleton'
 
 interface Asset {
   id: string

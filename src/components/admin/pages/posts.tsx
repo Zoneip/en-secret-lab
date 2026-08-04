@@ -10,13 +10,13 @@ import {
   Upload,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { api, fmtDate } from './lib/api'
-import { Button } from './ui/button'
-import { Badge } from './ui/badge'
-import { Card } from './ui/card'
-import { Skeleton } from './ui/skeleton'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
+import { api, fmtDate } from '../lib/api'
+import { Button } from '../ui/button'
+import { Badge } from '../ui/badge'
+import { Card } from '../ui/card'
+import { Skeleton } from '../ui/skeleton'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog'
+} from '../ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,15 +34,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog'
+} from '../ui/alert-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
+} from '../ui/dropdown-menu'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 
 interface PostRow {
   slug: string

@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ImagePlus, RotateCcw, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import { api } from './lib/api'
-import { Button } from './ui/button'
-import { Card } from './ui/card'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Skeleton } from './ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
+import { api } from '../lib/api'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Skeleton } from '../ui/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 
 interface Preset {
   id: string

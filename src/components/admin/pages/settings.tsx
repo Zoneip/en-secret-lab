@@ -3,18 +3,18 @@
 import { useEffect, useState } from 'react'
 import { KeyRound, Plus, Save, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { api } from './lib/api'
-import { Button } from './ui/button'
-import { Card } from './ui/card'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
-import { Switch } from './ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Skeleton } from './ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import ContentPage from './content-page'
-import ThemeEditorPage from './theme-editor-page'
+import { api } from '../lib/api'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
+import { Switch } from '../ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Skeleton } from '../ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import ContentPage from './content'
+import ThemeEditorPage from './themes'
 
 interface Site {
   title: string
@@ -120,9 +120,9 @@ export default function SettingsPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <Tabs value={tab} onValueChange={(v) => setTab(v as 'site' | 'content' | 'themes')}>
         <TabsList className="h-11 w-full gap-1 rounded-xl bg-muted/60 p-1 sm:w-auto">
-          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">设置</TabsTrigger>
-          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">内容</TabsTrigger>
-          <TabsTrigger className="h-9 rounded-lg data-[state=active]:shadow-md">主题</TabsTrigger>
+          <TabsTrigger value="site" className="h-9 rounded-lg data-[state=active]:shadow-md">设置</TabsTrigger>
+          <TabsTrigger value="content" className="h-9 rounded-lg data-[state=active]:shadow-md">内容</TabsTrigger>
+          <TabsTrigger value="themes" className="h-9 rounded-lg data-[state=active]:shadow-md">主题</TabsTrigger>
         </TabsList>
         <TabsContent value="site" className="mt-4 flex flex-col gap-4">
       <Card className="gap-5 rounded-2xl border-border/70 p-5 shadow-sm sm:p-6">

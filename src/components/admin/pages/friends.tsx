@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Check, ExternalLink, Plus, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { api } from './lib/api'
-import { Button } from './ui/button'
-import { Card } from './ui/card'
-import { Skeleton } from './ui/skeleton'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
+import { api } from '../lib/api'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
+import { Skeleton } from '../ui/skeleton'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog'
+} from '../ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +27,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog'
+} from '../ui/alert-dialog'
 
 interface Friend {
   id: string
