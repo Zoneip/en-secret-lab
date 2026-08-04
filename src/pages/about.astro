@@ -14,11 +14,16 @@ import { wallpaperCss } from '../lib/theme/engine'
 
 const about = await getSiteAbout()
 const siteConfig = getSiteConfig()
-const SCENE_PREFIX: Record<string, string> = { gray: 'gray-tech', yellow: 'yellow-field', purple: 'purple-library', white: 'white-sea' }
+const OC_SCENE: Record<string, { light: string; dark: string }> = {
+  gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
+  yellow: { light: 'yellow-field-light', dark: 'yellow-field-dark' },
+  purple: { light: 'purple-library-day', dark: 'purple-library-night' },
+  white: { light: 'white-sea-day', dark: 'white-sea-dark' },
+}
 const ocBg = (theme: string, mode: 'light' | 'dark') =>
-  `url(/wallpapers/${SCENE_PREFIX[theme]}-${mode === 'light' ? 'light' : 'dark'}-static.svg)`
+  `url(/wallpapers/${OC_SCENE[theme][mode]}-static.svg)`
 const ocBgAnim = (theme: string, mode: 'light' | 'dark') =>
-  `url(/wallpapers/${SCENE_PREFIX[theme]}-${mode === 'light' ? 'light' : 'dark'}.svg)`
+  `url(/wallpapers/${OC_SCENE[theme][mode]}.svg)`
 const siteAuthor = siteConfig.author
 
 // 关于页主题色 = 当前主题色板快照(内联具体色值,不再引用 CSS 变量;

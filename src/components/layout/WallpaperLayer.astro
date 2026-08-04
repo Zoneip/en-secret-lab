@@ -13,11 +13,15 @@ interface Props {
 
 const { theme: fallbackTheme, enabled = true } = Astro.props
 const themeIds = ['gray', 'yellow', 'purple', 'white'] as const
-const SCENE: Record<string, string> = { gray: 'gray-tech', yellow: 'yellow-field', purple: 'purple-library', white: 'white-sea' }
+const SCENE: Record<string, { light: string; dark: string }> = {
+  gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
+  yellow: { light: 'yellow-field-light', dark: 'yellow-field-dark' },
+  purple: { light: 'purple-library-day', dark: 'purple-library-night' },
+  white: { light: 'white-sea-day', dark: 'white-sea-dark' },
+}
 const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
-const modeOf = (m: 'light' | 'dark') => (m === 'light' ? 'light' : 'dark')
 const sceneFile = (id: string, m: 'light' | 'dark', anim: boolean) =>
-  `${SCENE[id]}-${modeOf(m)}${anim ? '' : '-static'}.svg`
+  `${SCENE[id][m]}${anim ? '' : '-static'}.svg`
 ---
 
 <div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true" data-wallpaper-fallback={fallbackTheme}>
