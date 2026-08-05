@@ -5,7 +5,7 @@
  *  - 定时备份(懒触发:admin 访问时检查)+ 冗余自动清理
  */
 import { mkdirSync, readdirSync, statSync, existsSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, relative } from 'node:path'
 import { createRequire } from 'node:module'
 import { loadEnv } from '../env'
 import { settingGet, settingSet } from './db'
@@ -29,7 +29,10 @@ const exportsDir = () => join(dataDir(), 'exports')
 /** 归档目录(支持不存在目录容错) */
 async function tarGz(sources: Array<{ path: string; base: string }>, outFile: string): Promise<void> {
   const tar = require('tar') as { c: (opts: Record<string, unknown>, files: string[]) => Promise<void> }
-  await tar.c({ gzip: true, file: outFile, portable: true, cwd: process.cwd() }, sources.filter((s) => existsSync(s.path)).map((s) => s.path))
+  const files = sources
+    .filter((s) => existsSync(s.path))
+    .map((s) => relative(process.cwd(), s.path))
+  await tar.c({ gzip: true, file: outFile, portable: true, cwd: process.cwd() }, files)
 }
 
 export async function createBackup(): Promise<BackupEntry> {

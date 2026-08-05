@@ -8,7 +8,7 @@ const schema = z.object({
     .transform((u) => u.toString())
     .default('http://localhost:4321'),
   ADMIN_USERNAME: z.string().min(1).default('admin'),
-  ADMIN_PASSWORD: z.string().min(6).default('change-me'),
+  ADMIN_PASSWORD: z.string().min(8).default('change-me'),
   SESSION_SECRET: z.string().min(16).default('dev-secret-do-not-use-in-prod'),
   DATABASE_PATH: z.string().default('./data/enlab.db'),
 })

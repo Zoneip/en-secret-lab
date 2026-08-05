@@ -12,8 +12,8 @@ export const PUT: APIRoute = async ({ request }) => {
   if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const body = (await request.json().catch(() => null)) as { password?: string } | null
   const password = body?.password ?? ''
-  if (password.length < 6) {
-    return new Response(JSON.stringify({ error: '密码至少 6 位' }), { status: 400 })
+  if (password.length < 8) {
+    return new Response(JSON.stringify({ error: '密码至少 8 位' }), { status: 400 })
   }
   const ok = changePassword(password)
   if (!ok) return new Response(JSON.stringify({ error: '密码更新失败' }), { status: 500 })
