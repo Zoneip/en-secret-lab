@@ -1,5 +1,5 @@
 ---
-/** 分类思维导图:Mind Elixir 数据驱动(分类→系列→文章),主题配色、深浅模式感知、点击跳转 */
+/** 分类总览:像素分类系列卡(卡头 + 系列分组 + 文章列表),纯 SSR 零 JS */
 import { aggregateByKey } from '../../lib/content/taxonomy'
 
 interface Props {
@@ -14,15 +14,15 @@ interface Props {
 
 const { posts } = Astro.props
 const categories = aggregateByKey(posts, 'category')
+const fmtDate = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 
-interface NodeData {
-  topic: string
-  id: string
-  hyperLink?: string
-  children?: NodeData[]
+interface SeriesGroup {
+  name: string
+  posts: typeof posts
 }
 
-const maps: Array<{ id: string; root: NodeData }> = categories.map((c) => {
+const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: typeof posts }> = categories.map((c) => {
   const catPosts = posts.filter((p) => p.category === c.name)
   const seriesMap = new Map<string, typeof catPosts>()
   for (const p of catPosts) {
@@ -31,162 +31,175 @@ const maps: Array<{ id: string; root: NodeData }> = categories.map((c) => {
       seriesMap.get(p.series)!.push(p)
     }
   }
-  const children: NodeData[] = []
-  for (const [name, ps] of seriesMap) {
-    children.push({
-      topic: name,
-      id: `s-${c.name}-${name}`,
-      children: ps.map((p) => ({
-        topic: p.title,
-        id: `p-${p.slug}`,
-        hyperLink: `/blog/${p.slug}`,
-      })),
-    })
-  }
-  for (const p of catPosts.filter((x) => !x.series)) {
-    children.push({ topic: p.title, id: `p-${p.slug}`, hyperLink: `/blog/${p.slug}` })
-  }
   return {
-    id: `map-${c.name}`,
-    root: { topic: `${c.name} (${c.count})`, id: `c-${c.name}`, children },
+    name: c.name,
+    count: c.count,
+    series: [...seriesMap.entries()].map(([name, ps]) => ({ name, posts: ps })),
+    loose: catPosts.filter((p) => !p.series),
   }
 })
-const mapsJson = JSON.stringify(maps)
 ---
 
-<div class="mindmap-wrap" data-mindmaps>
-  {maps.length === 0 && <p class="empty">还没有分类</p>}
-  {maps.map((m) => (
-    <div class="mindmap-card" data-mindmap={m.id}>
-      <div class="map-canvas" data-canvas></div>
-    </div>
+<div class="cat-wall">
+  {trees.length === 0 && <p class="empty">还没有分类</p>}
+  {trees.map((tree) => (
+    <section class="cat-card">
+      <a class="cat-head" href={`/categories/${encodeURIComponent(tree.name)}`}>
+        <span class="cat-name">{tree.name}</span>
+        <span class="cat-count">{tree.count} 篇</span>
+      </a>
+      <div class="cat-body">
+        {tree.series.map((s) => (
+          <div class="series">
+            <div class="series-name">
+              <span class="series-mark" aria-hidden="true"></span>
+              {s.name}
+            </div>
+            <ul class="post-list">
+              {s.posts.map((p) => (
+                <li>
+                  <a class="post-link" href={`/blog/${p.slug}`}>
+                    <span class="post-date">{fmtDate(p.pubDate)}</span>
+                    <span class="post-title">{p.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        {tree.loose.length > 0 && (
+          <ul class="post-list">
+            {tree.loose.map((p) => (
+              <li>
+                <a class="post-link" href={`/blog/${p.slug}`}>
+                  <span class="post-date">{fmtDate(p.pubDate)}</span>
+                  <span class="post-title">{p.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
   ))}
 </div>
-<script type="application/json" id="mindmap-data" set:html={mapsJson}></script>
 
 <style>
-  .mindmap-wrap {
+  .cat-wall {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
-  .mindmap-wrap .empty {
+  .cat-wall .empty {
     text-align: center;
     color: var(--fg-subtle);
     padding: 40px 0;
   }
-  .mindmap-card {
-    border: 1px solid var(--border);
-    border-radius: 20px;
+  .cat-card {
+    border: 1.5px solid var(--border-strong);
+    border-radius: 16px;
     background: var(--surface);
     box-shadow: var(--shadow);
-    padding: 10px;
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.6s var(--ease-soft), transform 0.6s var(--ease-soft);
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s;
   }
-  .mindmap-card.grown {
-    opacity: 1;
-    transform: none;
+  .cat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--primary) 16%, transparent);
   }
-  .map-canvas {
-    height: clamp(280px, 46vh, 440px);
-    width: 100%;
+  .cat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 22px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 12%, transparent), transparent 60%);
+    border-bottom: 1.5px solid var(--border);
+    text-decoration: none;
   }
-  /* Mind Elixir 内部:融入主题 */
-  .mindmap-card .mind-elixir {
-    --main-color: var(--primary);
-    --main-bgcolor: var(--border-strong);
-    --color: var(--fg);
-    --bgcolor: var(--surface);
-    --panel-color: 255, 255, 255;
-    --panel-bgcolor: 45, 45, 55;
+  .cat-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--primary);
   }
-  .mindmap-card .mind-elixir .minder-editor,
-  .mindmap-card .mind-elixir .minder-view {
-    background: transparent !important;
+  .cat-count {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--fg-muted);
+    background: var(--primary-soft);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 2px 12px;
   }
-  .mindmap-card .mind-elixir .minder-node {
-    cursor: pointer;
+  .cat-body {
+    padding: 16px 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .mindmap-card {
-      transition: none;
+  .series-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .series-mark {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: rotate(45deg);
+  }
+  .post-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+  }
+  .post-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: var(--fg);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--elevated);
+    padding: 7px 14px;
+    max-width: 320px;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .post-link:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .post-date {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    color: var(--fg-subtle);
+    flex-shrink: 0;
+  }
+  .post-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .cat-head {
+      padding: 14px 16px;
+    }
+    .cat-body {
+      padding: 14px 16px 18px;
+    }
+    .post-link {
+      max-width: 100%;
     }
   }
 </style>
-
-<script>
-  import MindElixir from 'mind-elixir'
-  import 'mind-elixir/style.css'
-
-  const cards = [...document.querySelectorAll('[data-mindmap]')]
-  const maps: Array<{ id: string; root: { topic: string; id: string; children?: unknown[] } }> = JSON.parse(
-    document.querySelector('#mindmap-data')?.textContent ?? '[]'
-  )
-  if (cards.length && maps.length) {
-    const minds: MindElixir[] = []
-
-    const cssVars = () => {
-      const root = getComputedStyle(document.documentElement)
-      const p = root.getPropertyValue('--primary').trim()
-      const b = root.getPropertyValue('--border-strong').trim()
-      const fg = root.getPropertyValue('--fg').trim()
-      const bg = root.getPropertyValue('--surface').trim()
-      return {
-        '--main-color': p,
-        '--main-bgcolor': b,
-        '--color': fg,
-        '--bgcolor': bg,
-        '--panel-color': '255, 255, 255',
-        '--panel-bgcolor': '45, 45, 55',
-      }
-    }
-
-    cards.forEach((card) => {
-      const id = card.getAttribute('data-mindmap')
-      const data = maps.find((m) => m.id === id)
-      if (!data) return
-      const el = card.querySelector('[data-canvas]')
-      const mind = new MindElixir({
-        el: el as HTMLElement,
-        direction: MindElixir.RIGHT,
-        draggable: false,
-        contextMenu: false,
-        toolBar: false,
-        keypress: false,
-        theme: {
-          name: 'theme',
-          palette: [cssVars()['--main-color']],
-          cssVar: cssVars(),
-        },
-      })
-      mind.init({ nodeData: data.root } as never)
-      minds.push(mind)
-    })
-
-    // 深浅模式切换:重设主题
-    window.addEventListener('enlab:theme-change', () => {
-      minds.forEach((mind) => {
-        if (typeof mind.changeTheme === 'function') {
-          mind.changeTheme({ name: 'theme', palette: [cssVars()['--main-color']], cssVar: cssVars() })
-        }
-      })
-    })
-  }
-
-  // 生长浮现(进入视口)
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('grown')
-          io.unobserve(entry.target)
-        }
-      }
-    },
-    { threshold: 0.15 }
-  )
-  cards.forEach((c) => io.observe(c))
-</script>
