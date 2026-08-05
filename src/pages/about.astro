@@ -93,6 +93,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     scrollbar-width: none;
   }
   .snap-scroller::-webkit-scrollbar {
@@ -327,7 +328,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
         lastWheel = now
         const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
         const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
-        scroller.scrollTo({ left: next * scroller.clientWidth, behavior: 'smooth' })
+        scroller.scrollLeft = next * scroller.clientWidth
       },
       { passive: false }
     )
