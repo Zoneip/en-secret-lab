@@ -314,32 +314,45 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
     let wheelLock = false
     let pendingTarget = null
     let wheelLockT = 0
+    let queuedDir = 0
+    const startPage = (dir) => {
+      wheelLock = true
+      const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
+      const next = Math.min(Math.max(0, cur + dir), screens.length - 1)
+      if (next === cur) {
+        // 已在边界:清掉排队,立即解锁,保证快速反向/正向响应
+        queuedDir = 0
+        unlockWheel()
+        return
+      }
+      pendingTarget = next * scroller.clientWidth
+      scroller.scrollTo({ left: pendingTarget, behavior: 'smooth' })
+      window.clearTimeout(wheelLockT)
+      wheelLockT = window.setTimeout(unlockWheel, 1500)
+    }
     const unlockWheel = () => {
       wheelLock = false
       pendingTarget = null
       window.clearTimeout(wheelLockT)
+      // 锁期间用户继续滚动:不丢弃,解锁后立即补翻(连滚跟手)
+      if (queuedDir) {
+        const dir = queuedDir
+        queuedDir = 0
+        startPage(dir)
+      }
     }
     window.addEventListener(
       'wheel',
       (e) => {
         if (e.deltaX && !e.deltaY) return
-        if (wheelLock || !e.deltaY) {
-          e.preventDefault()
-          return
-        }
         e.preventDefault()
-        wheelLock = true
-        const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
-        const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
-        if (next === cur) {
-          // 已在边界:立即解锁,保证快速反向/正向响应
-          unlockWheel()
+        if (wheelLock) {
+          // 动画中:记录方向,解锁后执行
+          queuedDir = Math.sign(e.deltaY)
           return
         }
-        pendingTarget = next * scroller.clientWidth
-        scroller.scrollTo({ left: pendingTarget, behavior: 'smooth' })
-        window.clearTimeout(wheelLockT)
-        wheelLockT = window.setTimeout(unlockWheel, 1500)
+        if (!e.deltaY) return
+        startPage(e.deltaY > 0 ? 1 : -1)
       },
       { passive: false }
     )
