@@ -312,26 +312,6 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
 
     // 滚轮翻页:垂直滚轮 → 横向平滑切屏;滚动到达目标即解锁(快速连滚灵敏),
     // 超时兜底防卡死;横向手势(触摸板)交还原生
-    // 滚轮翻页:事件风暴节流(250ms 最小翻页间隔)
-    // 一次物理滚动 = 一批事件(16-50ms 间隔)→ 节流窗口内合并为一屏;
-    // 手动连滚(>250ms 间隔)→ 逐屏;无锁状态,无卡死可能
-    let lastWheel = 0
-    const WHEEL_THROTTLE = 250
-    window.addEventListener(
-      'wheel',
-      (e) => {
-        if (e.deltaX && !e.deltaY) return
-        e.preventDefault()
-        if (!e.deltaY) return
-        const now = performance.now()
-        if (now - lastWheel < WHEEL_THROTTLE) return
-        lastWheel = now
-        const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
-        const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
-        scroller.scrollLeft = next * scroller.clientWidth
-      },
-      { passive: false }
-    )
 
     // 屏外裁剪 + 当前屏激活
     const inViewIo = new IntersectionObserver(
