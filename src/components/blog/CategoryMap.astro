@@ -1,7 +1,5 @@
 ---
-/** 分类思维导图:按文章结构生长(分类 → 系列 → 文章;无系列直接挂文章)
- *  横向树 + SVG 连线 + 进入视口逐个生长动画 + 分类可收起
- */
+/** 分类思维导图:Mind Elixir 数据驱动(分类→系列→文章),主题配色、深浅模式感知、点击跳转 */
 import { aggregateByKey } from '../../lib/content/taxonomy'
 
 interface Props {
@@ -16,308 +14,179 @@ interface Props {
 
 const { posts } = Astro.props
 const categories = aggregateByKey(posts, 'category')
-const fmtDate = (d: Date) =>
-  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 
-interface SeriesGroup {
-  name: string
-  posts: typeof posts
-}
-interface CategoryTree {
-  name: string
-  count: number
-  series: SeriesGroup[]
-  loose: typeof posts
+interface NodeData {
+  topic: string
+  id: string
+  hyperLink?: string
+  children?: NodeData[]
 }
 
-const trees: CategoryTree[] = categories.map((c) => {
+const maps: Array<{ id: string; root: NodeData }> = categories.map((c) => {
   const catPosts = posts.filter((p) => p.category === c.name)
-  const seriesMap = new Map<string, typeof posts>()
+  const seriesMap = new Map<string, typeof catPosts>()
   for (const p of catPosts) {
     if (p.series) {
       if (!seriesMap.has(p.series)) seriesMap.set(p.series, [])
       seriesMap.get(p.series)!.push(p)
     }
   }
+  const children: NodeData[] = []
+  for (const [name, ps] of seriesMap) {
+    children.push({
+      topic: name,
+      id: `s-${c.name}-${name}`,
+      children: ps.map((p) => ({
+        topic: p.title,
+        id: `p-${p.slug}`,
+        hyperLink: `/blog/${p.slug}`,
+      })),
+    })
+  }
+  for (const p of catPosts.filter((x) => !x.series)) {
+    children.push({ topic: p.title, id: `p-${p.slug}`, hyperLink: `/blog/${p.slug}` })
+  }
   return {
-    name: c.name,
-    count: c.count,
-    series: [...seriesMap.entries()].map(([name, ps]) => ({ name, posts: ps })),
-    loose: catPosts.filter((p) => !p.series),
+    id: `map-${c.name}`,
+    root: { topic: `${c.name} (${c.count})`, id: `c-${c.name}`, children },
   }
 })
+const mapsJson = JSON.stringify(maps)
 ---
 
-<div class="cat-map" data-cat-map>
-  {trees.length === 0 && <p class="empty">还没有分类</p>}
-  {trees.map((tree, ti) => (
-    <section class="tree-card" data-tree data-delay={ti}>
-      <div class="tree-layout">
-        {/* 根:分类节点 */}
-        <button class="node root" data-root aria-expanded="true">
-          <span class="root-name">{tree.name}</span>
-          <span class="root-count">{tree.count}</span>
-        </button>
-
-        {/* 分支:系列 + 无系列文章 */}
-        <div class="branches">
-          {tree.series.map((s, si) => (
-            <div class="branch" data-delay={si}>
-              <div class="series-node">
-                <span class="series-icon" aria-hidden="true"></span>
-                {s.name}
-              </div>
-              <div class="leaves">
-                {s.posts.map((p, pi) => (
-                  <a class="leaf" href={`/blog/${p.slug}`} data-delay={pi}>
-                    <span class="leaf-date">{fmtDate(p.pubDate)}</span>
-                    {p.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-          {tree.loose.length > 0 && (
-            <div class="branch" data-delay={tree.series.length}>
-              <div class="leaves">
-                {tree.loose.map((p, pi) => (
-                  <a class="leaf" href={`/blog/${p.slug}`} data-delay={pi}>
-                    <span class="leaf-date">{fmtDate(p.pubDate)}</span>
-                    {p.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
+<div class="mindmap-wrap" data-mindmaps>
+  {maps.length === 0 && <p class="empty">还没有分类</p>}
+  {maps.map((m) => (
+    <div class="mindmap-card" data-mindmap={m.id}>
+      <div class="map-canvas" data-canvas></div>
+    </div>
   ))}
 </div>
+<script type="application/json" id="mindmap-data" set:html={mapsJson}></script>
 
 <style>
-  .cat-map {
+  .mindmap-wrap {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 24px;
   }
-  .cat-map .empty {
+  .mindmap-wrap .empty {
     text-align: center;
     color: var(--fg-subtle);
     padding: 40px 0;
   }
-  .tree-card {
+  .mindmap-card {
     border: 1px solid var(--border);
     border-radius: 20px;
     background: var(--surface);
     box-shadow: var(--shadow);
-    padding: 22px 24px;
-    overflow-x: auto;
+    padding: 10px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s var(--ease-soft), transform 0.6s var(--ease-soft);
   }
-  .tree-layout {
-    display: flex;
-    gap: 28px;
-    align-items: flex-start;
-    min-width: max-content;
+  .mindmap-card.grown {
+    opacity: 1;
+    transform: none;
   }
-  /* 根节点 */
-  .node.root {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-    padding: 18px 22px;
-    border: none;
-    border-radius: 16px;
-    background: var(--primary);
-    color: var(--primary-fg, #fff);
-    font-family: var(--font-display);
-    font-size: 1.35rem;
+  .map-canvas {
+    height: clamp(280px, 46vh, 440px);
+    width: 100%;
+  }
+  /* Mind Elixir 内部:融入主题 */
+  .mindmap-card .mind-elixir {
+    --main-color: var(--primary);
+    --main-bgcolor: var(--border-strong);
+    --color: var(--fg);
+    --bgcolor: var(--surface);
+    --panel-color: 255, 255, 255;
+    --panel-bgcolor: 45, 45, 55;
+  }
+  .mindmap-card .mind-elixir .minder-editor,
+  .mindmap-card .mind-elixir .minder-view {
+    background: transparent !important;
+  }
+  .mindmap-card .mind-elixir .minder-node {
     cursor: pointer;
-    box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent);
-    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
-  }
-  .node.root:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--primary) 45%, transparent);
-  }
-  .root-count {
-    font-size: 0.72rem;
-    font-family: var(--font-mono);
-    opacity: 0.85;
-    background: color-mix(in srgb, var(--primary-fg, #fff) 20%, transparent);
-    border-radius: 999px;
-    padding: 1px 10px;
-  }
-  /* 分支列 */
-  .branches {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    flex: 1;
-    min-width: 0;
-  }
-  .branch {
-    position: relative;
-    padding-left: 20px;
-  }
-  .branch::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: -18px;
-    width: 2px;
-    background: var(--border-strong);
-    border-radius: 999px;
-  }
-  .branch:last-child::before {
-    bottom: 50%;
-  }
-  .branch::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 14px;
-    width: 18px;
-    height: 2px;
-    background: var(--border-strong);
-  }
-  /* 系列节点 */
-  .series-node {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: var(--primary);
-    background: var(--primary-soft);
-    border-radius: 999px;
-    padding: 4px 14px;
-  }
-  .series-icon {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    background: var(--primary);
-    transform: rotate(45deg);
-  }
-  /* 叶节点 */
-  .leaves {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .leaf {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.86rem;
-    color: var(--fg);
-    text-decoration: none;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--elevated);
-    padding: 6px 12px;
-    max-width: 260px;
-    transition: border-color 0.2s, color 0.2s, transform 0.2s;
-  }
-  .leaf:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: translateY(-1px);
-  }
-  .leaf-date {
-    font-size: 0.68rem;
-    font-family: var(--font-mono);
-    color: var(--fg-subtle);
-    flex-shrink: 0;
-  }
-  /* 生长动画:进入视口后,根 → 系列 → 叶 依次浮现 */
-  .node.root,
-  .series-node,
-  .leaf {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.5s var(--ease-soft), transform 0.5s var(--ease-soft);
-  }
-  .tree-card.grown .node.root {
-    opacity: 1;
-    transform: none;
-    transition-delay: 0.05s;
-  }
-  .tree-card.grown .branch {
-    opacity: 0;
-    animation: branch-grow 0.5s var(--ease-soft) forwards;
-    animation-delay: calc(0.25s + var(--delay, 0) * 0.18s);
-  }
-  .tree-card.grown .series-node {
-    opacity: 1;
-    transform: none;
-  }
-  .tree-card.grown .leaf {
-    opacity: 1;
-    transform: none;
-    transition-delay: calc(0.3s + var(--delay, 0) * 0.12s);
-  }
-  @keyframes branch-grow {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .node.root,
-    .series-node,
-    .leaf,
-    .tree-card.grown .branch {
-      opacity: 1;
-      transform: none;
-      animation: none;
-    }
-  }
-  @media (max-width: 760px) {
-    .tree-card {
-      padding: 16px;
-    }
-    .tree-layout {
-      gap: 16px;
-    }
-    .leaf {
-      max-width: 200px;
+    .mindmap-card {
+      transition: none;
     }
   }
 </style>
 
-<script is:inline>
-  ;(function () {
-    const cards = [...document.querySelectorAll('[data-tree]')]
-    if (!cards.length) return
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('grown')
-            io.unobserve(entry.target)
-          }
-        }
-      },
-      { threshold: 0.2 }
-    )
-    cards.forEach((c) => io.observe(c))
-    // 根节点收起/展开
+<script>
+  import MindElixir from 'mind-elixir'
+  import 'mind-elixir/style.css'
+
+  const cards = [...document.querySelectorAll('[data-mindmap]')]
+  const maps: Array<{ id: string; root: { topic: string; id: string; children?: unknown[] } }> = JSON.parse(
+    document.querySelector('#mindmap-data')?.textContent ?? '[]'
+  )
+  if (cards.length && maps.length) {
+    const minds: MindElixir[] = []
+
+    const cssVars = () => {
+      const root = getComputedStyle(document.documentElement)
+      const p = root.getPropertyValue('--primary').trim()
+      const b = root.getPropertyValue('--border-strong').trim()
+      const fg = root.getPropertyValue('--fg').trim()
+      const bg = root.getPropertyValue('--surface').trim()
+      return {
+        '--main-color': p,
+        '--main-bgcolor': b,
+        '--color': fg,
+        '--bgcolor': bg,
+        '--panel-color': '255, 255, 255',
+        '--panel-bgcolor': '45, 45, 55',
+      }
+    }
+
     cards.forEach((card) => {
-      const root = card.querySelector('[data-root]')
-      root?.addEventListener('click', () => {
-        const collapsed = card.classList.toggle('collapsed')
-        root.setAttribute('aria-expanded', String(!collapsed))
+      const id = card.getAttribute('data-mindmap')
+      const data = maps.find((m) => m.id === id)
+      if (!data) return
+      const el = card.querySelector('[data-canvas]')
+      const mind = new MindElixir({
+        el: el as HTMLElement,
+        direction: MindElixir.RIGHT,
+        draggable: false,
+        contextMenu: false,
+        toolBar: false,
+        keypress: false,
+        theme: {
+          name: 'theme',
+          palette: [cssVars()['--main-color']],
+          cssVar: cssVars(),
+        },
+      })
+      mind.init({ nodeData: data.root } as never)
+      minds.push(mind)
+    })
+
+    // 深浅模式切换:重设主题
+    window.addEventListener('enlab:theme-change', () => {
+      minds.forEach((mind) => {
+        if (typeof mind.changeTheme === 'function') {
+          mind.changeTheme({ name: 'theme', palette: [cssVars()['--main-color']], cssVar: cssVars() })
+        }
       })
     })
-  })()
+  }
+
+  // 生长浮现(进入视口)
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('grown')
+          io.unobserve(entry.target)
+        }
+      }
+    },
+    { threshold: 0.15 }
+  )
+  cards.forEach((c) => io.observe(c))
 </script>
