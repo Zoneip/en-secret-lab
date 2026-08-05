@@ -28,7 +28,7 @@ const { page, totalPages, posts } = Astro.props
 ---
 
 <BaseLayout title={`文章 · 第 ${page} 页`} description={`${config.title} 的文章列表`}>
-  <div class="page-enter container">
+  <div class="page-enter container" style="zoom:1.1">
     <header class="page-head">
       <h1>文章</h1>
       <p>第 {page} 页 · 共 {totalPages} 页</p>
