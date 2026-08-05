@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { FolderOpen, ImagePlus, RotateCcw, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import { ImageIcon, Settings2 } from 'lucide-react'
+import { Settings2 } from 'lucide-react'
 import { api } from '../lib/api'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -72,8 +72,6 @@ export default function ThemeEditorPage() {
   const [pickerMode, setPickerMode] = useState<'light' | 'dark' | null>(null)
   const [assets, setAssets] = useState<Asset[]>([])
   const [isDark, setIsDark] = useState(false)
-  const [friendsWallpaper, setFriendsWallpaper] = useState(true)
-  const [fwSaving, setFwSaving] = useState(false)
   const [topbar, setTopbar] = useState({ style: 'glass', accent: false, ornament: 'none', height: 56 })
 
   // 跟随控制台暗色模式:预览使用对应色板
@@ -92,7 +90,6 @@ export default function ThemeEditorPage() {
         setPresets(d.presets)
         setActive(d.presets[0].id)
         setAssets((d.assets ?? []).filter((a: Asset) => a.kind === 'wallpaper'))
-        setFriendsWallpaper(d.site?.features?.friendsWallpaper ?? true)
       })
       .catch((e) => toast.error(e.message))
   }, [])
@@ -246,24 +243,6 @@ export default function ThemeEditorPage() {
     input.click()
   }
 
-  async function saveFriendsWallpaper(v: boolean) {
-    setFwSaving(true)
-    try {
-      const state = await api<{ presets: Preset[]; site: SiteConfig }>('/admin/api/state')
-      const site = { ...state.site, features: { ...(state.site.features ?? {}), friendsWallpaper: v } }
-      await api('/admin/api/config', {
-        method: 'PUT',
-        body: JSON.stringify(site),
-      })
-      setFriendsWallpaper(v)
-      toast.success(v ? '友链壁纸已启用' : '友链壁纸已关闭')
-    } catch (e) {
-      toast.error((e as Error).message)
-    } finally {
-      setFwSaving(false)
-    }
-  }
-
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
       <Card className="p-5 sm:p-6">
@@ -283,34 +262,6 @@ export default function ThemeEditorPage() {
             </Button>
           </div>
         </div>
-
-        {/* 友链页专属壁纸(樱花主题,仅友链页展示) */}
-        <Card className="mt-4 p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-3">
-              <h4 className="flex items-center gap-2 text-sm font-semibold">
-                <ImageIcon className="size-4" />
-                友链页专属壁纸
-              </h4>
-              <Switch
-                checked={friendsWallpaper}
-                onCheckedChange={(v) => saveFriendsWallpaper(v)}
-                disabled={fwSaving}
-              />
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              巫女静静地在孤岛上守望,樱花萌芽,几度轮回春?本主题仅用于友链页背景,不参与前台主题切换。
-            </p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div className="overflow-hidden rounded-lg border">
-                <img src="/wallpapers/friends-shrine-day-static.svg" alt="樱花壁纸·白天" className="aspect-video w-full object-cover" />
-                <p className="px-2 py-1 text-[11px] text-muted-foreground">白天</p>
-              </div>
-              <div className="overflow-hidden rounded-lg border">
-                <img src="/wallpapers/friends-shrine-night-static.svg" alt="樱花壁纸·黑夜" className="aspect-video w-full object-cover" />
-                <p className="px-2 py-1 text-[11px] text-muted-foreground">黑夜</p>
-              </div>
-            </div>
-          </Card>
 
         {/* 局部作用域实时预览 */}
         <div
