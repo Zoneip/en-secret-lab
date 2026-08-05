@@ -4,6 +4,7 @@ import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 import CategoryMap from '../../components/blog/CategoryMap.astro'
+import PixelPaw from '../../components/mascot/PixelPaw.astro'
 
 const posts = await getAllPosts()
 const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
@@ -12,8 +13,11 @@ const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
 <BaseLayout fillViewport title="分类" description="全站分类总览">
   <div class="page-enter container">
     <header class="page-head">
+      <span class="paw-deco" aria-hidden="true">
+        <PixelPaw pixel={3} />
+      </span>
       <h1>分类</h1>
-      <p>{categories.length} 个分类</p>
+      <p>{categories.length} 个分类 · 顺着爪印去探险</p>
     </header>
 
     <CategoryMap posts={posts} />
@@ -24,6 +28,26 @@ const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
   .page-head {
     padding: 40px 0 24px;
     text-align: center;
+  }
+  .paw-deco {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset -3px -3px 0 0 color-mix(in srgb, var(--primary) 18%, transparent),
+      inset 3px 3px 0 0 color-mix(in srgb, #ffffff 40%, transparent);
+    margin-bottom: 14px;
+  }
+  .paw-deco svg {
+    width: 30px;
+    height: 30px;
   }
   .page-head h1 {
     font-size: 2rem;
