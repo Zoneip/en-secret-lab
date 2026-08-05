@@ -1,11 +1,11 @@
 name: Coulyer
 theme: purple
-subtitle: 编织梦境的旅人
-description: 在现实与幻想之间游走,收集星星和故事。偶尔消失几天,回来时会带回一篇新的冒险。声音很轻,但故事很重。
+subtitle: 思维边界的探索者
+description: 他很喜欢以旁观者的视角看着一切，仿佛凝视着镜中的倒影。其中有人喧哗，有人沉默，像聚合离散的鸟群。
 traits:
   - 神秘
-  - 温柔
-  - 讲故事的人
-quote: 嘘——故事还在梦里生长。
-quoteEffect: typing
+  - 沉着
+  - 善于观察
+quote: 远方除了遥远，一无所有。
+quoteEffect: float
 quoteSpeed: normal
