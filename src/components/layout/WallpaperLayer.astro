@@ -16,12 +16,13 @@ interface Props {
 
 const { theme: fallbackTheme, enabled = true } = Astro.props
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
-const themeIds = ['gray', 'yellow', 'purple', 'white'] as const
+const themeIds = ['gray', 'yellow', 'purple', 'white', 'friends'] as const
 const SCENE: Record<string, { light: string; dark: string }> = {
   gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
   yellow: { light: 'yellow-field-light', dark: 'yellow-field-dark' },
   purple: { light: 'purple-library-day', dark: 'purple-library-night' },
   white: { light: 'white-sea-day', dark: 'white-sea-dark' },
+  friends: { light: 'friends-shrine-day', dark: 'friends-shrine-night' },
 }
 const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
 const animSvg = (name: string) => {
@@ -73,7 +74,9 @@ const animSvg = (name: string) => {
   html[data-theme='purple'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-light],
   html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
   html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
-  html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark] {
+  html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark],
+  html[data-theme='friends'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-light],
+  html[data-theme='friends'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-dark] {
     display: block;
     animation: wl-fade-in 0.45s var(--ease-soft) both;
   }

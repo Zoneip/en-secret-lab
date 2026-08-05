@@ -18,7 +18,7 @@ import { themes } from '../../lib/theme/presets'
 
     <div class="theme-grid">
       {
-        themes.filter((t) => t.id !== 'friends').map((t) => (
+        themes.map((t) => (
           <button
             class="theme-card"
             data-theme-id={t.id}
