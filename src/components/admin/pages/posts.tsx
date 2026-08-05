@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { api, fmtDate } from '../lib/api'
+import DocsManager from './docs-manager'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
 import { Card } from '../ui/card'
@@ -100,6 +102,15 @@ export default function PostsPage() {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
+      <Tabs defaultValue="articles">
+        <TabsList className="grid w-64 grid-cols-2">
+          <TabsTrigger value="articles">文章</TabsTrigger>
+          <TabsTrigger value="docs">文档库</TabsTrigger>
+        </TabsList>
+        <TabsContent value="docs" className="mt-4">
+          <DocsManager />
+        </TabsContent>
+        <TabsContent value="articles" className="mt-4">
       <Card className="gap-0">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3.5">
           <div className="flex items-center gap-1.5">
@@ -231,6 +242,8 @@ export default function PostsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
