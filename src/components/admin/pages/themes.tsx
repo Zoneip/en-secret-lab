@@ -85,7 +85,7 @@ export default function ThemeEditorPage() {
   }, [])
 
   useEffect(() => {
-    api<{ presets: Preset[] }>('/admin/api/state')
+    api<{ presets: Preset[]; assets?: Asset[] }>('/admin/api/state')
       .then((d) => {
         setPresets(d.presets)
         setActive(d.presets[0].id)
@@ -98,11 +98,11 @@ export default function ThemeEditorPage() {
 
   useEffect(() => {
     if (!current) return
-    setTopbar(current.override?.topbar ?? {
-      style: current.topbar?.style ?? 'glass',
-      accent: current.topbar?.accent ?? false,
-      ornament: current.topbar?.ornament ?? 'none',
-      height: current.topbar?.height ?? 56,
+    setTopbar({
+      style: current.override?.topbar?.style ?? current.topbar?.style ?? 'glass',
+      accent: current.override?.topbar?.accent ?? current.topbar?.accent ?? false,
+      ornament: current.override?.topbar?.ornament ?? current.topbar?.ornament ?? 'none',
+      height: current.override?.topbar?.height ?? current.topbar?.height ?? 56,
     })
   }, [current])
 

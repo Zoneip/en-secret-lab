@@ -11,5 +11,7 @@ export const themes: ThemePreset[] = [gray, yellow, purple, white, friends]
 export const DEFAULT_THEME = 'gray'
 
 export function getTheme(id: string): ThemePreset {
-  return themes.find((t) => t.id === (isThemeId(id) ? id : DEFAULT_THEME)) ?? themes[0]
+  // 'random' 不是实际预设,回退到 gray
+  const lookupId = id === 'random' ? 'gray' : (isThemeId(id) ? id : DEFAULT_THEME)
+  return themes.find((t) => t.id === lookupId) ?? themes[0]
 }

@@ -43,7 +43,7 @@ const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
 const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
 const ocBgDark = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.dark)
 const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode]['wallpaper-overlay']
-const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode][key]
+const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) => infer T ? T : never)['palette']['light'], mode: 'light' | 'dark') => getTheme(theme).palette[mode][key]
 ---
 
 <BaseLayout title={config.title} description={config.description}>
@@ -66,7 +66,7 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
       <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
         {
           themeIds.map((t) => (
-            <div class="hero-mascot-item" key={t}>
+            <div class="hero-mascot-item">
               <Mascot role="furry" theme={t} pixel={7} />
               <span class="hero-mascot-name">{ocNameByTheme[t] ?? themeNames[t]}</span>
             </div>
@@ -92,7 +92,7 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
           <h2 class="section-title">探索实验室</h2>
           <div class="column-grid">
             {columns.map((c) => (
-              <a class="column-card" data-motion-group="cards" href={`/${c.id}`} key={c.id} style={`--oc-color:${col(c.theme)}`}>
+              <a class="column-card" data-motion-group="cards" href={`/${c.id}`} style={`--oc-color:${col(c.theme)}`}>
                 <div class="column-card-head">
                   <Mascot role="furry" theme={c.theme} pixel={5} />
                   <span class="column-count">{countByCategory(c.category)} 篇</span>
@@ -119,7 +119,6 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
                 data-motion-group="cards"
                 data-oc-theme={oc.theme}
                 style={`--oc-bg-light:${ocBg(oc.theme)}; --oc-bg-dark:${ocBgDark(oc.theme)}; --oc-overlay-light:${ocOverlay(oc.theme, 'light')}; --oc-overlay-dark:${ocOverlay(oc.theme, 'dark')}; --oc-primary-light:${ocTok(oc.theme, 'primary', 'light')}; --oc-primary-dark:${ocTok(oc.theme, 'primary', 'dark')}; --oc-fg-light:${ocTok(oc.theme, 'fg', 'light')}; --oc-fg-dark:${ocTok(oc.theme, 'fg', 'dark')}; --oc-muted-light:${ocTok(oc.theme, 'fg-muted', 'light')}; --oc-muted-dark:${ocTok(oc.theme, 'fg-muted', 'dark')}`}
-                key={oc.id}
               >
                 <div class="oc-card-top">
                   <Mascot role="boy" theme={oc.theme} pixel={6} />
@@ -129,7 +128,7 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
                 <p class="oc-card-sub">{oc.subtitle}</p>
                 <div class="oc-card-traits">
                   {oc.traits.slice(0, 3).map((t) => (
-                    <span class="oc-card-trait" key={t}>
+                    <span class="oc-card-trait">
                       {t}
                     </span>
                   ))}
@@ -158,7 +157,6 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
             category={p.category}
             tags={p.tags}
             cover={p.cover}
-            key={p.slug}
           />
         ))}
       </div>
@@ -171,7 +169,7 @@ const ocTok = (theme: string, key: string, mode: 'light' | 'dark') => getTheme(t
           <h2 class="section-title">驱动本站的技术</h2>
           <div class="tech-grid">
             {techStack.map((t) => (
-              <div class="tech-card" key={t.name} style={`--tc:${t.color}`}>
+              <div class="tech-card" style={`--tc:${t.color}`}>
                 <span class="tech-dot" aria-hidden="true"></span>
                 <span class="tech-name">{t.name}</span>
                 <span class="tech-desc">{t.desc}</span>

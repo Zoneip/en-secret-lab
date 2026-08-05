@@ -42,6 +42,8 @@ export function bootScript(lightDefault: string, darkDefault: string): string {
   if(ft){t=ft;}
   else if(p&&p.themeLocked&&p.theme){t=p.theme;}
   else{t=mode==='dark'?'${darkDefault}':'${lightDefault}';}
+  // 随机主题解析
+  if(t==='random'){var pool=['gray','yellow','purple','white'];t=pool[Math.floor(Math.random()*pool.length)];}
   document.documentElement.dataset.theme=t;
   document.documentElement.dataset.mode=mode;
   document.documentElement.dataset.modePref=m;

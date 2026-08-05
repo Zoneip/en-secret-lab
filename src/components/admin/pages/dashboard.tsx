@@ -29,6 +29,7 @@ interface SiteState {
   site: {
     title: string
     defaultTheme: string
+    themeByMode: { light: string; dark: string }
   }
   stats: {
     posts: number
@@ -190,7 +191,7 @@ export default function Dashboard() {
   const hour = new Date().getHours()
   const greet = hour < 6 ? '夜深了' : hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好'
   const pubRatio = state?.stats.posts ? Math.round((state.stats.published / state.stats.posts) * 100) : 0
-  const defaultPreset = state?.presets.find((p) => p.id === state.site.defaultTheme)
+  const defaultPreset = state?.presets.find((p) => p.id === state.site.themeByMode.light)
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
@@ -314,28 +315,73 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-2.5 p-4">
             {!state
               ? [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-14" />)
-              : state.presets.map((t, i) => (
-                  <a
-                    key={t.id}
-                    href="/admin/themes"
-                    className="group relative flex items-center gap-2.5 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-sm animate-in fade-in zoom-in-95 duration-200"
-                    style={{ animationDelay: `${i * 50}ms` }}
-                  >
-                    <span className="flex -space-x-1.5">
-                      {(['bg', 'surface', 'primary', 'accent'] as const).map((k, j) => (
-                        <span
-                          key={k}
-                          className="size-4 rounded-md border border-black/5"
-                          style={{ background: t.palette.light[k], zIndex: 4 - j }}
-                        />
-                      ))}
-                    </span>
-                    <span className="text-sm font-medium">{t.name}</span>
-                    {t.id === state.site.defaultTheme && (
-                      <Badge className="absolute right-2 top-2 px-1.5 py-0 text-[9px]">默认</Badge>
-                    )}
-                  </a>
-                ))}
+              : (() => {
+                  const filtered = state.presets.filter((t) => t.id !== 'friends')
+                  const lightDef = state.site.themeByMode.light
+                  const darkDef = state.site.themeByMode.dark
+                  const items = [
+                    ...filtered.map((t, i) => ({
+                      key: t.id,
+                      name: t.name,
+                      palette: t.palette,
+                      href: '/admin/themes',
+                      badges: [
+                        t.id === lightDef ? '浅色默认' : null,
+                        t.id === darkDef ? '深色默认' : null,
+                      ].filter(Boolean) as string[],
+                      animDelay: i * 50,
+                    })),
+                    {
+                      key: 'random',
+                      name: '随机',
+                      href: '/admin/settings?tab=site',
+                      badges: (lightDef === 'random' || darkDef === 'random') ? ['默认'] as string[] : [],
+                      animDelay: filtered.length * 50,
+                      isRandom: true,
+                    },
+                  ]
+                  return items.map(
+                    (item: {
+                      key: string
+                      name: string
+                      palette?: { light: Record<string, string> }
+                      href: string
+                      badges?: string[]
+                      animDelay: number
+                      isRandom?: boolean
+                    }) => (
+                    <a
+                      key={item.key}
+                      href={item.href}
+                      className="group relative flex items-center gap-2.5 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-sm animate-in fade-in zoom-in-95 duration-200"
+                      style={{ animationDelay: `${item.animDelay}ms` }}
+                    >
+                      {item.isRandom ? (
+                        <span className="flex size-5 items-center justify-center rounded-md border border-black/5 bg-muted text-xs">
+                          <Palette className="size-3" />
+                        </span>
+                      ) : (
+                        <span className="flex -space-x-1.5">
+                          {(['bg', 'surface', 'primary', 'accent'] as const).map((k, j) => (
+                            <span
+                              key={k}
+                              className="size-4 rounded-md border border-black/5"
+                              style={{ background: item.palette?.light[k] ?? '#ccc', zIndex: 4 - j }}
+                            />
+                          ))}
+                        </span>
+                      )}
+                      <span className="text-sm font-medium">{item.name}</span>
+                      {(item.badges?.length ?? 0) > 0 && (
+                        <span className="absolute right-2 top-2 flex gap-1">
+                          {item.badges!.map((b: string) => (
+                            <Badge key={b} className="px-1.5 py-0 text-[9px]">{b}</Badge>
+                          ))}
+                        </span>
+                      )}
+                    </a>
+                  ))
+                })()}
           </div>
         </Card>
       </div>

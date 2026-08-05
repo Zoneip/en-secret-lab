@@ -77,7 +77,7 @@ export function listBackups(): BackupEntry[] {
     .filter((f) => f.endsWith('.tar.gz'))
     .map((name) => {
       const stat = statSync(join(backupsDir(), name))
-      return { name, kind: 'backup', size: stat.size, createdAt: stat.mtimeMs }
+      return { name, kind: 'backup' as const, size: stat.size, createdAt: stat.mtimeMs }
     })
     .sort((a, b) => b.createdAt - a.createdAt)
 }
@@ -88,7 +88,7 @@ export function listExports(): BackupEntry[] {
     .filter((f) => f.endsWith('.tar.gz'))
     .map((name) => {
       const stat = statSync(join(exportsDir(), name))
-      return { name, kind: 'export', size: stat.size, createdAt: stat.mtimeMs }
+      return { name, kind: 'export' as const, size: stat.size, createdAt: stat.mtimeMs }
     })
     .sort((a, b) => b.createdAt - a.createdAt)
 }

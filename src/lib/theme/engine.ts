@@ -28,11 +28,14 @@ export interface ThemePreset {
   palette: { light: ColorTokens; dark: ColorTokens }
 }
 
-export type ThemeId = 'gray' | 'yellow' | 'purple' | 'white'
+export type ThemeId = 'gray' | 'yellow' | 'purple' | 'white' | 'random'
 export type ColorMode = 'light' | 'dark'
 
 /** 访客偏好 localStorage 键名 */
 export const PREFS_KEY = 'enlab:prefs'
+
+/** 可随机选取的主题池(排除 friends 和 random 自身) */
+export const RANDOM_POOL: ThemeId[] = ['gray', 'yellow', 'purple', 'white']
 
 /** L2 站长配置对主题的覆盖(控制台产出) */
 export interface ThemeOverride {
@@ -46,7 +49,8 @@ export interface ThemeOverride {
 
 /** 访客偏好(L3) */
 export interface ThemePrefs {
-  theme: ThemeId
+  theme?: ThemeId
+  themeLocked: boolean
   mode: ColorMode | 'system'
 }
 
@@ -74,7 +78,12 @@ export function wallpaperCss(value: string): string {
 }
 
 export function isThemeId(value: string): value is ThemeId {
-  return value === 'gray' || value === 'yellow' || value === 'purple' || value === 'white' || value === 'friends'
+  return value === 'gray' || value === 'yellow' || value === 'purple' || value === 'white' || value === 'random' || value === 'friends'
+}
+
+/** 从主题池随机选一个主题 */
+export function randomTheme(): ThemeId {
+  return RANDOM_POOL[Math.floor(Math.random() * RANDOM_POOL.length)]
 }
 
 export function isColorMode(value: string): value is ColorMode {

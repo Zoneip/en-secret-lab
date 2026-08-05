@@ -75,6 +75,7 @@ export default function SettingsPage() {
     try {
       await api('/admin/api/config', { method: 'PUT', body: JSON.stringify(site) })
       toast.success('已保存')
+      setTimeout(() => window.location.reload(), 500)
     } catch (e) {
       toast.error((e as Error).message)
     } finally {
@@ -145,40 +146,54 @@ export default function SettingsPage() {
               <Label>作者署名</Label>
               <Input value={site.author} onChange={(e) => setSite({ ...site, author: e.target.value })} />
             </div>
-            <div className="grid gap-1.5">
-              <Label>浅色模式默认主题</Label>
-              <Select
-                value={site.themeByMode?.light ?? 'gray'}
-                onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, light: v } })}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gray">灰糖</SelectItem>
-                  <SelectItem value="yellow">蜜糖</SelectItem>
-                  <SelectItem value="purple">葡萄</SelectItem>
-                  <SelectItem value="white">棉花糖</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-1.5">
-              <Label>深色模式默认主题</Label>
-              <Select
-                value={site.themeByMode?.dark ?? 'purple'}
-                onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, dark: v } })}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gray">灰糖</SelectItem>
-                  <SelectItem value="yellow">蜜糖</SelectItem>
-                  <SelectItem value="purple">葡萄</SelectItem>
-                  <SelectItem value="white">棉花糖</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card className="gap-5 rounded-2xl border-border/70 p-5 shadow-sm sm:p-6">
+        <h3 className="flex items-center gap-2 text-sm font-semibold">
+          <span className="block size-2.5 rounded-full bg-primary shadow-[0_0_0_4px_rgba(92,103,125,0.12)]" />
+          默认主题
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          访客首次访问时,会根据所选模式自动应用对应的默认主题;选择「随机」则每次访问随机挑选主题。
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-1.5">
+            <Label>浅色模式默认主题</Label>
+            <Select
+              value={site.themeByMode?.light ?? 'gray'}
+              onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, light: v } })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gray">灰糖</SelectItem>
+                <SelectItem value="yellow">蜜糖</SelectItem>
+                <SelectItem value="purple">葡萄</SelectItem>
+                <SelectItem value="white">棉花糖</SelectItem>
+                <SelectItem value="random">随机</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-1.5">
+            <Label>深色模式默认主题</Label>
+            <Select
+              value={site.themeByMode?.dark ?? 'purple'}
+              onValueChange={(v) => setSite({ ...site, themeByMode: { ...site.themeByMode, dark: v } })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gray">灰糖</SelectItem>
+                <SelectItem value="yellow">蜜糖</SelectItem>
+                <SelectItem value="purple">葡萄</SelectItem>
+                <SelectItem value="white">棉花糖</SelectItem>
+                <SelectItem value="random">随机</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </Card>

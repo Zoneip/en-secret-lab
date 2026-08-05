@@ -17,8 +17,8 @@ export const siteConfigSchema = z.object({
   /** 深浅模式各自的默认主题(切换模式时未锁定主题则跟随) */
   themeByMode: z
     .object({
-      light: z.enum(['gray', 'yellow', 'purple', 'white', 'friends']).default('gray'),
-      dark: z.enum(['gray', 'yellow', 'purple', 'white', 'friends']).default('purple'),
+      light: z.enum(['gray', 'yellow', 'purple', 'white', 'random']).default('gray'),
+      dark: z.enum(['gray', 'yellow', 'purple', 'white', 'random']).default('purple'),
     })
     .default({ light: 'gray', dark: 'purple' }),
   /** 全局开关 */

@@ -1,14 +1,32 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { FileText, FilePlus, Folder, FolderOpen, FolderPlus, Pencil, Save, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  FileText,
+  FilePlus,
+  Folder,
+  FolderOpen,
+  FolderPlus,
+  Pencil,
+  Save,
+  Trash2,
+  Eye,
+  EyeOff,
+  FileEdit,
+  Clock,
+  Type,
+  Search,
+  X,
+} from 'lucide-react'
 import { Tree, type NodeRendererProps } from 'react-arborist'
 import { toast } from 'sonner'
 import { api } from '../lib/api'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { Input } from '../ui/input'
+import { Textarea } from '../ui/textarea'
 import { Skeleton } from '../ui/skeleton'
+import { Badge } from '../ui/badge'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +37,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog'
-import Editor from '@toast-ui/editor'
 
 interface DocNode {
   id: string
@@ -38,6 +55,14 @@ interface TreeData {
   children?: TreeData[]
 }
 
+interface RenderedPreview {
+  html: string
+  wordCount: number
+  readingTime: number
+}
+
+type PreviewMode = 'edit' | 'split' | 'preview'
+
 function toTreeData(nodes: DocNode[]): TreeData[] {
   return nodes.map((n) => ({
     id: n.id,
@@ -54,15 +79,15 @@ function NodeRow({ node, style, dragHandle }: NodeRendererProps<TreeData>) {
     <div
       style={style}
       ref={dragHandle}
-      className={`flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm ${
+      className={`flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-sm ${
         node.isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-accent'
       }`}
       onClick={() => node.isInternal ? node.toggle() : node.select()}
     >
       {isDir ? (
-        node.isOpen ? <FolderOpen className="size-4 text-primary" /> : <Folder className="size-4 text-primary" />
+        node.isOpen ? <FolderOpen className="size-4 shrink-0 text-primary" /> : <Folder className="size-4 shrink-0 text-primary" />
       ) : (
-        <FileText className="size-4 text-muted-foreground" />
+        <FileText className="size-4 shrink-0 text-muted-foreground" />
       )}
       <span className="truncate">{node.data.name}</span>
     </div>
@@ -81,57 +106,74 @@ export default function DocsManager() {
   const [renameValue, setRenameValue] = useState('')
   const [deleteTarget, setDeleteTarget] = useState<TreeData | null>(null)
   const [saving, setSaving] = useState(false)
-  const editorRef = useRef<HTMLDivElement>(null)
-  const editorInstance = useRef<Editor | null>(null)
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('split')
+  const [preview, setPreview] = useState<RenderedPreview | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const load = useCallback(async () => {
-    const d = await api<{ tree: DocNode[] }>('/admin/api/docs?action=tree')
-    setTree(toTreeData(d.tree))
+    try {
+      const d = await api<{ tree: DocNode[] }>('/admin/api/docs?action=tree')
+      setTree(toTreeData(d.tree))
+    } catch (e) {
+      toast.error((e as Error).message)
+    }
   }, [])
 
   useEffect(() => {
-    load().catch((e) => toast.error(e.message))
+    load()
   }, [load])
 
   const openDoc = useCallback(async (path: string) => {
-    const d = await api<{ name: string; content: string }>(`/admin/api/docs?action=read&path=${encodeURIComponent(path)}`)
-    setDoc(d)
-    setSelectedPath(path)
-    setDirty(false)
-    if (editorInstance.current) {
-      editorInstance.current.setMarkdown(d.content)
+    try {
+      const d = await api<{ name: string; content: string }>(`/admin/api/docs?action=read&path=${encodeURIComponent(path)}`)
+      setDoc(d)
+      setSelectedPath(path)
+      setDirty(false)
+    } catch (e) {
+      toast.error((e as Error).message)
     }
   }, [])
 
-  // TOAST UI 编辑器挂载
-  useEffect(() => {
-    if (!editorRef.current || editorInstance.current) return
-    const ed = new Editor({
-      el: editorRef.current,
-      initialValue: '',
-      previewStyle: 'vertical',
-      height: '100%',
-      initialEditType: 'wysiwyg',
-      language: 'zh-CN',
-      hideModeSwitch: false,
-    })
-    editorInstance.current = ed
-    ed.on('change', () => setDirty(true))
-    return () => {
-      ed.destroy()
-      editorInstance.current = null
+  const renderPreview = useCallback(async (markdown: string) => {
+    if (!markdown.trim()) {
+      setPreview({ html: '', wordCount: 0, readingTime: 1 })
+      return
+    }
+    setPreviewLoading(true)
+    try {
+      const d = await api<{ html: string; wordCount: number; readingTime: number }>(
+        '/admin/api/render-markdown',
+        {
+          method: 'POST',
+          body: JSON.stringify({ markdown }),
+        }
+      )
+      setPreview(d)
+    } catch { /* ignore */ }
+    finally {
+      setPreviewLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (previewMode === 'edit' || !doc?.content) return
+    const timer = setTimeout(() => {
+      renderPreview(doc.content)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [doc?.content, previewMode, renderPreview])
 
   async function save() {
-    if (!selectedPath || !editorInstance.current) return
+    if (!selectedPath || !doc) return
     setSaving(true)
     try {
-      const content = editorInstance.current.getMarkdown()
-      await api('/admin/api/docs', { method: 'POST', body: JSON.stringify({ action: 'write', path: selectedPath, content }) })
+      await api('/admin/api/docs', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'write', path: selectedPath, content: doc.content }),
+      })
       setDirty(false)
       toast.success('已保存')
-      await load()
     } catch (e) {
       toast.error((e as Error).message)
     } finally {
@@ -145,10 +187,19 @@ export default function DocsManager() {
         e.preventDefault()
         save()
       }
+      if (e.key === 'Escape') {
+        if (creating) {
+          setCreating(null)
+          setCreateName('')
+        }
+        if (renaming) {
+          setRenaming(null)
+        }
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  })
+  }, [selectedPath, doc, creating, renaming])
 
   async function create() {
     if (!createName) return
@@ -169,10 +220,21 @@ export default function DocsManager() {
   async function doRename() {
     if (!renaming || !renameValue) return
     try {
-      await api('/admin/api/docs', { method: 'PUT', body: JSON.stringify({ action: 'rename', path: renaming, name: renameValue }) })
+      await api('/admin/api/docs', {
+        method: 'PUT',
+        body: JSON.stringify({ action: 'rename', path: renaming, name: renameValue }),
+      })
       setRenaming(null)
       toast.success('已重命名')
       await load()
+      if (selectedPath === renaming) {
+        const newPath = renaming.substring(0, renaming.lastIndexOf('/')) + '/' + renameValue
+        if (renaming.substring(0, renaming.lastIndexOf('/')) === '') {
+          await openDoc(renameValue)
+        } else {
+          await openDoc(newPath)
+        }
+      }
     } catch (e) {
       toast.error((e as Error).message)
     }
@@ -194,45 +256,144 @@ export default function DocsManager() {
     }
   }
 
+  function updateContent(newContent: string) {
+    if (!doc) return
+    setDoc({ ...doc, content: newContent })
+    setDirty(true)
+  }
+
+  // 过滤树节点
+  const filteredTree = useCallback((nodes: TreeData[]): TreeData[] => {
+    if (!searchTerm) return nodes
+    const kw = searchTerm.toLowerCase()
+    return nodes
+      .map((n) => {
+        if (n.type === 'dir' && n.children) {
+          const filtered = filteredTree(n.children)
+          if (filtered.length > 0 || n.name.toLowerCase().includes(kw)) {
+            return { ...n, children: filtered }
+          }
+          return null
+        }
+        if (n.name.toLowerCase().includes(kw)) {
+          return n
+        }
+        return null
+      })
+      .filter(Boolean) as TreeData[]
+  }, [searchTerm])
+
+  const displayTree = tree ? filteredTree(tree) : null
+
+  const wordCount = doc?.content.trim() ? doc.content.trim().split(/\s+/).length : 0
+  const readingTime = Math.max(1, Math.round(wordCount / 200))
+
   return (
-    <div className="flex h-[calc(100vh-220px)] min-h-[480px] gap-4">
+    <div className="flex h-[calc(100vh-280px)] min-h-[500px] gap-4">
       {/* 文件树 */}
-      <Card className="flex w-72 shrink-0 flex-col gap-2 p-3">
+      <Card className="flex w-64 shrink-0 flex-col gap-2 p-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold">文档库</span>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="size-7" title="新建文件" onClick={() => { setCreating('file'); setCreateParent(''); setCreateName('') }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              title="新建文件"
+              onClick={() => {
+                setCreating('file')
+                setCreateParent(selectedPath?.includes('/') ? selectedPath.substring(0, selectedPath.lastIndexOf('/')) : ''
+                )
+                setCreateName('')
+                setSearchTerm('')
+              }}
+            >
               <FilePlus />
             </Button>
-            <Button variant="ghost" size="icon" className="size-7" title="新建文件夹" onClick={() => { setCreating('dir'); setCreateParent(''); setCreateName('') }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              title="新建文件夹"
+              onClick={() => {
+                setCreating('dir')
+                setCreateParent(selectedPath?.includes('/') ? selectedPath.substring(0, selectedPath.lastIndexOf('/')) : ''
+                )
+                setCreateName('')
+                setSearchTerm('')
+              }}
+            >
               <FolderPlus />
             </Button>
           </div>
         </div>
+
+        {/* 搜索框 */}
+        <div className="relative">
+          <Search className="absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="搜索文档..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-7 pl-7 pr-6 text-xs"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="size-3" />
+            </button>
+          )}
+        </div>
+
         {creating && (
-          <div className="flex gap-1.5">
+          <div className="flex items-center gap-1.5">
             <Input
               autoFocus
               value={createName}
               onChange={(e) => setCreateName(e.target.value)}
               placeholder={creating === 'dir' ? '文件夹名' : '文件名.md'}
-              className="h-8 text-xs"
-              onKeyDown={(e) => e.key === 'Enter' && create()}
+              className="h-7 flex-1 text-xs"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') create()
+                if (e.key === 'Escape') { setCreating(null); setCreateName('') }
+              }}
             />
-            <Button size="sm" className="h-8" onClick={create}>建</Button>
+            <Button
+              size="icon"
+              variant="secondary"
+              className="size-7 shrink-0"
+              title="确认"
+              onClick={create}
+            >
+              <Save className="size-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-7 shrink-0"
+              title="取消"
+              onClick={() => { setCreating(null); setCreateName('') }}
+            >
+              <X className="size-3.5" />
+            </Button>
           </div>
         )}
+
         <div className="min-h-0 flex-1 overflow-auto">
           {!tree ? (
             <Skeleton className="h-full" />
-          ) : tree.length === 0 ? (
-            <p className="p-4 text-center text-xs text-muted-foreground">文档库为空,点右上角新建</p>
+          ) : displayTree!.length === 0 ? (
+            <p className="p-4 text-center text-xs text-muted-foreground">
+              {searchTerm ? '没有匹配的文档' : '文档库为空,点右上角新建'}
+            </p>
           ) : (
             <Tree<TreeData>
-              data={tree}
+              data={displayTree!}
               openByDefault
-              rowHeight={30}
-              indent={14}
+              rowHeight={28}
+              indent={12}
               onSelect={(nodes) => {
                 const n = nodes[0]
                 if (n?.data.type === 'file') openDoc(n.data.path).catch((e) => toast.error(e.message))
@@ -244,7 +405,10 @@ export default function DocsManager() {
                   const src = findNode(tree ?? [], id)
                   if (src) {
                     try {
-                      await api('/admin/api/docs', { method: 'PUT', body: JSON.stringify({ action: 'move', path: src.path, toDir }) })
+                      await api('/admin/api/docs', {
+                        method: 'PUT',
+                        body: JSON.stringify({ action: 'move', path: src.path, toDir }),
+                      })
                     } catch (e) {
                       toast.error((e as Error).message)
                     }
@@ -263,46 +427,189 @@ export default function DocsManager() {
       <Card className="flex min-w-0 flex-1 flex-col p-3">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="truncate text-sm font-medium">{doc?.name ?? '未选择文档'}</span>
-            {dirty && <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700">未保存</span>}
-          </div>
-          <div className="flex shrink-0 gap-1">
-            {selectedPath && (
+            {selectedPath && doc ? (
               <>
-                <Button variant="ghost" size="icon" className="size-8" title="重命名" onClick={() => { setRenaming(selectedPath); setRenameValue(doc?.name ?? '') }}>
-                  <Pencil />
-                </Button>
-                <Button variant="ghost" size="icon" className="size-8 text-destructive" title="删除" onClick={() => setDeleteTarget({ id: selectedPath, name: doc?.name ?? '', type: 'file', path: selectedPath })}>
-                  <Trash2 />
-                </Button>
+                <span className="truncate text-sm font-medium">{doc.name}</span>
+                {dirty && (
+                  <Badge variant="outline" className="gap-1 border-amber-500 text-amber-600 text-[10px]">
+                    <span className="size-1.5 rounded-full bg-amber-500"></span>
+                    未保存
+                  </Badge>
+                )}
               </>
+            ) : (
+              <span className="text-sm text-muted-foreground">未选择文档</span>
             )}
-            <Button size="sm" onClick={save} disabled={!selectedPath || !dirty || saving}>
-              <Save />
-              {saving ? '保存中…' : '保存'}
+          </div>
+
+          {selectedPath && doc && (
+            <div className="flex shrink-0 items-center gap-2">
+              {/* 预览模式切换 */}
+              <div className="flex items-center gap-0.5 rounded-md border px-1 py-0.5">
+                <button
+                  onClick={() => setPreviewMode('edit')}
+                  className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+                    previewMode === 'edit' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  title="仅编辑"
+                >
+                  <EyeOff className="size-3" />
+                </button>
+                <button
+                  onClick={() => setPreviewMode('split')}
+                  className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+                    previewMode === 'split' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  title="分屏预览"
+                >
+                  <Eye className="size-3" />
+                </button>
+                <button
+                  onClick={() => setPreviewMode('preview')}
+                  className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+                    previewMode === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  title="仅预览"
+                >
+                  <FileEdit className="size-3" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Type className="size-3" />
+                {preview?.wordCount ?? wordCount} 字
+              </div>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="size-3" />
+                约 {preview?.readingTime ?? readingTime} 分钟
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7"
+                title="重命名"
+                onClick={() => {
+                  setRenaming(selectedPath)
+                  setRenameValue(doc.name)
+                }}
+              >
+                <Pencil />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7 text-destructive"
+                title="删除"
+                onClick={() => setDeleteTarget({ id: selectedPath, name: doc.name, type: 'file', path: selectedPath })}
+              >
+                <Trash2 />
+              </Button>
+              <Button size="sm" onClick={save} disabled={!selectedPath || !dirty || saving}>
+                <Save />
+                {saving ? '保存中…' : '保存'}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {renaming && (
+          <div className="mb-2 flex items-center gap-1.5">
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              className="h-7 flex-1 text-xs"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') doRename()
+                if (e.key === 'Escape') setRenaming(null)
+              }}
+            />
+            <Button
+              size="icon"
+              variant="secondary"
+              className="size-7 shrink-0"
+              title="确认"
+              onClick={doRename}
+            >
+              <Save className="size-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-7 shrink-0"
+              title="取消"
+              onClick={() => setRenaming(null)}
+            >
+              <X className="size-3.5" />
             </Button>
           </div>
-        </div>
-        {renaming && (
-          <div className="mb-2 flex gap-1.5">
-            <Input value={renameValue} onChange={(e) => setRenameValue(e.target.value)} className="h-8 text-xs" autoFocus onKeyDown={(e) => e.key === 'Enter' && doRename()} />
-            <Button size="sm" className="h-8" onClick={doRename}>确定</Button>
+        )}
+
+        {/* 编辑区/预览区 */}
+        {!selectedPath || !doc ? (
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed">
+            <div className="text-center">
+              <FileText className="mx-auto mb-2 size-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">从左侧选择一个文档,或创建新文档</p>
+            </div>
+          </div>
+        ) : (
+          <div className={`grid min-h-0 flex-1 gap-2 ${previewMode === 'split' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {/* 编辑区 */}
+            {previewMode !== 'preview' && (
+              <div className="min-h-0 overflow-hidden rounded-lg border">
+                <Textarea
+                  value={doc.content}
+                  onChange={(e) => updateContent(e.target.value)}
+                  className="h-full min-h-[400px] resize-none border-0 font-mono text-[13px] leading-relaxed focus-visible:ring-0"
+                  placeholder="# 开始写作..."
+                />
+              </div>
+            )}
+
+            {/* 预览区 */}
+            {previewMode !== 'edit' && (
+              <div className="min-h-0 overflow-auto rounded-lg border bg-muted/30">
+                <div className="border-b bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground">预览效果</div>
+                <div className="p-3">
+                  {previewLoading ? (
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-5/6" />
+                    </div>
+                  ) : preview?.html ? (
+                    <div
+                      className="prose prose-sm prose-slate max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-a:text-primary"
+                      dangerouslySetInnerHTML={{ __html: preview.html }}
+                    />
+                  ) : (
+                    <p className="py-8 text-center text-sm text-muted-foreground">
+                      开始输入 Markdown 内容以查看预览
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
-        <div className="min-h-0 flex-1 overflow-hidden rounded-lg border">
-          <div ref={editorRef} className="h-full [&_.toastui-editor-defaultUI]:h-full [&_.toastui-editor-main]:h-[calc(100%-40px)]" />
-        </div>
       </Card>
 
       <AlertDialog open={deleteTarget !== null} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>删除「{deleteTarget?.name}」?</AlertDialogTitle>
-            <AlertDialogDescription>{deleteTarget?.type === 'dir' ? '整个文件夹及其内容将被删除。' : '文件将被永久删除。'}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {deleteTarget?.type === 'dir' ? '整个文件夹及其内容将被删除。' : '文件将被永久删除。'}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={doDelete}>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              onClick={doDelete}
+            >
               <Trash2 />
               删除
             </AlertDialogAction>

@@ -31,7 +31,7 @@ const categories = [...new Set(resources.map((r) => r.category))]
 
     <div class="grid">
       {resources.map((r) => (
-        <a class="res-card card" href={`/resources/${r.id}`} key={r.id}>
+        <a class="res-card card" href={`/resources/${r.id}`}>
           <div class="res-head">
             <span class="res-icon" aria-hidden="true"></span>
             <span class="chip">{r.category}</span>

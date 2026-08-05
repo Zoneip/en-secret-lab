@@ -43,7 +43,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
         description: req.description,
       })
     }
-    setRequestStatus(id, body.action)
+    setRequestStatus(id, body.action === 'approve' ? 'approved' : 'rejected')
     return new Response(JSON.stringify({ ok: true }))
   }
 

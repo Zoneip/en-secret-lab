@@ -78,7 +78,7 @@ const displayName = (key: string) => (key === '__other__' ? '其他' : key)
             <p class="nav-title">系列</p>
             <nav class="nav-list" data-series-nav>
               {seriesNames.map((key) => (
-                <a class="nav-item" href={`#series-${slugify(displayName(key))}`} key={key}>
+                <a class="nav-item" href={`#series-${slugify(displayName(key))}`}>
                   <span class="nav-name">{displayName(key)}</span>
                   <span class="nav-count">{groups.get(key)!.length}</span>
                 </a>
@@ -92,21 +92,21 @@ const displayName = (key: string) => (key === '__other__' ? '其他' : key)
             <div class="filter-bar" data-filter-bar>
               <button class="filter-chip active" data-filter="__all__">全部</button>
               {seriesNames.map((key) => (
-                <button class="filter-chip" data-filter={key} key={key}>
+                <button class="filter-chip" data-filter={key}>
                   {displayName(key)}
                 </button>
               ))}
             </div>
 
             {seriesNames.map((key) => (
-              <section class="series-group" data-series={key} id={`series-${slugify(displayName(key))}`} key={key}>
+              <section class="series-group" data-series={key} id={`series-${slugify(displayName(key))}`}>
                 <h2 class="series-head">
                   {displayName(key)}
                   <span class="series-count">{groups.get(key)!.length} 篇</span>
                 </h2>
                 <ol class="article-list">
                   {groups.get(key)!.map((p) => (
-                    <li class="article-row" data-row key={p.slug}>
+                    <li class="article-row" data-row>
                       <a class="article-link" href={`/blog/${p.slug}`}>
                         <span class="row-bar" aria-hidden="true"></span>
                         <span class="row-main">
@@ -114,7 +114,7 @@ const displayName = (key: string) => (key === '__other__' ? '其他' : key)
                           {p.description && <span class="row-desc">{p.description}</span>}
                           <span class="row-meta">
                             {p.tags.map((t) => (
-                              <span class="row-tag" key={t}>
+                              <span class="row-tag">
                                 #{t}
                               </span>
                             ))}

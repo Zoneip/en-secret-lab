@@ -34,6 +34,50 @@ export interface PostFile {
   draft: PostDraft
 }
 
+export interface ListPostsOptions {
+  /** 搜索关键词(匹配标题/标签/描述) */
+  search?: string
+  /** 按分类筛选 */
+  category?: string
+  /** 按标签筛选 */
+  tag?: string
+  /** 状态筛选:all 全部/draft 草稿/published 已发布 */
+  status?: 'all' | 'draft' | 'published'
+  /** 按日期范围筛选 */
+  fromDate?: string
+  toDate?: string
+  /** 排序方式 */
+  sortBy?: 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'updated-desc'
+  /** 分页 */
+  page?: number
+  pageSize?: number
+}
+
+export interface ListPostsResult {
+  posts: PostFile[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export interface BatchUpdateOptions {
+  slugs: string[]
+  draft?: boolean
+  category?: string
+  featured?: boolean
+}
+
+export interface PostStats {
+  total: number
+  draft: number
+  published: number
+  featured: number
+  categories: { name: string; count: number }[]
+  tags: { name: string; count: number }[]
+  totalWords: number
+}
+
 const REQUIRED: Array<keyof PostDraft> = ['slug', 'title', 'pubDate', 'category']
 
 function assertValid(draft: Partial<PostDraft>): asserts draft is PostDraft {
@@ -76,7 +120,6 @@ export function parsePostFile(fileName: string, raw: string): PostFile {
       if (!eq) continue
       const [, key, value] = eq
       if (key === 'tags') {
-        // 兼容 YAML 数组与简单列表:先取 [ ] 内内容,再逐个匹配引号/裸词
         const inner = value.match(/\[(.*)\]/)?.[1] ?? value
         fm.tags = [...inner.matchAll(/'([^']+)'|"([^"]+)"|([^,\s[]+)/g)]
           .map((g) => (g[1] ?? g[2] ?? g[3]).trim())
@@ -107,16 +150,105 @@ export function parsePostFile(fileName: string, raw: string): PostFile {
   }
 }
 
-export function listPosts(): PostFile[] {
+/** 原始列表(不分页、不筛选) */
+function _listAllPosts(): PostFile[] {
   mkdirSync(postsDir, { recursive: true })
   const files = readdirSync(postsDir).filter((f) => /\.(md|mdx)$/.test(f) && statSync(join(postsDir, f)).isFile())
   return files
     .map((f) => parsePostFile(f, readFileSync(join(postsDir, f), 'utf8')))
-    .sort((a, b) => +new Date(b.draft.pubDate) - +new Date(a.draft.pubDate))
+}
+
+/** 兼容旧 API:返回全部文章(按日期倒序) */
+export function listPosts(): PostFile[] {
+  return _listAllPosts().sort((a, b) => +new Date(b.draft.pubDate) - +new Date(a.draft.pubDate))
+}
+
+/** 增强版列表:支持搜索、筛选、排序、分页 */
+export function listPostsAdvanced(opts: ListPostsOptions = {}): ListPostsResult {
+  const {
+    search,
+    category,
+    tag,
+    status,
+    fromDate,
+    toDate,
+    sortBy = 'date-desc',
+    page = 1,
+    pageSize = 20,
+  } = opts
+
+  let posts = _listAllPosts()
+
+  // 搜索
+  if (search) {
+    const kw = search.toLowerCase()
+    posts = posts.filter(
+      (p) =>
+        p.draft.title.toLowerCase().includes(kw) ||
+        p.draft.description?.toLowerCase().includes(kw) ||
+        p.draft.tags.some((t) => t.toLowerCase().includes(kw))
+    )
+  }
+
+  // 分类筛选
+  if (category) {
+    posts = posts.filter((p) => p.draft.category === category)
+  }
+
+  // 标签筛选
+  if (tag) {
+    posts = posts.filter((p) => p.draft.tags.includes(tag))
+  }
+
+  // 状态筛选
+  if (status === 'draft') {
+    posts = posts.filter((p) => p.draft.draft)
+  } else if (status === 'published') {
+    posts = posts.filter((p) => !p.draft.draft)
+  }
+
+  // 日期范围
+  if (fromDate) {
+    posts = posts.filter((p) => p.draft.pubDate >= fromDate)
+  }
+  if (toDate) {
+    posts = posts.filter((p) => p.draft.pubDate <= toDate)
+  }
+
+  // 排序
+  posts.sort((a, b) => {
+    switch (sortBy) {
+      case 'date-asc':
+        return +new Date(a.draft.pubDate) - +new Date(b.draft.pubDate)
+      case 'date-desc':
+        return +new Date(b.draft.pubDate) - +new Date(a.draft.pubDate)
+      case 'title-asc':
+        return a.draft.title.localeCompare(b.draft.title, 'zh-CN')
+      case 'title-desc':
+        return b.draft.title.localeCompare(a.draft.title, 'zh-CN')
+      case 'updated-desc':
+        return +new Date(b.draft.updatedDate ?? b.draft.pubDate) - +new Date(a.draft.updatedDate ?? a.draft.pubDate)
+      default:
+        return 0
+    }
+  })
+
+  const total = posts.length
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const safePage = Math.min(Math.max(1, page), totalPages)
+  const start = (safePage - 1) * pageSize
+
+  return {
+    posts: posts.slice(start, start + pageSize),
+    total,
+    page: safePage,
+    pageSize,
+    totalPages,
+  }
 }
 
 export function getPost(slug: string): PostFile | null {
-  return listPosts().find((p) => p.slug === slug) ?? null
+  return _listAllPosts().find((p) => p.slug === slug) ?? null
 }
 
 export function savePost(draft: Partial<PostDraft> & { slug: string }): PostFile {
@@ -132,6 +264,87 @@ export function deletePost(slug: string): boolean {
   if (!post) return false
   unlinkSync(join(postsDir, post.fileName))
   return true
+}
+
+/** 批量更新 */
+export function batchUpdate(options: BatchUpdateOptions): { updated: number } {
+  const { slugs, draft, category, featured } = options
+  let updated = 0
+
+  for (const slug of slugs) {
+    const post = getPost(slug)
+    if (!post) continue
+
+    const merged: PostDraft = {
+      ...post.draft,
+      ...(draft !== undefined ? { draft } : {}),
+      ...(category !== undefined ? { category } : {}),
+      ...(featured !== undefined ? { featured } : {}),
+      updatedDate: new Date().toISOString().slice(0, 10),
+    }
+
+    savePost(merged)
+    updated++
+  }
+
+  return { updated }
+}
+
+/** 批量删除 */
+export function batchDelete(slugs: string[]): { deleted: number } {
+  let deleted = 0
+  for (const slug of slugs) {
+    if (deletePost(slug)) deleted++
+  }
+  return { deleted }
+}
+
+/** 获取所有分类及其文章数 */
+export function getCategories(): { name: string; count: number }[] {
+  const posts = _listAllPosts()
+  const map = new Map<string, number>()
+  for (const p of posts) {
+    map.set(p.draft.category, (map.get(p.draft.category) ?? 0) + 1)
+  }
+  return Array.from(map.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+/** 获取所有标签及其文章数 */
+export function getTags(): { name: string; count: number }[] {
+  const posts = _listAllPosts()
+  const map = new Map<string, number>()
+  for (const p of posts) {
+    for (const tag of p.draft.tags) {
+      map.set(tag, (map.get(tag) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+/** 文章统计 */
+export function getStats(): PostStats {
+  const posts = _listAllPosts()
+  const published = posts.filter((p) => !p.draft.draft)
+  const featured = posts.filter((p) => p.draft.featured)
+
+  const categories = getCategories()
+  const tags = getTags()
+
+  const totalWords = posts.reduce((sum, p) => sum + p.draft.body.length, 0)
+
+  return {
+    total: posts.length,
+    draft: posts.length - published.length,
+    published: published.length,
+    featured: featured.length,
+    categories,
+    tags,
+    totalWords,
+  }
 }
 
 /** 供编辑页读取单个文章全文 */
