@@ -74,7 +74,7 @@ export function wallpaperCss(value: string): string {
 }
 
 export function isThemeId(value: string): value is ThemeId {
-  return value === 'gray' || value === 'yellow' || value === 'purple' || value === 'white'
+  return value === 'gray' || value === 'yellow' || value === 'purple' || value === 'white' || value === 'friends'
 }
 
 export function isColorMode(value: string): value is ColorMode {

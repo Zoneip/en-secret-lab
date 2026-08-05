@@ -10,7 +10,7 @@ const friends = await getSiteFriends()
 const config = getSiteConfig()
 ---
 
-<BaseLayout fillViewport title="友链" description="交换友链的伙伴们">
+<BaseLayout fillViewport title="友链" description="交换友链的伙伴们" forceTheme="friends" noWallpaper>
   <FriendsWallpaper enabled={config.features.friendsWallpaper} />
   <div class="page-enter container">
     <div class="shrine-quote" aria-hidden="true">
