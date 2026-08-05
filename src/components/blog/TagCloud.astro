@@ -82,8 +82,11 @@ const tier = (count: number) => (count / max >= 0.66 ? 'lg' : count / max >= 0.3
   .tag-chip.sm {
     font-size: 0.86rem;
     padding: 5px 12px;
-    background: var(--surface);
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--fg-muted);
+    border-color: color-mix(in srgb, var(--border-strong) 70%, transparent);
   }
   .tag-count {
     font-size: 0.62em;
