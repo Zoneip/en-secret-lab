@@ -15,7 +15,7 @@ const posts = await getAllPosts()
       <p>共 {posts.reduce((n, p) => n + p.tags.length, 0)} 枚标签</p>
     </header>
     <div class="card cloud-card">
-      <TagCloud posts={posts} maxSize={1.9} />
+      <TagCloud posts={posts} />
     </div>
   </div>
 </BaseLayout>

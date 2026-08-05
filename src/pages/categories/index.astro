@@ -3,10 +3,10 @@
 import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-import { aggregateByKey } from '../../lib/content/taxonomy'
+import CategoryMap from '../../components/blog/CategoryMap.astro'
 
 const posts = await getAllPosts()
-const categories = aggregateByKey(posts, 'category')
+const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
 ---
 
 <BaseLayout fillViewport title="分类" description="全站分类总览">
@@ -16,14 +16,7 @@ const categories = aggregateByKey(posts, 'category')
       <p>{categories.length} 个分类</p>
     </header>
 
-    <div class="cats">
-      {categories.map((c) => (
-        <a class="cat-card card" href={`/categories/${encodeURIComponent(c.name)}`}>
-          <span class="cat-name">{c.name}</span>
-          <span class="cat-count">{c.count} 篇</span>
-        </a>
-      ))}
-    </div>
+    <CategoryMap posts={posts} />
   </div>
 </BaseLayout>
 
@@ -39,29 +32,5 @@ const categories = aggregateByKey(posts, 'category')
   .page-head p {
     color: var(--fg-subtle);
     font-size: 0.85rem;
-  }
-  .cats {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-  .cat-card {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 22px;
-    color: var(--fg);
-  }
-  .cat-card:hover {
-    transform: translateY(-3px);
-  }
-  .cat-name {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    color: var(--primary);
-  }
-  .cat-count {
-    font-size: 0.8rem;
-    color: var(--fg-subtle);
   }
 </style>

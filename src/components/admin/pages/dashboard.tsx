@@ -308,9 +308,22 @@ export default function Dashboard() {
               <Palette className="size-4 text-primary" />
               主题色板
             </h3>
-            <Button variant="ghost" size="sm" asChild>
-              <a href="/admin/themes">编辑</a>
-            </Button>
+            <div className="flex items-center gap-3">
+              {/* 圆点图例 */}
+              <span className="hidden items-center gap-2 text-[10px] text-muted-foreground sm:flex">
+                <span className="flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-amber-300 dark:bg-amber-200/80" />
+                  浅色默认
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-violet-400/80 dark:bg-violet-300/70" />
+                  深色默认
+                </span>
+              </span>
+              <Button variant="ghost" size="sm" asChild>
+                <a href="/admin/themes">编辑</a>
+              </Button>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2.5 p-4">
             {!state
@@ -325,17 +338,16 @@ export default function Dashboard() {
                       name: t.name,
                       palette: t.palette,
                       href: '/admin/themes',
-                      badges: [
-                        t.id === lightDef ? '浅色默认' : null,
-                        t.id === darkDef ? '深色默认' : null,
-                      ].filter(Boolean) as string[],
+                      isLightDefault: t.id === lightDef,
+                      isDarkDefault: t.id === darkDef,
                       animDelay: i * 50,
                     })),
                     {
                       key: 'random',
                       name: '随机',
                       href: '/admin/settings?tab=site',
-                      badges: (lightDef === 'random' || darkDef === 'random') ? ['默认'] as string[] : [],
+                      isLightDefault: lightDef === 'random',
+                      isDarkDefault: darkDef === 'random',
                       animDelay: filtered.length * 50,
                       isRandom: true,
                     },
@@ -346,7 +358,8 @@ export default function Dashboard() {
                       name: string
                       palette?: { light: Record<string, string> }
                       href: string
-                      badges?: string[]
+                      isLightDefault: boolean
+                      isDarkDefault: boolean
                       animDelay: number
                       isRandom?: boolean
                     }) => (
@@ -355,6 +368,15 @@ export default function Dashboard() {
                       href={item.href}
                       className="group relative flex items-center gap-2.5 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-sm animate-in fade-in zoom-in-95 duration-200"
                       style={{ animationDelay: `${item.animDelay}ms` }}
+                      title={
+                        item.isLightDefault && item.isDarkDefault
+                          ? `${item.name} · 浅色/深色模式默认`
+                          : item.isLightDefault
+                            ? `${item.name} · 浅色模式默认`
+                            : item.isDarkDefault
+                              ? `${item.name} · 深色模式默认`
+                              : item.name
+                      }
                     >
                       {item.isRandom ? (
                         <span className="flex size-5 items-center justify-center rounded-md border border-black/5 bg-muted text-xs">
@@ -372,13 +394,25 @@ export default function Dashboard() {
                         </span>
                       )}
                       <span className="text-sm font-medium">{item.name}</span>
-                      {(item.badges?.length ?? 0) > 0 && (
-                        <span className="absolute right-2 top-2 flex gap-1">
-                          {item.badges!.map((b: string) => (
-                            <Badge key={b} className="px-1.5 py-0 text-[9px]">{b}</Badge>
-                          ))}
-                        </span>
-                      )}
+                      {/* 底部双圆点指示器:左=浅色默认(淡黄),右=深色默认(淡紫) */}
+                      <span className="absolute bottom-1.5 right-2 flex items-center gap-1">
+                        <span
+                          className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
+                            item.isLightDefault
+                              ? 'bg-amber-300/90 ring-amber-300/40 shadow-[0_0_3px_rgba(252,211,77,0.4)] dark:bg-amber-200/80 dark:ring-amber-200/30'
+                              : 'bg-transparent ring-muted-foreground/25'
+                          }`}
+                          aria-label={item.isLightDefault ? '浅色模式默认' : '非浅色模式默认'}
+                        />
+                        <span
+                          className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
+                            item.isDarkDefault
+                              ? 'bg-violet-400/80 ring-violet-400/40 shadow-[0_0_3px_rgba(167,139,250,0.4)] dark:bg-violet-300/70 dark:ring-violet-300/30'
+                              : 'bg-transparent ring-muted-foreground/25'
+                          }`}
+                          aria-label={item.isDarkDefault ? '深色模式默认' : '非深色模式默认'}
+                        />
+                      </span>
                     </a>
                   ))
                 })()}

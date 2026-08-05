@@ -1,60 +1,167 @@
 ---
-/** 标签云:标签大小随数量映射 */
+/** 动态标签云:权重驱动布局(大标签居中、小标签环绕)+ 漂浮动效 + 悬停交互
+ *  布局确定性(标签名 hash),SSR 与客户端一致无闪烁
+ */
 import { aggregateByKey } from '../../lib/content/taxonomy'
 
 interface Props {
   posts: Array<{ tags?: string[] }>
-  /** 标签相对文字大小上限(rem) */
-  maxSize?: number
 }
 
-const { posts, maxSize = 1.6 } = Astro.props
-const tags = aggregateByKey(posts, 'tags')
+const { posts } = Astro.props
+const tags = aggregateByKey(posts, 'tags').slice(0, 30)
 const max = Math.max(1, ...tags.map((t) => t.count))
+
+// 确定性伪随机(hash 标签名)
+function hashOf(s: string): number {
+  let h = 0
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 997
+  return h / 997
+}
+
+// 权重 → 圈层:内圈放权重高的标签
+const ranked = tags.map((t, i) => ({ ...t, rank: i }))
+const inner = ranked.filter((t) => t.rank < Math.max(4, Math.ceil(tags.length * 0.4)))
+const outer = ranked.filter((t) => !inner.includes(t))
+
+interface Placed {
+  name: string
+  count: number
+  x: number
+  y: number
+  size: number
+  hue: number
+  delay: number
+  dur: number
+  amp: number
+}
+
+function place(list: typeof inner, cx: number, cy: number, rBase: number, rGrow: number, sizeScale: number): Placed[] {
+  const golden = 2.399963
+  return list.map((t, i) => {
+    const r = rBase + (i / Math.max(1, list.length)) * rGrow
+    const a = i * golden
+    const jitter = hashOf(t.name) * 6 - 3
+    const weight = t.count / max
+    return {
+      name: t.name,
+      count: t.count,
+      x: Math.round((cx + Math.cos(a) * r + jitter) * 10) / 10,
+      y: Math.round((cy + Math.sin(a) * r * 0.82 + jitter) * 10) / 10,
+      size: 0.95 + weight * sizeScale,
+      hue: Math.round(weight * 2), // 0/1/2 色阶
+      delay: Math.round(hashOf(t.name) * 60) / 10,
+      dur: Math.round((6 + hashOf(t.name + 'd') * 5) * 10) / 10,
+      amp: Math.round((2 + hashOf(t.name + 'a') * 3) * 10) / 10,
+    }
+  })
+}
+
+const cloud = [...place(inner, 50, 46, 4, 22, 1.1), ...place(outer, 50, 48, 28, 20, 0.7)]
+const HUE_CLASS = ['hue-a', 'hue-b', 'hue-c']
 ---
 
-<div class="tag-cloud">
+<div class="tag-cloud" data-tag-cloud>
   {tags.length === 0 && <p class="empty">还没有标签</p>}
-  {tags.map((tag) => {
-    const size = 0.85 + (tag.count / max) * (maxSize - 0.85)
-    return (
-      <a
-        href={`/tags/${encodeURIComponent(tag.name)}`}
-        class="tag-link underline-tail"
-        style={`font-size:${size.toFixed(2)}rem`}
-       
-      >
-        {tag.name}
-        <span class="count">{tag.count}</span>
-      </a>
-    )
-  })}
+  {cloud.map((t) => (
+    <a
+      href={`/tags/${encodeURIComponent(t.name)}`}
+      class={`tag-link ${HUE_CLASS[t.hue]}`}
+      style={`left:${t.x}%; top:${t.y}%; font-size:${t.size.toFixed(2)}rem; --float-d:${t.delay}s; --float-dur:${t.dur}s; --float-amp:${t.amp}px`}
+      title={`${t.name} · ${t.count} 篇`}
+    >
+      {t.name}
+      <span class="count">{t.count}</span>
+    </a>
+  ))}
 </div>
 
 <style>
   .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 10px 18px;
-    padding: 12px 0;
+    position: relative;
+    height: clamp(320px, 62vh, 560px);
+    width: 100%;
+    overflow: hidden;
+  }
+  .tag-cloud .empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--fg-subtle);
   }
   .tag-link {
+    position: absolute;
+    transform: translate(-50%, -50%);
     display: inline-flex;
     align-items: baseline;
-    gap: 4px;
+    gap: 5px;
     font-family: var(--font-display);
+    line-height: 1.3;
+    white-space: nowrap;
+    text-decoration: none;
     color: var(--primary);
-    line-height: 1.4;
+    transition: transform 0.3s var(--ease-spring), color 0.3s, text-shadow 0.3s;
+    /* 漂浮动效(GPU transform,错开相位) */
+    animation: tag-float var(--float-dur) ease-in-out infinite alternate;
+    animation-delay: var(--float-d);
+    will-change: transform;
   }
-  .count {
-    font-size: 0.7rem;
-    font-family: var(--font-body);
-    color: var(--fg-subtle);
+  @keyframes tag-float {
+    from {
+      transform: translate(-50%, -50%) translate(0, 0) rotate(-0.6deg);
+    }
+    to {
+      transform: translate(-50%, -50%) translate(var(--float-amp), calc(var(--float-amp) * -0.7)) rotate(0.6deg);
+    }
   }
-  .empty {
+  .tag-link:hover {
+    color: var(--accent);
+    transform: translate(-50%, -50%) scale(1.12);
+    animation-play-state: paused;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--primary) 45%, transparent);
+    z-index: 2;
+  }
+  .tag-link .count {
+    font-size: 0.55em;
+    font-family: var(--font-mono);
     color: var(--fg-subtle);
-    font-size: 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 0 5px;
+  }
+  .hue-a {
+    color: var(--primary);
+  }
+  .hue-b {
+    color: var(--accent);
+  }
+  .hue-c {
+    color: var(--fg-muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tag-link {
+      animation: none;
+    }
+  }
+  @media (max-width: 640px) {
+    /* 窄屏:退化为流式标签行,保证可用 */
+    .tag-cloud {
+      height: auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 16px;
+      padding: 12px 0;
+      overflow: visible;
+    }
+    .tag-link {
+      position: static;
+      transform: none;
+      animation: none;
+      font-size: 1rem !important;
+    }
   }
 </style>

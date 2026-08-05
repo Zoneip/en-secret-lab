@@ -1,0 +1,323 @@
+---
+/** 分类思维导图:按文章结构生长(分类 → 系列 → 文章;无系列直接挂文章)
+ *  横向树 + SVG 连线 + 进入视口逐个生长动画 + 分类可收起
+ */
+import { aggregateByKey } from '../../lib/content/taxonomy'
+
+interface Props {
+  posts: Array<{
+    slug: string
+    title: string
+    category?: string
+    series?: string
+    pubDate: Date
+  }>
+}
+
+const { posts } = Astro.props
+const categories = aggregateByKey(posts, 'category')
+const fmtDate = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+
+interface SeriesGroup {
+  name: string
+  posts: typeof posts
+}
+interface CategoryTree {
+  name: string
+  count: number
+  series: SeriesGroup[]
+  loose: typeof posts
+}
+
+const trees: CategoryTree[] = categories.map((c) => {
+  const catPosts = posts.filter((p) => p.category === c.name)
+  const seriesMap = new Map<string, typeof posts>()
+  for (const p of catPosts) {
+    if (p.series) {
+      if (!seriesMap.has(p.series)) seriesMap.set(p.series, [])
+      seriesMap.get(p.series)!.push(p)
+    }
+  }
+  return {
+    name: c.name,
+    count: c.count,
+    series: [...seriesMap.entries()].map(([name, ps]) => ({ name, posts: ps })),
+    loose: catPosts.filter((p) => !p.series),
+  }
+})
+---
+
+<div class="cat-map" data-cat-map>
+  {trees.length === 0 && <p class="empty">还没有分类</p>}
+  {trees.map((tree, ti) => (
+    <section class="tree-card" data-tree data-delay={ti}>
+      <div class="tree-layout">
+        {/* 根:分类节点 */}
+        <button class="node root" data-root aria-expanded="true">
+          <span class="root-name">{tree.name}</span>
+          <span class="root-count">{tree.count}</span>
+        </button>
+
+        {/* 分支:系列 + 无系列文章 */}
+        <div class="branches">
+          {tree.series.map((s, si) => (
+            <div class="branch" data-delay={si}>
+              <div class="series-node">
+                <span class="series-icon" aria-hidden="true"></span>
+                {s.name}
+              </div>
+              <div class="leaves">
+                {s.posts.map((p, pi) => (
+                  <a class="leaf" href={`/blog/${p.slug}`} data-delay={pi}>
+                    <span class="leaf-date">{fmtDate(p.pubDate)}</span>
+                    {p.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+          {tree.loose.length > 0 && (
+            <div class="branch" data-delay={tree.series.length}>
+              <div class="leaves">
+                {tree.loose.map((p, pi) => (
+                  <a class="leaf" href={`/blog/${p.slug}`} data-delay={pi}>
+                    <span class="leaf-date">{fmtDate(p.pubDate)}</span>
+                    {p.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .cat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .cat-map .empty {
+    text-align: center;
+    color: var(--fg-subtle);
+    padding: 40px 0;
+  }
+  .tree-card {
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: 22px 24px;
+    overflow-x: auto;
+  }
+  .tree-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    min-width: max-content;
+  }
+  /* 根节点 */
+  .node.root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 18px 22px;
+    border: none;
+    border-radius: 16px;
+    background: var(--primary);
+    color: var(--primary-fg, #fff);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent);
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+  }
+  .node.root:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+  .root-count {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    opacity: 0.85;
+    background: color-mix(in srgb, var(--primary-fg, #fff) 20%, transparent);
+    border-radius: 999px;
+    padding: 1px 10px;
+  }
+  /* 分支列 */
+  .branches {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex: 1;
+    min-width: 0;
+  }
+  .branch {
+    position: relative;
+    padding-left: 20px;
+  }
+  .branch::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: -18px;
+    width: 2px;
+    background: var(--border-strong);
+    border-radius: 999px;
+  }
+  .branch:last-child::before {
+    bottom: 50%;
+  }
+  .branch::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 18px;
+    height: 2px;
+    background: var(--border-strong);
+  }
+  /* 系列节点 */
+  .series-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    border-radius: 999px;
+    padding: 4px 14px;
+  }
+  .series-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: rotate(45deg);
+  }
+  /* 叶节点 */
+  .leaves {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .leaf {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.86rem;
+    color: var(--fg);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--elevated);
+    padding: 6px 12px;
+    max-width: 260px;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .leaf:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .leaf-date {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    color: var(--fg-subtle);
+    flex-shrink: 0;
+  }
+  /* 生长动画:进入视口后,根 → 系列 → 叶 依次浮现 */
+  .node.root,
+  .series-node,
+  .leaf {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s var(--ease-soft), transform 0.5s var(--ease-soft);
+  }
+  .tree-card.grown .node.root {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.05s;
+  }
+  .tree-card.grown .branch {
+    opacity: 0;
+    animation: branch-grow 0.5s var(--ease-soft) forwards;
+    animation-delay: calc(0.25s + var(--delay, 0) * 0.18s);
+  }
+  .tree-card.grown .series-node {
+    opacity: 1;
+    transform: none;
+  }
+  .tree-card.grown .leaf {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(0.3s + var(--delay, 0) * 0.12s);
+  }
+  @keyframes branch-grow {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .node.root,
+    .series-node,
+    .leaf,
+    .tree-card.grown .branch {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .tree-card {
+      padding: 16px;
+    }
+    .tree-layout {
+      gap: 16px;
+    }
+    .leaf {
+      max-width: 200px;
+    }
+  }
+</style>
+
+<script is:inline>
+  ;(function () {
+    const cards = [...document.querySelectorAll('[data-tree]')]
+    if (!cards.length) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('grown')
+            io.unobserve(entry.target)
+          }
+        }
+      },
+      { threshold: 0.2 }
+    )
+    cards.forEach((c) => io.observe(c))
+    // 根节点收起/展开
+    cards.forEach((card) => {
+      const root = card.querySelector('[data-root]')
+      root?.addEventListener('click', () => {
+        const collapsed = card.classList.toggle('collapsed')
+        root.setAttribute('aria-expanded', String(!collapsed))
+      })
+    })
+  })()
+</script>
