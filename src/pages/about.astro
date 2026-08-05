@@ -311,48 +311,25 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
 
     // 滚轮翻页:垂直滚轮 → 横向平滑切屏;滚动到达目标即解锁(快速连滚灵敏),
     // 超时兜底防卡死;横向手势(触摸板)交还原生
-    let wheelLock = false
-    let pendingTarget = null
-    let wheelLockT = 0
-    const unlockWheel = () => {
-      wheelLock = false
-      pendingTarget = null
-      window.clearTimeout(wheelLockT)
-    }
+    // 滚轮翻页:事件风暴节流(250ms 最小翻页间隔)
+    // 一次物理滚动 = 一批事件(16-50ms 间隔)→ 节流窗口内合并为一屏;
+    // 手动连滚(>250ms 间隔)→ 逐屏;无锁状态,无卡死可能
+    let lastWheel = 0
+    const WHEEL_THROTTLE = 250
     window.addEventListener(
       'wheel',
       (e) => {
-        // 一次物理滚动 = 一批事件:锁中直接忽略(同批合并为一屏),
-        // 避免同批后续事件被误判为继续意图导致连跳/失控
         if (e.deltaX && !e.deltaY) return
-        if (wheelLock || !e.deltaY) {
-          e.preventDefault()
-          return
-        }
         e.preventDefault()
-        wheelLock = true
+        if (!e.deltaY) return
+        const now = performance.now()
+        if (now - lastWheel < WHEEL_THROTTLE) return
+        lastWheel = now
         const cur = Math.round(scroller.scrollLeft / scroller.clientWidth)
         const next = Math.min(Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)), screens.length - 1)
-        if (next === cur) {
-          // 已在边界:立即解锁,保证快速反向/正向响应
-          unlockWheel()
-          return
-        }
-        pendingTarget = next * scroller.clientWidth
-        scroller.scrollTo({ left: pendingTarget, behavior: 'smooth' })
-        window.clearTimeout(wheelLockT)
-        wheelLockT = window.setTimeout(unlockWheel, 1500)
+        scroller.scrollTo({ left: next * scroller.clientWidth, behavior: 'smooth' })
       },
       { passive: false }
-    )
-    scroller.addEventListener(
-      'scroll',
-      () => {
-        if (pendingTarget !== null && Math.abs(scroller.scrollLeft - pendingTarget) < 4) {
-          unlockWheel()
-        }
-      },
-      { passive: true }
     )
 
     // 屏外裁剪 + 当前屏激活
