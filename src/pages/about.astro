@@ -19,7 +19,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
 <BaseLayout title="关于" description="关于这个站点和它的主人" hideFooter>
   <div class="snap-wrap">
     <div class="snap-scroller" data-snap-scroller>
-      <!-- 屏1:hero(默认主题) -->
+      <!-- 屏1:hero(跟随全局主题,不强制) -->
       <section class="snap-section hero-screen" data-screen>
         <div class="hero-inner">
           {
@@ -315,11 +315,8 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
         html.dataset.forceTheme = theme
         html.dataset.themeLocked = 'true'
       } else {
+        // 首屏(hero):跟随全局主题变量,不强制、不重置
         delete html.dataset.forceTheme
-        const dark = html.dataset.mode === 'dark'
-        html.dataset.theme = dark
-          ? (document.body.dataset.defaultThemeDark ?? 'purple')
-          : (document.body.dataset.defaultThemeLight ?? 'gray')
         html.dataset.themeLocked = 'false'
       }
       window.dispatchEvent(new CustomEvent('enlab:theme-change'))
