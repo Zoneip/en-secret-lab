@@ -7,7 +7,7 @@ import { getCollection } from 'astro:content'
 import { isServer } from '../utils'
 import { published, type PostLike } from './posts'
 import { fsPostsDir, fsReadPost, toPostLike } from './fs-posts'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { parsePostFile } from '../admin/posts-store'
 
@@ -15,6 +15,8 @@ import { parsePostFile } from '../admin/posts-store'
 export async function getAllPosts(): Promise<PostLike[]> {
   if (isServer) {
     const dir = fsPostsDir()
+    // 尚未发布任何文章时目录可能不存在,视为空列表
+    if (!existsSync(dir)) return []
     const files = readdirSync(dir).filter(
       (f) => /\.(md|mdx)$/.test(f) && statSync(join(dir, f)).isFile(),
     )
