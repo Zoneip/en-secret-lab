@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { formatDate, readingTime, absoluteUrl, slugify } from '../../src/lib/utils'
+import {
+  formatDate,
+  readingTime,
+  absoluteUrl,
+  slugify,
+} from '../../src/lib/utils'
 
 describe('formatDate', () => {
   it('输出中文日期', () => {
@@ -19,13 +24,19 @@ describe('readingTime', () => {
 
 describe('absoluteUrl', () => {
   it('拼接相对路径', () => {
-    expect(absoluteUrl('https://example.com', '/blog/a')).toBe('https://example.com/blog/a')
+    expect(absoluteUrl('https://example.com', '/blog/a')).toBe(
+      'https://example.com/blog/a',
+    )
   })
   it('站点地址带尾斜杠也正确', () => {
-    expect(absoluteUrl('https://example.com/', '/rss.xml')).toBe('https://example.com/rss.xml')
+    expect(absoluteUrl('https://example.com/', '/rss.xml')).toBe(
+      'https://example.com/rss.xml',
+    )
   })
   it('绝对链接原样返回', () => {
-    expect(absoluteUrl('https://example.com', 'https://other.com/x')).toBe('https://other.com/x')
+    expect(absoluteUrl('https://example.com', 'https://other.com/x')).toBe(
+      'https://other.com/x',
+    )
   })
 })
 

@@ -8,7 +8,8 @@ import { getCategories, getTags } from '../../../lib/admin/posts-store'
 export const prerender = !isServer
 
 export const GET: APIRoute = () => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const categories = getCategories()
   const tags = getTags()
   return new Response(JSON.stringify({ categories, tags }), {

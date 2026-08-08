@@ -12,20 +12,21 @@ export const prerender = !isServer
 export const GET: APIRoute = async () => {
   if (!isServer) return new Response('Not Found', { status: 404 })
   const posts = await getAllPosts()
-  const index = await Promise.all(
-    posts.map(async (p) => {
-      const full = await fsReadPost(p.slug)
-      return {
-        slug: p.slug,
-        title: p.title,
-        description: p.description ?? '',
-        tags: p.tags,
-        pubDate: p.pubDate.toISOString(),
-        body: full?.body ?? '',
-      }
-    })
-  )
+  const index = posts.map((p) => {
+    const full = fsReadPost(p.slug)
+    return {
+      slug: p.slug,
+      title: p.title,
+      description: p.description ?? '',
+      tags: p.tags,
+      pubDate: p.pubDate.toISOString(),
+      body: full?.body ?? '',
+    }
+  })
   return new Response(JSON.stringify(index), {
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+    },
   })
 }

@@ -38,7 +38,7 @@ const about = defineCollection({
         z.object({
           label: z.string(),
           url: z.string(),
-        })
+        }),
       )
       .default([]),
   }),

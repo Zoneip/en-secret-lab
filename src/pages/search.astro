@@ -18,16 +18,23 @@ const config = getSiteConfig()
       <p>在 {config.title} 里找点什么</p>
     </header>
 
-    {isServer ? (
-      <div class="search-wrap card">
-        <input type="search" class="live-input" data-live-input placeholder="输入关键词搜索…" />
-        <div class="live-results" data-live-results></div>
-      </div>
-    ) : (
-      <div class="search-wrap card">
-        <div id="search"></div>
-      </div>
-    )}
+    {
+      isServer ? (
+        <div class="search-wrap card">
+          <input
+            type="search"
+            class="live-input"
+            data-live-input
+            placeholder="输入关键词搜索…"
+          />
+          <div class="live-results" data-live-results />
+        </div>
+      ) : (
+        <div class="search-wrap card">
+          <div id="search" />
+        </div>
+      )
+    }
   </div>
 </BaseLayout>
 
@@ -56,7 +63,7 @@ const config = getSiteConfig()
           <a class="result card" href="/blog/${p.slug}">
             <span class="result-title">${p.title}</span>
             <span class="result-meta">${p.tags.map((t) => `#${t}`).join(' ')}</span>
-          </a>`
+          </a>`,
         )
         .join('')
     }
@@ -74,7 +81,7 @@ const config = getSiteConfig()
             p.title.toLowerCase().includes(q) ||
             (p.description ?? '').toLowerCase().includes(q) ||
             p.body.toLowerCase().includes(q) ||
-            p.tags.some((t) => t.toLowerCase().includes(q))
+            p.tags.some((t) => t.toLowerCase().includes(q)),
         )
         .slice(0, 12)
       render(hits)
@@ -90,7 +97,11 @@ const config = getSiteConfig()
   if (!document.querySelector('[data-live-input]')) {
     const container = document.getElementById('search')
     if (container) {
-      new PagefindUI({ element: '#search', showSubResults: true, showImages: false })
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+      })
     }
   }
 </script>

@@ -68,29 +68,32 @@ import '../assets/motion/keyframes/ambient.css'
 
 ```html
 <!-- 这个吉祥物:节奏更快、幅度更大 -->
-<div class="pixel-sprite motion-bob" style="--motion-duration: 5s; --motion-intensity: 1.6"></div>
+<div
+  class="pixel-sprite motion-bob"
+  style="--motion-duration: 5s; --motion-intensity: 1.6"
+></div>
 ```
 
-| 变量 | 默认 | 作用 |
-|------|------|------|
-| `--motion-duration` | `3s` | 基础时长,全库唯一旋钮;各动效用 `calc()` 取倍率(如跑马灯 ×6.667 ≈ 20s) |
-| `--motion-intensity` | `1` | 强度系数;px/deg 幅度一律经 `calc(N × var(--motion-intensity))` |
+| 变量                 | 默认 | 作用                                                                  |
+| -------------------- | ---- | --------------------------------------------------------------------- |
+| `--motion-duration`  | `3s` | 基础时长,全库唯一旋钮;各动效用 `calc()` 取倍率(如跑马灯 ×6.667 ≈ 20s) |
+| `--motion-intensity` | `1`  | 强度系数;px/deg 幅度一律经 `calc(N × var(--motion-intensity))`        |
 
 各动效的实际默认时长 = `--motion-duration × 倍率`:
 
-| 动效 | 倍率 | ≈ 默认 |
-|------|------|--------|
-| bob / ear-tip / tail-wag / wobble / sheen | ×1 | 3s |
-| bob-fast | ×0.4 | 1.2s |
-| blink | ×1.333 | 4s(间隔,0.15s 完成) |
-| card-lift / card-tilt / nav-underline / shrink | ×0.1 | 0.3s |
-| card-float-in | ×0.2 | 0.6s |
-| topbar-gradient | ×4 | 12s |
-| float-slow | ×2.667 | 8s |
-| spin-slow | ×4 | 12s |
-| pulse-soft | ×0.8 | 2.4s |
-| marquee | ×6.667 | 20s |
-| scroll-hint | ×0.7 | ≈ 2.1s |
+| 动效                                           | 倍率   | ≈ 默认              |
+| ---------------------------------------------- | ------ | ------------------- |
+| bob / ear-tip / tail-wag / wobble / sheen      | ×1     | 3s                  |
+| bob-fast                                       | ×0.4   | 1.2s                |
+| blink                                          | ×1.333 | 4s(间隔,0.15s 完成) |
+| card-lift / card-tilt / nav-underline / shrink | ×0.1   | 0.3s                |
+| card-float-in                                  | ×0.2   | 0.6s                |
+| topbar-gradient                                | ×4     | 12s                 |
+| float-slow                                     | ×2.667 | 8s                  |
+| spin-slow                                      | ×4     | 12s                 |
+| pulse-soft                                     | ×0.8   | 2.4s                |
+| marquee                                        | ×6.667 | 20s                 |
+| scroll-hint                                    | ×0.7   | ≈ 2.1s              |
 
 ### 4. 特殊说明
 
@@ -112,6 +115,6 @@ import '../assets/motion/keyframes/ambient.css'
 
 ## 版本记录
 
-| 版本 | 日期 | 变更 |
-|------|------|------|
+| 版本   | 日期       | 变更                                      |
+| ------ | ---------- | ----------------------------------------- |
 | v1.0.0 | 2026-08-04 | 初版:4 组 21 个动效类 + 注册表 + 使用规范 |

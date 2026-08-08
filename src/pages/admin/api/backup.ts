@@ -17,16 +17,24 @@ import {
 export const prerender = !isServer
 
 export const GET: APIRoute = () => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   return new Response(
-    JSON.stringify({ config: getBackupConfig(), backups: listBackups(), exports: listExports() }),
-    { headers: { 'Content-Type': 'application/json' } }
+    JSON.stringify({
+      config: getBackupConfig(),
+      backups: listBackups(),
+      exports: listExports(),
+    }),
+    { headers: { 'Content-Type': 'application/json' } },
   )
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
-  const body = (await request.json().catch(() => null)) as { action?: 'backup' | 'export' } | null
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  const body = (await request.json().catch(() => null)) as {
+    action?: 'backup' | 'export'
+  } | null
   try {
     if (body?.action === 'export') {
       const entry = await exportContent()
@@ -35,18 +43,24 @@ export const POST: APIRoute = async ({ request }) => {
     const entry = await createBackup()
     return new Response(JSON.stringify({ ok: true, entry }))
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 500,
+    })
   }
 }
 
 export const PUT: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const body = (await request.json().catch(() => null)) as {
     intervalHours?: number
     keep?: number
     enabled?: boolean
   } | null
-  if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
+  if (!body)
+    return new Response(JSON.stringify({ error: '请求体无效' }), {
+      status: 400,
+    })
   const cfg = getBackupConfig()
   const next = {
     intervalHours: Number(body.intervalHours ?? cfg.intervalHours),
@@ -54,10 +68,15 @@ export const PUT: APIRoute = async ({ request }) => {
     enabled: body.enabled ?? cfg.enabled,
   }
   if (next.intervalHours < 1 || next.intervalHours > 720) {
-    return new Response(JSON.stringify({ error: '备份间隔需在 1-720 小时之间' }), { status: 400 })
+    return new Response(
+      JSON.stringify({ error: '备份间隔需在 1-720 小时之间' }),
+      { status: 400 },
+    )
   }
   if (next.keep < 1 || next.keep > 100) {
-    return new Response(JSON.stringify({ error: '保留份数需在 1-100 之间' }), { status: 400 })
+    return new Response(JSON.stringify({ error: '保留份数需在 1-100 之间' }), {
+      status: 400,
+    })
   }
   setBackupConfig(next)
   return new Response(JSON.stringify({ ok: true, config: next }))

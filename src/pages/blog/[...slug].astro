@@ -5,7 +5,7 @@
  */
 import type { GetStaticPaths, MarkdownHeading } from 'astro'
 // @ts-expect-error import 路径在运行时存在
-import type { AstroComponentFactory } from "astro/dist/runtime/server/index.js"
+import type { AstroComponentFactory } from 'astro/dist/runtime/server/index.js'
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { formatDate, readingTime } from '../../lib/utils'
@@ -38,10 +38,15 @@ const idx = all.findIndex((p) => p.slug === slug)
 const prev = idx > 0 ? all[idx - 1] : undefined
 const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : undefined
 // 同系列内上一篇/下一篇(连续阅读)
-const seriesPosts = post.series ? all.filter((p) => p.series === post.series) : []
+const seriesPosts = post.series
+  ? all.filter((p) => p.series === post.series)
+  : []
 const seriesIdx = seriesPosts.findIndex((p) => p.slug === slug)
 const seriesPrev = seriesIdx > 0 ? seriesPosts[seriesIdx - 1] : undefined
-const seriesNext = seriesIdx >= 0 && seriesIdx < seriesPosts.length - 1 ? seriesPosts[seriesIdx + 1] : undefined
+const seriesNext =
+  seriesIdx >= 0 && seriesIdx < seriesPosts.length - 1
+    ? seriesPosts[seriesIdx + 1]
+    : undefined
 
 // 正文渲染:静态版用 astro:content,动态版用 markdown-it(实时文件)
 let contentHtml = ''
@@ -64,18 +69,24 @@ const words = content.body
   <article class="post page-enter container">
     <header class="post-head">
       <div class="post-meta">
-        <Chip href={`/categories/${encodeURIComponent(post.category)}`}>{post.category}</Chip>
-        <time datetime={post.pubDate.toISOString()}>{formatDate(post.pubDate)}</time>
+        <Chip href={`/categories/${encodeURIComponent(post.category)}`}
+          >{post.category}</Chip
+        >
+        <time datetime={post.pubDate.toISOString()}
+          >{formatDate(post.pubDate)}</time
+        >
         <span class="reading">{readingTime(words)} 分钟阅读</span>
       </div>
       <h1>{post.title}</h1>
       {post.description && <p class="subtitle">{post.description}</p>}
       <div class="tags">
-        {post.tags.map((tag) => (
-          <a class="chip" href={`/tags/${encodeURIComponent(tag)}`}>
-            #{tag}
-          </a>
-        ))}
+        {
+          post.tags.map((tag) => (
+            <a class="chip" href={`/tags/${encodeURIComponent(tag)}`}>
+              #{tag}
+            </a>
+          ))
+        }
       </div>
     </header>
 
@@ -86,35 +97,64 @@ const words = content.body
         <TableOfContents headings={contentHeadings ?? []} />
       </div>
       <div class="prose">
-        {ContentComponent ? <ContentComponent /> : <Fragment set:html={contentHtml} />}
+        {
+          ContentComponent ? (
+            <ContentComponent />
+          ) : (
+            <Fragment set:html={contentHtml} />
+          )
+        }
       </div>
     </div>
   </article>
 
   <div class="container">
-    {post.series && (
-      <p class="series-badge">
-        系列 · {post.series}
-        {seriesPrev || seriesNext ? <span class="series-nav-links">{[seriesPrev && <a href={`/blog/${seriesPrev.slug}`} class="series-link">上一篇</a>, seriesNext && <a href={`/blog/${seriesNext.slug}`} class="series-link">下一篇</a>].filter(Boolean)}</span> : ''}
-      </p>
-    )}
+    {
+      post.series && (
+        <p class="series-badge">
+          系列 · {post.series}
+          {seriesPrev || seriesNext ? (
+            <span class="series-nav-links">
+              {[
+                seriesPrev && (
+                  <a href={`/blog/${seriesPrev.slug}`} class="series-link">
+                    上一篇
+                  </a>
+                ),
+                seriesNext && (
+                  <a href={`/blog/${seriesNext.slug}`} class="series-link">
+                    下一篇
+                  </a>
+                ),
+              ].filter(Boolean)}
+            </span>
+          ) : (
+            ''
+          )}
+        </p>
+      )
+    }
     <nav class="adjacent" aria-label="上下篇文章">
-      {prev ? (
-        <a class="adj card" href={`/blog/${prev.slug}`}>
-          <span class="adj-label">上一篇</span>
-          <span class="adj-title">{prev.title}</span>
-        </a>
-      ) : (
-        <span />
-      )}
-      {next ? (
-        <a class="adj card adj-next" href={`/blog/${next.slug}`}>
-          <span class="adj-label">下一篇</span>
-          <span class="adj-title">{next.title}</span>
-        </a>
-      ) : (
-        <span />
-      )}
+      {
+        prev ? (
+          <a class="adj card" href={`/blog/${prev.slug}`}>
+            <span class="adj-label">上一篇</span>
+            <span class="adj-title">{prev.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="adj card adj-next" href={`/blog/${next.slug}`}>
+            <span class="adj-label">下一篇</span>
+            <span class="adj-title">{next.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
     </nav>
   </div>
 </BaseLayout>
@@ -218,25 +258,25 @@ const words = content.body
   }
   @media (max-width: 640px) {
     .series-badge {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 36px;
-    padding: 8px 16px;
-    border-radius: 12px;
-    background: var(--primary-soft);
-    color: var(--primary);
-    font-size: 0.85rem;
-  }
-  .series-nav-links {
-    display: flex;
-    gap: 12px;
-  }
-  .series-link {
-    font-size: 0.8rem;
-  }
-  .adjacent {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 36px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.85rem;
+    }
+    .series-nav-links {
+      display: flex;
+      gap: 12px;
+    }
+    .series-link {
+      font-size: 0.8rem;
+    }
+    .adjacent {
       grid-template-columns: 1fr;
     }
     .post-head h1 {

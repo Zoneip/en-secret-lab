@@ -25,7 +25,9 @@ export function loadEnv(env: Record<string, string | undefined>): AppEnv {
     DATABASE_PATH: env.DATABASE_PATH,
   })
   if (!result.success) {
-    const detail = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')
+    const detail = result.error.issues
+      .map((i) => `${i.path.join('.')}: ${i.message}`)
+      .join('; ')
     throw new Error(`环境变量配置无效:${detail}`)
   }
   return result.data

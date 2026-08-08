@@ -22,7 +22,12 @@ interface SeriesGroup {
   posts: typeof posts
 }
 
-const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: typeof posts }> = categories.map((c) => {
+const trees: Array<{
+  name: string
+  count: number
+  series: SeriesGroup[]
+  loose: typeof posts
+}> = categories.map((c) => {
   const catPosts = posts.filter((p) => p.category === c.name)
   const seriesMap = new Map<string, typeof catPosts>()
   for (const p of catPosts) {
@@ -42,21 +47,38 @@ const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: 
 
 <div class="cat-wall">
   {trees.length === 0 && <p class="empty">还没有分类</p>}
-  {trees.map((tree) => (
-    <section class="cat-card">
-      <a class="cat-head" href={`/categories/${encodeURIComponent(tree.name)}`}>
-        <span class="cat-name">{tree.name}</span>
-        <span class="cat-count">{tree.count} 篇</span>
-      </a>
-      <div class="cat-body">
-        {tree.series.map((s) => (
-          <div class="series">
-            <div class="series-name">
-              <span class="series-mark" aria-hidden="true"></span>
-              {s.name}
+  {
+    trees.map((tree) => (
+      <section class="cat-card">
+        <a
+          class="cat-head"
+          href={`/categories/${encodeURIComponent(tree.name)}`}
+        >
+          <span class="cat-name">{tree.name}</span>
+          <span class="cat-count">{tree.count} 篇</span>
+        </a>
+        <div class="cat-body">
+          {tree.series.map((s) => (
+            <div class="series">
+              <div class="series-name">
+                <span class="series-mark" aria-hidden="true" />
+                {s.name}
+              </div>
+              <ul class="post-list">
+                {s.posts.map((p) => (
+                  <li>
+                    <a class="post-link" href={`/blog/${p.slug}`}>
+                      <span class="post-date">{fmtDate(p.pubDate)}</span>
+                      <span class="post-title">{p.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
+          ))}
+          {tree.loose.length > 0 && (
             <ul class="post-list">
-              {s.posts.map((p) => (
+              {tree.loose.map((p) => (
                 <li>
                   <a class="post-link" href={`/blog/${p.slug}`}>
                     <span class="post-date">{fmtDate(p.pubDate)}</span>
@@ -65,23 +87,11 @@ const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: 
                 </li>
               ))}
             </ul>
-          </div>
-        ))}
-        {tree.loose.length > 0 && (
-          <ul class="post-list">
-            {tree.loose.map((p) => (
-              <li>
-                <a class="post-link" href={`/blog/${p.slug}`}>
-                  <span class="post-date">{fmtDate(p.pubDate)}</span>
-                  <span class="post-title">{p.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
-  ))}
+          )}
+        </div>
+      </section>
+    ))
+  }
 </div>
 
 <style>
@@ -96,14 +106,18 @@ const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: 
     padding: 40px 0;
   }
   .cat-card {
-    border: 1.5px solid color-mix(in srgb, var(--border-strong) 75%, transparent);
+    border: 1.5px solid
+      color-mix(in srgb, var(--border-strong) 75%, transparent);
     border-radius: 16px;
     background: color-mix(in srgb, var(--surface) 70%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 4px 18px color-mix(in srgb, var(--primary) 8%, transparent);
     overflow: hidden;
-    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s, border-color 0.2s;
+    transition:
+      transform 0.2s var(--ease-spring),
+      box-shadow 0.2s,
+      border-color 0.2s;
   }
   .cat-card:hover {
     transform: translateY(-2px);
@@ -116,8 +130,14 @@ const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: 
     justify-content: space-between;
     gap: 12px;
     padding: 16px 22px;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 18%, transparent), color-mix(in srgb, var(--primary) 4%, transparent) 55%, transparent 85%);
-    border-bottom: 1.5px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--primary) 18%, transparent),
+      color-mix(in srgb, var(--primary) 4%, transparent) 55%,
+      transparent 85%
+    );
+    border-bottom: 1.5px solid
+      color-mix(in srgb, var(--border) 70%, transparent);
     text-decoration: none;
   }
   .cat-name {
@@ -178,7 +198,10 @@ const trees: Array<{ name: string; count: number; series: SeriesGroup[]; loose: 
     -webkit-backdrop-filter: blur(8px);
     padding: 7px 14px;
     max-width: 320px;
-    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      transform 0.2s;
   }
   .post-link:hover {
     border-color: var(--primary);

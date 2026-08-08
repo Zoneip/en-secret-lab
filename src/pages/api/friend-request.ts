@@ -4,7 +4,10 @@
  */
 import type { APIRoute } from 'astro'
 import { isServer } from '../../lib/utils'
-import { createRequest, countRequestsToday } from '../../lib/admin/friends-store'
+import {
+  createRequest,
+  countRequestsToday,
+} from '../../lib/admin/friends-store'
 
 export const prerender = !isServer
 
@@ -12,7 +15,8 @@ export const prerender = !isServer
 export const GET: APIRoute = () => new Response(null, { status: 404 })
 
 export const POST: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const body = (await request.json().catch(() => null)) as {
     name?: string
     url?: string
@@ -20,15 +24,26 @@ export const POST: APIRoute = async ({ request }) => {
     description?: string
     email?: string
   } | null
-  if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
+  if (!body)
+    return new Response(JSON.stringify({ error: '请求体无效' }), {
+      status: 400,
+    })
 
   const name = body.name?.trim() ?? ''
   const url = body.url?.trim() ?? ''
   const email = body.email?.trim() ?? ''
-  if (!name || !url) return new Response(JSON.stringify({ error: '站点名称和链接必填' }), { status: 400 })
-  if (!/^https?:\/\/.+/.test(url)) return new Response(JSON.stringify({ error: '链接需以 http(s):// 开头' }), { status: 400 })
+  if (!name || !url)
+    return new Response(JSON.stringify({ error: '站点名称和链接必填' }), {
+      status: 400,
+    })
+  if (!/^https?:\/\/.+/.test(url))
+    return new Response(JSON.stringify({ error: '链接需以 http(s):// 开头' }), {
+      status: 400,
+    })
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return new Response(JSON.stringify({ error: '邮箱格式不正确' }), { status: 400 })
+    return new Response(JSON.stringify({ error: '邮箱格式不正确' }), {
+      status: 400,
+    })
   }
 
   const ip =
@@ -36,7 +51,10 @@ export const POST: APIRoute = async ({ request }) => {
     request.headers.get('x-real-ip') ??
     'unknown'
   if (countRequestsToday(ip) >= 3) {
-    return new Response(JSON.stringify({ error: '今天提交的申请太多了,明天再来吧' }), { status: 429 })
+    return new Response(
+      JSON.stringify({ error: '今天提交的申请太多了,明天再来吧' }),
+      { status: 429 },
+    )
   }
 
   const req = createRequest(
@@ -47,7 +65,7 @@ export const POST: APIRoute = async ({ request }) => {
       description: body.description?.trim() || undefined,
       email: email || undefined,
     },
-    ip
+    ip,
   )
   return new Response(JSON.stringify({ ok: true, id: req.id }))
 }

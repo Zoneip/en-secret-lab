@@ -5,7 +5,12 @@
  */
 import type { APIRoute } from 'astro'
 import { isServer } from '../../../../lib/utils'
-import { getPost, savePost, deletePost, type PostDraft } from '../../../../lib/admin/posts-store'
+import {
+  getPost,
+  savePost,
+  deletePost,
+  type PostDraft,
+} from '../../../../lib/admin/posts-store'
 
 export const prerender = !isServer
 
@@ -15,25 +20,41 @@ export function getStaticPaths() {
 }
 
 export const GET: APIRoute = ({ params }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const post = getPost(params.slug ?? '')
-  if (!post) return new Response(JSON.stringify({ error: '文章不存在' }), { status: 404 })
+  if (!post)
+    return new Response(JSON.stringify({ error: '文章不存在' }), {
+      status: 404,
+    })
   return new Response(JSON.stringify({ ok: true, ...post }), {
     headers: { 'Content-Type': 'application/json' },
   })
 }
 
 export const PUT: APIRoute = async ({ params, request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
-  const body = (await request.json().catch(() => null)) as Partial<PostDraft> | null
-  if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  const body = (await request
+    .json()
+    .catch(() => null)) as Partial<PostDraft> | null
+  if (!body)
+    return new Response(JSON.stringify({ error: '请求体无效' }), {
+      status: 400,
+    })
   try {
     const target = body.slug ?? params.slug ?? ''
     if (target !== params.slug && getPost(target)) {
-      return new Response(JSON.stringify({ error: `slug「${target}」已被占用` }), { status: 422 })
+      return new Response(
+        JSON.stringify({ error: `slug「${target}」已被占用` }),
+        { status: 422 },
+      )
     }
     const existing = getPost(params.slug ?? '')
-    if (!existing) return new Response(JSON.stringify({ error: '文章不存在' }), { status: 404 })
+    if (!existing)
+      return new Response(JSON.stringify({ error: '文章不存在' }), {
+        status: 404,
+      })
     // 改 slug 时删除旧文件
     if (target !== params.slug) deletePost(params.slug!)
     const merged: Partial<PostDraft> & { slug: string } = {
@@ -44,13 +65,19 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const saved = savePost(merged)
     return new Response(JSON.stringify({ ok: true, post: saved }))
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 422 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 422,
+    })
   }
 }
 
 export const DELETE: APIRoute = ({ params }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const ok = deletePost(params.slug ?? '')
-  if (!ok) return new Response(JSON.stringify({ error: '文章不存在' }), { status: 404 })
+  if (!ok)
+    return new Response(JSON.stringify({ error: '文章不存在' }), {
+      status: 404,
+    })
   return new Response(JSON.stringify({ ok: true }))
 }

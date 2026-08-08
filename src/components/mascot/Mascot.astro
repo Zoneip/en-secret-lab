@@ -1,26 +1,69 @@
 ---
 /**
  * 吉祥物:四角色 × 双形态 = 8 幅像素画
- * 用法:theme 指定主题(自动映射角色),或 character 显式指定
+ * 用法:
+ *   theme 指定主题(自动映射角色),或 character 显式指定角色名(DCH/FWB/Coulyer/Zoneip)
  *   gray→DCH / yellow→FWB / purple→Coulyer / white→Zoneip
+ *
+ *   支持控制台配置覆盖:
+ *     - character: 替换角色(仍用像素画稿)
+ *     - role:      切换 boy / furry 形态
+ *     - name:      显示名
+ *     - imageUrl:  自定义图片,有则覆盖像素画渲染
  */
-import { CHARACTERS, THEME_TO_CHARACTER, paletteFor } from './art'
+import {
+  CHARACTERS,
+  CHARACTER_TO_THEME,
+  THEME_TO_CHARACTER,
+  paletteFor,
+} from './art'
 import PixelSprite from './PixelSprite.astro'
 import { getTheme } from '../../lib/theme/presets'
 
 interface Props {
-  role: 'boy' | 'furry'
+  role?: 'boy' | 'furry'
   theme?: string
   character?: 'DCH' | 'FWB' | 'Coulyer' | 'Zoneip'
+  name?: string
+  /** 有 imageUrl 时优先渲染图片,忽略像素画 */
+  imageUrl?: string
   pixel?: number
 }
 
-const { role, theme = 'gray', character, pixel = 8 } = Astro.props
-const set = CHARACTERS[THEME_TO_CHARACTER[theme] ?? 'gray']
-const label = character ?? set.name
-const art = role === 'boy' ? set.boy : set.furry
+const {
+  role: roleProp,
+  theme = 'gray',
+  character: characterProp,
+  name: nameProp,
+  imageUrl,
+  pixel = 8,
+} = Astro.props
+
+// character prop 优先,否则 theme → THEME_TO_CHARACTER,回退 gray
+const effectiveThemeKey: keyof typeof CHARACTERS =
+  (characterProp ? CHARACTER_TO_THEME[characterProp] : undefined) ??
+  (THEME_TO_CHARACTER[theme] as keyof typeof CHARACTERS) ??
+  'gray'
+const effectiveRole: 'boy' | 'furry' = roleProp ?? 'furry'
+const set = CHARACTERS[effectiveThemeKey]
+const label = nameProp ?? set.name
+const art = effectiveRole === 'boy' ? set.boy : set.furry
 const preset = getTheme(theme)
 const palette = paletteFor(preset.mascot)
+const w = art.width * pixel
+const h = art.height * pixel
 ---
 
-<PixelSprite art={art} palette={palette} pixel={pixel} role={label} />
+{
+  imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={label}
+      width={w}
+      height={h}
+      style="image-rendering: pixelated;"
+    />
+  ) : (
+    <PixelSprite art={art} palette={palette} pixel={pixel} role={label} />
+  )
+}

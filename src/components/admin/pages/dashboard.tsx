@@ -98,21 +98,36 @@ function useCountUp(target: number, duration = 700) {
   return value
 }
 
-function StatCard({ stat, value, index }: { stat: (typeof STAT_CARDS)[number]; value: number; index: number }) {
+function StatCard({
+  stat,
+  value,
+  index,
+}: {
+  stat: (typeof STAT_CARDS)[number]
+  value: number
+  index: number
+}) {
   const num = useCountUp(value)
   const Icon = stat.icon
   return (
-    <Card className="flex min-h-[76px] items-center animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ animationDelay: `${index * 50}ms` }}>
+    <Card
+      className="flex min-h-[76px] items-center animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all hover:-translate-y-0.5 hover:shadow-md"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
       <div className="flex w-full items-center gap-3 px-5">
         <span
           className="flex size-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
-          style={{ background: `linear-gradient(135deg, ${stat.color}, color-mix(in srgb, ${stat.color} 60%, #fff))` }}
+          style={{
+            background: `linear-gradient(135deg, ${stat.color}, color-mix(in srgb, ${stat.color} 60%, #fff))`,
+          }}
         >
           <Icon className="size-5" />
         </span>
         <div className="flex min-w-0 flex-col">
           <p className="text-xl font-bold tabular-nums leading-none">{num}</p>
-          <p className="mt-1.5 truncate text-xs text-muted-foreground">{stat.label}</p>
+          <p className="mt-1.5 truncate text-xs text-muted-foreground">
+            {stat.label}
+          </p>
         </div>
       </div>
     </Card>
@@ -158,8 +173,17 @@ function Mascot({ colors }: { colors: Record<string, string> }) {
       {cells.flatMap((row, y) =>
         [...row].map((ch, x) => {
           const fill = map[ch]
-          return fill ? <rect key={`${x}-${y}`} x={x * px} y={y * px} width={px} height={px} fill={fill} /> : null
-        })
+          return fill ? (
+            <rect
+              key={`${x}-${y}`}
+              x={x * px}
+              y={y * px}
+              width={px}
+              height={px}
+              fill={fill}
+            />
+          ) : null
+        }),
       )}
       <style>{`@keyframes mascot-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }`}</style>
     </svg>
@@ -172,7 +196,10 @@ export default function Dashboard() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    Promise.all([api<SiteState>('/admin/api/state'), api<{ posts: PostLite[] }>('/admin/api/posts')])
+    Promise.all([
+      api<SiteState>('/admin/api/state'),
+      api<{ posts: PostLite[] }>('/admin/api/posts'),
+    ])
       .then(([s, p]) => {
         setState(s)
         setPosts(p.posts)
@@ -189,15 +216,23 @@ export default function Dashboard() {
   }
 
   const hour = new Date().getHours()
-  const greet = hour < 6 ? '夜深了' : hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好'
-  const pubRatio = state?.stats.posts ? Math.round((state.stats.published / state.stats.posts) * 100) : 0
-  const defaultPreset = state?.presets.find((p) => p.id === state.site.themeByMode.light)
+  const greet =
+    hour < 6 ? '夜深了' : hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好'
+  const pubRatio = state?.stats.posts
+    ? Math.round((state.stats.published / state.stats.posts) * 100)
+    : 0
+  const defaultPreset = state?.presets.find(
+    (p) => p.id === state.site.themeByMode.light,
+  )
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
       {/* 欢迎区 */}
       <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-6 sm:p-8">
-        <div className="pointer-events-none absolute -right-16 -top-24 size-80 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute -right-16 -top-24 size-80 rounded-full bg-primary/10 blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative flex flex-wrap items-center justify-between gap-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -207,7 +242,12 @@ export default function Dashboard() {
               {state?.site.title ?? '加载中…'}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+              {new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+              })}
             </p>
             <div className="mt-5 flex gap-2.5">
               <Button asChild>
@@ -235,7 +275,12 @@ export default function Dashboard() {
       {/* 统计 */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {STAT_CARDS.map((stat, i) => (
-          <StatCard key={stat.key} stat={stat} value={state?.stats[stat.key] ?? 0} index={i} />
+          <StatCard
+            key={stat.key}
+            stat={stat}
+            value={state?.stats[stat.key] ?? 0}
+            index={i}
+          />
         ))}
       </section>
       {state && state.stats.posts > 0 && (
@@ -268,7 +313,9 @@ export default function Dashboard() {
             ) : posts.length === 0 ? (
               <div className="flex flex-col items-center gap-3 py-10 text-center">
                 <PenSquare className="size-8 text-muted-foreground/40" />
-                <p className="text-sm text-muted-foreground">还没有文章,写一篇吧</p>
+                <p className="text-sm text-muted-foreground">
+                  还没有文章,写一篇吧
+                </p>
                 <Button asChild size="sm">
                   <a href="/admin/posts/new">写新文章</a>
                 </Button>
@@ -286,12 +333,16 @@ export default function Dashboard() {
                         {p.title.slice(0, 1)}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium">{p.title}</span>
+                        <span className="block truncate text-sm font-medium">
+                          {p.title}
+                        </span>
                         <span className="block text-xs text-muted-foreground">
                           {p.category} · {fmtDate(p.pubDate)}
                         </span>
                       </span>
-                      <Badge variant={p.draft ? 'warning' : 'success'}>{p.draft ? '草稿' : '已发布'}</Badge>
+                      <Badge variant={p.draft ? 'warning' : 'success'}>
+                        {p.draft ? '草稿' : '已发布'}
+                      </Badge>
                       <ArrowRight className="size-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
                     </a>
                   </li>
@@ -329,7 +380,9 @@ export default function Dashboard() {
             {!state
               ? [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-14" />)
               : (() => {
-                  const filtered = state.presets.filter((t) => t.id !== 'friends')
+                  const filtered = state.presets.filter(
+                    (t) => t.id !== 'friends',
+                  )
                   const lightDef = state.site.themeByMode.light
                   const darkDef = state.site.themeByMode.dark
                   const items = [
@@ -363,58 +416,72 @@ export default function Dashboard() {
                       animDelay: number
                       isRandom?: boolean
                     }) => (
-                    <a
-                      key={item.key}
-                      href={item.href}
-                      className="group relative flex items-center gap-2.5 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-sm animate-in fade-in zoom-in-95 duration-200"
-                      style={{ animationDelay: `${item.animDelay}ms` }}
-                      title={
-                        item.isLightDefault && item.isDarkDefault
-                          ? `${item.name} · 浅色/深色模式默认`
-                          : item.isLightDefault
-                            ? `${item.name} · 浅色模式默认`
-                            : item.isDarkDefault
-                              ? `${item.name} · 深色模式默认`
-                              : item.name
-                      }
-                    >
-                      {item.isRandom ? (
-                        <span className="flex size-5 items-center justify-center rounded-md border border-black/5 bg-muted text-xs">
-                          <Palette className="size-3" />
+                      <a
+                        key={item.key}
+                        href={item.href}
+                        className="group relative flex items-center gap-2.5 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-sm animate-in fade-in zoom-in-95 duration-200"
+                        style={{ animationDelay: `${item.animDelay}ms` }}
+                        title={
+                          item.isLightDefault && item.isDarkDefault
+                            ? `${item.name} · 浅色/深色模式默认`
+                            : item.isLightDefault
+                              ? `${item.name} · 浅色模式默认`
+                              : item.isDarkDefault
+                                ? `${item.name} · 深色模式默认`
+                                : item.name
+                        }
+                      >
+                        {item.isRandom ? (
+                          <span className="flex size-5 items-center justify-center rounded-md border border-black/5 bg-muted text-xs">
+                            <Palette className="size-3" />
+                          </span>
+                        ) : (
+                          <span className="flex -space-x-1.5">
+                            {(
+                              ['bg', 'surface', 'primary', 'accent'] as const
+                            ).map((k, j) => (
+                              <span
+                                key={k}
+                                className="size-4 rounded-md border border-black/5"
+                                style={{
+                                  background: item.palette?.light[k] ?? '#ccc',
+                                  zIndex: 4 - j,
+                                }}
+                              />
+                            ))}
+                          </span>
+                        )}
+                        <span className="text-sm font-medium">{item.name}</span>
+                        {/* 底部双圆点指示器:左=浅色默认(淡黄),右=深色默认(淡紫) */}
+                        <span className="absolute bottom-1.5 right-2 flex items-center gap-1">
+                          <span
+                            className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
+                              item.isLightDefault
+                                ? 'bg-amber-300/90 ring-amber-300/40 shadow-[0_0_3px_rgba(252,211,77,0.4)] dark:bg-amber-200/80 dark:ring-amber-200/30'
+                                : 'bg-transparent ring-muted-foreground/25'
+                            }`}
+                            aria-label={
+                              item.isLightDefault
+                                ? '浅色模式默认'
+                                : '非浅色模式默认'
+                            }
+                          />
+                          <span
+                            className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
+                              item.isDarkDefault
+                                ? 'bg-violet-400/80 ring-violet-400/40 shadow-[0_0_3px_rgba(167,139,250,0.4)] dark:bg-violet-300/70 dark:ring-violet-300/30'
+                                : 'bg-transparent ring-muted-foreground/25'
+                            }`}
+                            aria-label={
+                              item.isDarkDefault
+                                ? '深色模式默认'
+                                : '非深色模式默认'
+                            }
+                          />
                         </span>
-                      ) : (
-                        <span className="flex -space-x-1.5">
-                          {(['bg', 'surface', 'primary', 'accent'] as const).map((k, j) => (
-                            <span
-                              key={k}
-                              className="size-4 rounded-md border border-black/5"
-                              style={{ background: item.palette?.light[k] ?? '#ccc', zIndex: 4 - j }}
-                            />
-                          ))}
-                        </span>
-                      )}
-                      <span className="text-sm font-medium">{item.name}</span>
-                      {/* 底部双圆点指示器:左=浅色默认(淡黄),右=深色默认(淡紫) */}
-                      <span className="absolute bottom-1.5 right-2 flex items-center gap-1">
-                        <span
-                          className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
-                            item.isLightDefault
-                              ? 'bg-amber-300/90 ring-amber-300/40 shadow-[0_0_3px_rgba(252,211,77,0.4)] dark:bg-amber-200/80 dark:ring-amber-200/30'
-                              : 'bg-transparent ring-muted-foreground/25'
-                          }`}
-                          aria-label={item.isLightDefault ? '浅色模式默认' : '非浅色模式默认'}
-                        />
-                        <span
-                          className={`size-1.5 rounded-full ring-1 ring-inset transition-all ${
-                            item.isDarkDefault
-                              ? 'bg-violet-400/80 ring-violet-400/40 shadow-[0_0_3px_rgba(167,139,250,0.4)] dark:bg-violet-300/70 dark:ring-violet-300/30'
-                              : 'bg-transparent ring-muted-foreground/25'
-                          }`}
-                          aria-label={item.isDarkDefault ? '深色模式默认' : '非深色模式默认'}
-                        />
-                      </span>
-                    </a>
-                  ))
+                      </a>
+                    ),
+                  )
                 })()}
           </div>
         </Card>
@@ -435,16 +502,27 @@ export default function Dashboard() {
                 <Skeleton className="my-2 h-9" />
               </>
             ) : state.activity.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">还没有动态</p>
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                还没有动态
+              </p>
             ) : (
               <ol className="relative space-y-4 before:absolute before:left-[3.5px] before:top-1 before:bottom-1 before:w-px before:bg-border">
                 {state.activity.map((a, i) => {
                   const meta = ACTIVITY_META[a.kind]
                   return (
-                    <li key={`${a.kind}-${a.title}-${i}`} className="relative flex gap-3 pl-5 animate-in fade-in slide-in-from-bottom-1 duration-300" style={{ animationDelay: `${i * 60}ms` }}>
-                      <span className={`absolute left-0 top-1.5 size-2 rounded-full ${meta.dot} ring-4 ring-background`} aria-hidden="true" />
+                    <li
+                      key={`${a.kind}-${a.title}-${i}`}
+                      className="relative flex gap-3 pl-5 animate-in fade-in slide-in-from-bottom-1 duration-300"
+                      style={{ animationDelay: `${i * 60}ms` }}
+                    >
+                      <span
+                        className={`absolute left-0 top-1.5 size-2 rounded-full ${meta.dot} ring-4 ring-background`}
+                        aria-hidden="true"
+                      />
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{a.title}</p>
+                        <p className="truncate text-sm font-medium">
+                          {a.title}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {meta.label}
                           {a.meta ? ` · ${a.meta}` : ''} · {timeAgo(a.time)}
@@ -466,10 +544,15 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-col gap-4 p-5">
             <div className="flex items-center gap-3">
-              <span className="size-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15" aria-hidden="true" />
+              <span
+                className="size-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15"
+                aria-hidden="true"
+              />
               <div>
                 <p className="text-xs text-muted-foreground">运行模式</p>
-                <p className="text-sm font-medium">{state?.system.mode ?? '—'}</p>
+                <p className="text-sm font-medium">
+                  {state?.system.mode ?? '—'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -478,7 +561,9 @@ export default function Dashboard() {
               </span>
               <div>
                 <p className="text-xs text-muted-foreground">Node 版本</p>
-                <p className="text-sm font-medium">{state?.system.node ?? '—'}</p>
+                <p className="text-sm font-medium">
+                  {state?.system.node ?? '—'}
+                </p>
               </div>
             </div>
             <div>
@@ -491,11 +576,17 @@ export default function Dashboard() {
                   <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-primary to-blue-400 transition-all duration-700"
-                      style={{ width: `${Math.min(100, Math.max(2, ((state?.system.uploadBytes ?? 0) / 1024 / 1024) * 4))}%` }}
+                      style={{
+                        width: `${Math.min(100, Math.max(2, ((state?.system.uploadBytes ?? 0) / 1024 / 1024) * 4))}%`,
+                      }}
                     />
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {state?.system.uploads ?? 0} 个文件 · {((state?.system.uploadBytes ?? 0) / 1024 / 1024).toFixed(2)} MB
+                    {state?.system.uploads ?? 0} 个文件 ·{' '}
+                    {((state?.system.uploadBytes ?? 0) / 1024 / 1024).toFixed(
+                      2,
+                    )}{' '}
+                    MB
                   </p>
                 </div>
               </div>

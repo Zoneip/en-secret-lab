@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dir = join(root, 'public', 'wallpapers')
 
-for (const f of readdirSync(dir).filter((f) => f.endsWith('.svg') && !f.includes('-static'))) {
+for (const f of readdirSync(dir).filter(
+  (f) => f.endsWith('.svg') && !f.includes('-static'),
+)) {
   let s = readFileSync(join(dir, f), 'utf8')
   s = s.replace(/<style>[\s\S]*?<\/style>/g, '')
   s = s.replace(/ class="[\w ]+"/g, '')

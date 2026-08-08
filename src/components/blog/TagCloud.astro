@@ -4,24 +4,33 @@ import { aggregateByKey } from '../../lib/content/taxonomy'
 
 interface Props {
   posts: Array<{ tags?: string[] }>
+  /** 最大标签字号(rem),默认为 1.45 */
+  maxSize?: number
 }
 
-const { posts } = Astro.props
+const { posts, maxSize = 1.45 } = Astro.props
 const tags = aggregateByKey(posts, 'tags')
 const max = Math.max(1, ...tags.map((t) => t.count))
 
 // 3 档:权重 >= 2/3 为大,>= 1/3 为中,其余小
-const tier = (count: number) => (count / max >= 0.66 ? 'lg' : count / max >= 0.33 ? 'md' : 'sm')
+const tier = (count: number) =>
+  count / max >= 0.66 ? 'lg' : count / max >= 0.33 ? 'md' : 'sm'
 ---
 
-<div class="tag-wall">
+<div class="tag-wall" style={`--tag-max-size: ${maxSize}rem;`}>
   {tags.length === 0 && <p class="empty">还没有标签</p>}
-  {tags.map((t) => (
-    <a href={`/tags/${encodeURIComponent(t.name)}`} class={`tag-chip ${tier(t.count)}`} title={`${t.name} · ${t.count} 篇`}>
-      {t.name}
-      <span class="tag-count">{t.count}</span>
-    </a>
-  ))}
+  {
+    tags.map((t) => (
+      <a
+        href={`/tags/${encodeURIComponent(t.name)}`}
+        class={`tag-chip ${tier(t.count)}`}
+        title={`${t.name} · ${t.count} 篇`}
+      >
+        {t.name}
+        <span class="tag-count">{t.count}</span>
+      </a>
+    ))
+  }
 </div>
 
 <style>
@@ -51,7 +60,11 @@ const tier = (count: number) => (count / max >= 0.66 ? 'lg' : count / max >= 0.3
     box-shadow:
       inset -3px -3px 0 0 color-mix(in srgb, var(--primary) 22%, transparent),
       inset 3px 3px 0 0 color-mix(in srgb, #ffffff 55%, transparent);
-    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s, border-color 0.2s, color 0.2s;
+    transition:
+      transform 0.2s var(--ease-spring),
+      box-shadow 0.2s,
+      border-color 0.2s,
+      color 0.2s;
   }
   .tag-chip:hover {
     transform: translateY(-2px);
@@ -63,7 +76,7 @@ const tier = (count: number) => (count / max >= 0.66 ? 'lg' : count / max >= 0.3
       0 4px 12px color-mix(in srgb, var(--primary) 22%, transparent);
   }
   .tag-chip.lg {
-    font-size: 1.45rem;
+    font-size: var(--tag-max-size, 1.45rem);
     padding: 10px 20px;
     background: var(--primary);
     color: var(--primary-fg, #fff);
@@ -99,7 +112,7 @@ const tier = (count: number) => (count / max >= 0.66 ? 'lg' : count / max >= 0.3
   }
   @media (max-width: 640px) {
     .tag-chip.lg {
-      font-size: 1.2rem;
+      font-size: calc(var(--tag-max-size, 1.45rem) * 0.83);
     }
   }
 </style>

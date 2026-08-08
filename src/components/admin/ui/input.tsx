@@ -13,7 +13,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
         'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
         'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
         'md:text-sm',
-        className
+        className,
       )}
       {...props}
     />

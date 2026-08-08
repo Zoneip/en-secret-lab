@@ -19,7 +19,8 @@
   );
   background-size: 200% 100%;
   background-repeat: no-repeat;
-  animation: motion-topbar-gradient calc(var(--motion-duration, 3s) * 4) linear infinite;
+  animation: motion-topbar-gradient calc(var(--motion-duration, 3s) * 4) linear
+    infinite;
 }
 @keyframes motion-topbar-gradient {
   from {
@@ -35,8 +36,11 @@
  * 默认 64px → 52px + 阴影增强,0.3s(基础时长 ×0.1) */
 .motion-topbar-shrink {
   height: var(--header-h, 64px);
-  transition: height calc(var(--motion-duration, 3s) * 0.1) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)),
-    box-shadow calc(var(--motion-duration, 3s) * 0.1) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1));
+  transition:
+    height calc(var(--motion-duration, 3s) * 0.1)
+      var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)),
+    box-shadow calc(var(--motion-duration, 3s) * 0.1)
+      var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1));
 }
 .motion-topbar-shrink[data-motion-shrunk] {
   height: 52px;
@@ -60,7 +64,8 @@
   background: linear-gradient(90deg, var(--primary), var(--accent));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform calc(var(--motion-duration, 3s) * 0.1) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1));
+  transition: transform calc(var(--motion-duration, 3s) * 0.1)
+    var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1));
 }
 .motion-nav-underline:hover::after,
 .motion-nav-underline[aria-current='page']::after {
@@ -71,11 +76,29 @@
  * 全库统一:任一文件被单独引入时也保证动画/过渡被禁用。
  * 伪元素与子元素的动画需要单独点名,父级 animation: none 不会停止它们。 */
 @media (prefers-reduced-motion: reduce) {
-  .motion-bob, .motion-bob-fast, .motion-ear-tip, .motion-tail-wag, .motion-blink, .motion-wobble,
-  .motion-card-lift, .motion-card-tilt, .motion-card-sheen, .motion-card-border-flow, .motion-card-float-in,
-  .motion-topbar-gradient, .motion-topbar-shrink, .motion-nav-underline, .motion-float-slow, .motion-spin-slow,
-  .motion-pulse-soft, .motion-marquee, .motion-scroll-hint,
-  .motion-card-sheen::after, .motion-card-border-flow::before, .motion-marquee > *, .motion-stagger > * {
+  .motion-bob,
+  .motion-bob-fast,
+  .motion-ear-tip,
+  .motion-tail-wag,
+  .motion-blink,
+  .motion-wobble,
+  .motion-card-lift,
+  .motion-card-tilt,
+  .motion-card-sheen,
+  .motion-card-border-flow,
+  .motion-card-float-in,
+  .motion-topbar-gradient,
+  .motion-topbar-shrink,
+  .motion-nav-underline,
+  .motion-float-slow,
+  .motion-spin-slow,
+  .motion-pulse-soft,
+  .motion-marquee,
+  .motion-scroll-hint,
+  .motion-card-sheen::after,
+  .motion-card-border-flow::before,
+  .motion-marquee > *,
+  .motion-stagger > * {
     animation: none !important;
     transition: none !important;
   }

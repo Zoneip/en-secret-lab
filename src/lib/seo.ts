@@ -11,7 +11,10 @@ export interface SeoOptions {
 }
 
 export function buildMeta(opts: SeoOptions) {
-  const fullTitle = opts.title === opts.siteTitle ? opts.title : `${opts.title} · ${opts.siteTitle}`
+  const fullTitle =
+    opts.title === opts.siteTitle
+      ? opts.title
+      : `${opts.title} · ${opts.siteTitle}`
   const meta: Record<string, string>[] = [
     { charset: 'utf-8' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -22,7 +25,8 @@ export function buildMeta(opts: SeoOptions) {
     { property: 'og:site_name', content: opts.siteTitle },
   ]
   if (opts.url) meta.push({ property: 'og:url', content: opts.url })
-  if (opts.description) meta.push({ property: 'og:description', content: opts.description })
+  if (opts.description)
+    meta.push({ property: 'og:description', content: opts.description })
   if (opts.image) {
     meta.push({ property: 'og:image', content: opts.image })
     meta.push({ name: 'twitter:card', content: 'summary_large_image' })

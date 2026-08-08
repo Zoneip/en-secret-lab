@@ -13,20 +13,32 @@ export function fsPostsDir(): string {
   return postsDirOf()
 }
 
-export function fsReadPost(slug: string): { post: PostLike; body: string } | null {
+export function fsReadPost(
+  slug: string,
+): { post: PostLike; body: string } | null {
   const dir = fsPostsDir()
   const mdPath = join(dir, `${slug}.md`)
   const mdxPath = join(dir, `${slug}.mdx`)
-  const file = existsSync(mdPath) ? mdPath : existsSync(mdxPath) ? mdxPath : null
+  const file = existsSync(mdPath)
+    ? mdPath
+    : existsSync(mdxPath)
+      ? mdxPath
+      : null
   if (!file) return null
-  const parsed = parsePostFile(file.split('/').pop()!, readFileSync(file, 'utf8'))
+  const parsed = parsePostFile(
+    file.split('/').pop()!,
+    readFileSync(file, 'utf8'),
+  )
   return {
     post: toPostLike(parsed),
     body: parsed.draft.body,
   }
 }
 
-export function toPostLike(parsed: { slug: string; draft: PostDraft }): PostLike {
+export function toPostLike(parsed: {
+  slug: string
+  draft: PostDraft
+}): PostLike {
   return {
     id: parsed.slug,
     slug: parsed.slug,

@@ -7,6 +7,9 @@ import '../styles/admin.css'
 import { Toaster } from 'sonner'
 import DarkToggle from '../components/admin/lib/dark-toggle'
 import CommandMenu from '../components/admin/lib/command-menu'
+import { getSiteConfig } from '../lib/config'
+
+const config = getSiteConfig()
 
 interface Props {
   title: string
@@ -19,6 +22,13 @@ const nav = [
   { key: 'dashboard', label: '仪表盘', href: '/admin', icon: 'dashboard' },
   { key: 'posts', label: '文章', href: '/admin/posts', icon: 'file-text' },
   { key: 'settings', label: '设置', href: '/admin/settings', icon: 'settings' },
+  {
+    key: 'resources',
+    label: '资源',
+    href: '/admin/resources',
+    icon: 'package',
+  },
+  { key: 'accounts', label: '账号', href: '/admin/accounts', icon: 'users' },
   { key: 'friends', label: '友链', href: '/admin/friends', icon: 'link' },
   { key: 'assets', label: '资产', href: '/admin/assets', icon: 'image' },
   { key: 'backup', label: '备份', href: '/admin/backup', icon: 'archive' },
@@ -32,7 +42,12 @@ const nav = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>{title} · 控制台</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={config.favicon.href} type={config.favicon.type} />
+    {
+      config.favicon.appleTouchHref && (
+        <link rel="apple-touch-icon" href={config.favicon.appleTouchHref} />
+      )
+    }
     <style is:inline>
       body {
         font-family: 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
@@ -50,31 +65,39 @@ const nav = [
   </head>
   <body class="bg-background text-foreground antialiased" style="zoom:1.1">
     <div class="flex min-h-screen">
-      <aside class="fixed inset-y-0 left-0 z-30 hidden w-56 flex-col border-r bg-sidebar px-3 py-4 lg:flex">
+      <aside
+        class="fixed inset-y-0 left-0 z-30 hidden w-56 flex-col border-r bg-sidebar px-3 py-4 lg:flex"
+      >
         <a href="/admin" class="flex items-center gap-2.5 px-2 pb-5">
-          <svg width="30" height="30" viewBox="0 0 32 32" class="shrink-0 drop-shadow-[0_2px_6px_rgba(92,103,125,0.35)]" aria-hidden="true">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 32 32"
+            class="shrink-0 drop-shadow-[0_2px_6px_rgba(92,103,125,0.35)]"
+            aria-hidden="true"
+          >
             <defs>
               <linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#5c677d" />
-                <stop offset="1" stop-color="#9aa5b5" />
+                <stop offset="0" stop-color="#5c677d"></stop>
+                <stop offset="1" stop-color="#9aa5b5"></stop>
               </linearGradient>
             </defs>
-            <rect width="32" height="32" rx="9" fill="url(#logo-g)" />
+            <rect width="32" height="32" rx="9" fill="url(#logo-g)"></rect>
             <g fill="#fff" opacity="0.95">
-              <rect x="5" y="5" width="5" height="5" rx="1.5" />
-              <rect x="13.5" y="3" width="5" height="5" rx="1.5" />
-              <rect x="22" y="5" width="5" height="5" rx="1.5" />
-              <rect x="9.5" y="13" width="5" height="5" rx="1.5" />
-              <rect x="17.5" y="13" width="5" height="5" rx="1.5" />
+              <rect x="5" y="5" width="5" height="5" rx="1.5"></rect>
+              <rect x="13.5" y="3" width="5" height="5" rx="1.5"></rect>
+              <rect x="22" y="5" width="5" height="5" rx="1.5"></rect>
+              <rect x="9.5" y="13" width="5" height="5" rx="1.5"></rect>
+              <rect x="17.5" y="13" width="5" height="5" rx="1.5"></rect>
             </g>
             <g fill="#e8ebf0" opacity="0.9">
-              <rect x="7" y="20" width="4" height="4" rx="1.5" />
-              <rect x="12" y="19" width="4" height="4" rx="1.5" />
-              <rect x="17" y="19" width="4" height="4" rx="1.5" />
-              <rect x="22" y="20" width="4" height="4" rx="1.5" />
-              <rect x="9" y="24.5" width="6" height="3" rx="1.5" />
-              <rect x="18" y="24.5" width="6" height="3" rx="1.5" />
-              <rect x="13" y="23" width="7" height="5" rx="2.5" />
+              <rect x="7" y="20" width="4" height="4" rx="1.5"></rect>
+              <rect x="12" y="19" width="4" height="4" rx="1.5"></rect>
+              <rect x="17" y="19" width="4" height="4" rx="1.5"></rect>
+              <rect x="22" y="20" width="4" height="4" rx="1.5"></rect>
+              <rect x="9" y="24.5" width="6" height="3" rx="1.5"></rect>
+              <rect x="18" y="24.5" width="6" height="3" rx="1.5"></rect>
+              <rect x="13" y="23" width="7" height="5" rx="2.5"></rect>
             </g>
           </svg>
           <span class="text-sm font-semibold tracking-tight">秘密实验室</span>
@@ -91,14 +114,74 @@ const nav = [
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
                 ]}
               >
-                <span class:list={['grid size-4 shrink-0 place-items-center', { 'opacity-70': active !== item.key }]}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    {item.icon === 'dashboard' && <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-4H3zM13 3v6h8V3z" />}
-                    {item.icon === 'file-text' && <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M16 13H8M16 17H8M10 9H8" /></>}
-                    {item.icon === 'settings' && <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></>}
-                    {item.icon === 'link' && <><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></>}
-                    {item.icon === 'image' && <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></>}
-                    {item.icon === 'archive' && <><rect x="2" y="3" width="20" height="5" rx="1" /><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" /><path d="M10 12h4" /></>}
+                <span
+                  class:list={[
+                    'grid size-4 shrink-0 place-items-center',
+                    { 'opacity-70': active !== item.key },
+                  ]}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    {item.icon === 'dashboard' && (
+                      <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-4H3zM13 3v6h8V3z" />
+                    )}
+                    {item.icon === 'file-text' && (
+                      <>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                        <path d="M16 13H8M16 17H8M10 9H8" />
+                      </>
+                    )}
+                    {item.icon === 'settings' && (
+                      <>
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                      </>
+                    )}
+                    {item.icon === 'package' && (
+                      <>
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                        <path d="m3.3 7 8.7 5 8.7-5" />
+                        <path d="M12 22V12" />
+                      </>
+                    )}
+                    {item.icon === 'link' && (
+                      <>
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                      </>
+                    )}
+                    {item.icon === 'image' && (
+                      <>
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                      </>
+                    )}
+                    {item.icon === 'archive' && (
+                      <>
+                        <rect x="2" y="3" width="20" height="5" rx="1" />
+                        <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+                        <path d="M10 12h4" />
+                      </>
+                    )}
+                    {item.icon === 'users' && (
+                      <>
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </>
+                    )}
                   </svg>
                 </span>
                 {item.label}
@@ -107,29 +190,116 @@ const nav = [
           }
         </nav>
         <div class="mt-auto flex flex-col gap-0.5 border-t pt-3">
-          <a href="/" target="_blank" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60">
+          <a
+            href="/"
+            target="_blank"
+            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60"
+          >
             查看前台
           </a>
-          <button data-logout class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-destructive/80 transition-colors hover:bg-destructive/10">
+          <button
+            data-logout
+            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-destructive/80 transition-colors hover:bg-destructive/10"
+          >
             退出登录
           </button>
         </div>
       </aside>
 
       <div class="flex min-w-0 flex-1 flex-col lg:pl-56">
-        <header class="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur lg:px-8">
-          <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" aria-hidden="true"></div>
+        <header
+          class="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur lg:px-8"
+        >
+          <div
+            class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+            aria-hidden="true"
+          >
+          </div>
           <div class="flex items-center gap-3">
             <a href="/admin" class="flex items-center gap-2 lg:hidden">
-              <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#5c677d"/><g fill="#fff" opacity="0.95"><rect x="5" y="5" width="5" height="5" rx="1.5"/><rect x="13.5" y="3" width="5" height="5" rx="1.5"/><rect x="22" y="5" width="5" height="5" rx="1.5"/><rect x="9.5" y="13" width="5" height="5" rx="1.5"/><rect x="17.5" y="13" width="5" height="5" rx="1.5"/></g><g fill="#e8ebf0" opacity="0.9"><rect x="7" y="20" width="4" height="4" rx="1.5"/><rect x="12" y="19" width="4" height="4" rx="1.5"/><rect x="17" y="19" width="4" height="4" rx="1.5"/><rect x="22" y="20" width="4" height="4" rx="1.5"/><rect x="9" y="24.5" width="6" height="3" rx="1.5"/><rect x="18" y="24.5" width="6" height="3" rx="1.5"/><rect x="13" y="23" width="7" height="5" rx="2.5"/></g></svg>
+              <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"
+                ><rect width="32" height="32" rx="9" fill="#5c677d"></rect><g
+                  fill="#fff"
+                  opacity="0.95"
+                  ><rect x="5" y="5" width="5" height="5" rx="1.5"></rect><rect
+                    x="13.5"
+                    y="3"
+                    width="5"
+                    height="5"
+                    rx="1.5"></rect><rect
+                    x="22"
+                    y="5"
+                    width="5"
+                    height="5"
+                    rx="1.5"></rect><rect
+                    x="9.5"
+                    y="13"
+                    width="5"
+                    height="5"
+                    rx="1.5"></rect><rect
+                    x="17.5"
+                    y="13"
+                    width="5"
+                    height="5"
+                    rx="1.5"></rect></g
+                ><g fill="#e8ebf0" opacity="0.9"
+                  ><rect x="7" y="20" width="4" height="4" rx="1.5"></rect><rect
+                    x="12"
+                    y="19"
+                    width="4"
+                    height="4"
+                    rx="1.5"></rect><rect
+                    x="17"
+                    y="19"
+                    width="4"
+                    height="4"
+                    rx="1.5"></rect><rect
+                    x="22"
+                    y="20"
+                    width="4"
+                    height="4"
+                    rx="1.5"></rect><rect
+                    x="9"
+                    y="24.5"
+                    width="6"
+                    height="3"
+                    rx="1.5"></rect><rect
+                    x="18"
+                    y="24.5"
+                    width="6"
+                    height="3"
+                    rx="1.5"></rect><rect
+                    x="13"
+                    y="23"
+                    width="7"
+                    height="5"
+                    rx="2.5"></rect></g
+                ></svg
+              >
             </a>
             <h1 class="text-base font-semibold tracking-tight">{title}</h1>
           </div>
           <div class="flex items-center gap-2">
-            <span class="hidden rounded-full bg-muted px-2.5 py-0.5 text-[11px] text-muted-foreground sm:inline">动态版</span>
+            <span
+              class="hidden rounded-full bg-muted px-2.5 py-0.5 text-[11px] text-muted-foreground sm:inline"
+              >动态版</span
+            >
             <DarkToggle client:only="react" />
-            <button data-mobile-nav class="inline-flex size-8 items-center justify-center rounded-md hover:bg-accent lg:hidden" aria-label="菜单">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <button
+              data-mobile-nav
+              class="inline-flex size-8 items-center justify-center rounded-md hover:bg-accent lg:hidden"
+              aria-label="菜单"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                ><path d="M4 6h16M4 12h16M4 18h16"></path></svg
+              >
             </button>
           </div>
         </header>
@@ -151,15 +321,18 @@ const nav = [
           { label: '文章', href: '/admin/posts' },
           { label: '友链', href: '/admin/friends' },
           { label: '设置', href: '/admin/settings' },
+          { label: '资源', href: '/admin/resources' },
+          { label: '账号', href: '/admin/accounts' },
           { label: '备份', href: '/admin/backup' },
           { label: '资产', href: '/admin/assets' },
         ],
       }
-      document.querySelector('[data-mobile-nav]')?.addEventListener('click', () => {
-        const panel = document.createElement('div')
-        panel.className =
-          'fixed inset-0 z-40 flex flex-col bg-background p-4'
-        panel.innerHTML = `
+      document
+        .querySelector('[data-mobile-nav]')
+        ?.addEventListener('click', () => {
+          const panel = document.createElement('div')
+          panel.className = 'fixed inset-0 z-40 flex flex-col bg-background p-4'
+          panel.innerHTML = `
           <div class="flex items-center justify-between pb-4">
             <span class="text-sm font-semibold">导航</span>
             <button class="rounded-md px-2 py-1 text-sm hover:bg-accent">关闭</button>
@@ -167,22 +340,26 @@ const nav = [
           ${navHtml.links
             .map(
               (l) =>
-                `<a href="${l.href}" class="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-accent">${l.label}</a>`
+                `<a href="${l.href}" class="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-accent">${l.label}</a>`,
             )
             .join('')}
           <div class="mt-auto border-t pt-3">
             <a href="/" target="_blank" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-accent">查看前台</a>
           </div>
         `
-        document.body.appendChild(panel)
-        panel.querySelector('button')?.addEventListener('click', () => panel.remove())
-      })
+          document.body.appendChild(panel)
+          panel
+            .querySelector('button')
+            ?.addEventListener('click', () => panel.remove())
+        })
 
       // 退出登录
-      document.querySelector('[data-logout]')?.addEventListener('click', async () => {
-        await fetch('/admin/api/logout', { method: 'POST' })
-        location.href = '/admin/login'
-      })
+      document
+        .querySelector('[data-logout]')
+        ?.addEventListener('click', async () => {
+          await fetch('/admin/api/logout', { method: 'POST' })
+          location.href = '/admin/login'
+        })
     </script>
   </body>
 </html>

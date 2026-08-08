@@ -40,11 +40,17 @@ export const RANDOM_POOL: ThemeId[] = ['gray', 'yellow', 'purple', 'white']
 /** L2 站长配置对主题的覆盖(控制台产出) */
 export interface ThemeOverride {
   /** 覆盖后的色值,key 为 token 名 */
-  palette?: Partial<ColorTokens> & Partial<Record<'wallpaper-overlay' | 'shadow', string>>
+  palette?: Partial<ColorTokens> &
+    Partial<Record<'wallpaper-overlay' | 'shadow', string>>
   /** 覆盖壁纸源,支持 gradient: / url: */
   wallpaper?: { light?: string; dark?: string }
   /** 顶部栏美化:style=glass/solid/gradient,accent=主题渐变线,ornament=none/dots/wave/leaf,height 像素 */
-  topbar?: { style?: 'glass' | 'solid' | 'gradient'; accent?: boolean; ornament?: 'none' | 'dots' | 'wave' | 'leaf'; height?: number }
+  topbar?: {
+    style?: 'glass' | 'solid' | 'gradient'
+    accent?: boolean
+    ornament?: 'none' | 'dots' | 'wave' | 'leaf'
+    height?: number
+  }
 }
 
 /** 访客偏好(L3) */
@@ -55,7 +61,10 @@ export interface ThemePrefs {
 }
 
 /** 合并 L1 预设 + L2 站长覆盖,产出最终生效配置 */
-export function resolveTheme(preset: ThemePreset, override?: ThemeOverride): ThemePreset {
+export function resolveTheme(
+  preset: ThemePreset,
+  override?: ThemeOverride,
+): ThemePreset {
   if (!override) return preset
   return {
     ...preset,
@@ -78,7 +87,14 @@ export function wallpaperCss(value: string): string {
 }
 
 export function isThemeId(value: string): value is ThemeId {
-  return value === 'gray' || value === 'yellow' || value === 'purple' || value === 'white' || value === 'random' || value === 'friends'
+  return (
+    value === 'gray' ||
+    value === 'yellow' ||
+    value === 'purple' ||
+    value === 'white' ||
+    value === 'random' ||
+    value === 'friends'
+  )
 }
 
 /** 从主题池随机选一个主题 */

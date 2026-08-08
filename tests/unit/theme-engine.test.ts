@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { resolveTheme, wallpaperCss, isThemeId, isColorMode } from '../../src/lib/theme/engine'
+import {
+  resolveTheme,
+  wallpaperCss,
+  isThemeId,
+  isColorMode,
+} from '../../src/lib/theme/engine'
 import type { ThemePreset } from '../../src/lib/theme/engine'
 
 const preset: ThemePreset = {
@@ -72,7 +77,9 @@ describe('resolveTheme', () => {
 
 describe('wallpaperCss', () => {
   it('剥离 gradient: 前缀', () => {
-    expect(wallpaperCss('gradient:linear-gradient(#eee, #ddd)')).toBe('linear-gradient(#eee, #ddd)')
+    expect(wallpaperCss('gradient:linear-gradient(#eee, #ddd)')).toBe(
+      'linear-gradient(#eee, #ddd)',
+    )
   })
   it('url: 转为 url()', () => {
     expect(wallpaperCss('url:/assets/x.png')).toBe('url(/assets/x.png)')

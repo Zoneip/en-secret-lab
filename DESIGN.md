@@ -20,11 +20,11 @@ Kemono 像素风个人博客:内容创作(文章/栏目/角色)+ 深度主题定
 
 ## 3. 主题引擎(三层)
 
-| 层 | 载体 | 说明 |
-|---|---|---|
-| **L1 预设** | `src/themes/presets/*.json` | 配色(light/dark 全 token)、壁纸、顶部栏、mascot |
-| **L2 覆盖** | SQLite `themeOverrides` | 控制台主题编辑器写入,运行时 `themeOverrideCss` 注入 `:root:root[data-theme]` 变量 |
-| **L3 偏好** | localStorage `enlab:prefs` | 访客主题锁定 / 深浅模式 |
+| 层          | 载体                        | 说明                                                                              |
+| ----------- | --------------------------- | --------------------------------------------------------------------------------- |
+| **L1 预设** | `src/themes/presets/*.json` | 配色(light/dark 全 token)、壁纸、顶部栏、mascot                                   |
+| **L2 覆盖** | SQLite `themeOverrides`     | 控制台主题编辑器写入,运行时 `themeOverrideCss` 注入 `:root:root[data-theme]` 变量 |
+| **L3 偏好** | localStorage `enlab:prefs`  | 访客主题锁定 / 深浅模式                                                           |
 
 - 5 个预设:灰糖/蜜糖/葡萄/棉花糖/樱花,前 4 个可被前台切换,樱花仅友链页使用(forceTheme)
 - 栏目页 `forceTheme` 锁定主题;关于页横向切屏时动态切换全局主题(同机制)

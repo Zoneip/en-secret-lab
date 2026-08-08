@@ -27,26 +27,49 @@ const SCENE: Record<string, { light: string; dark: string }> = {
 const presets = themeIds.map((id) => ({ id, preset: getTheme(id) }))
 const animSvg = (name: string) => {
   try {
-    return readFileSync(join(root, 'public', 'wallpapers', `${name}-anim.svg`), 'utf8')
+    return readFileSync(
+      join(root, 'public', 'wallpapers', `${name}-anim.svg`),
+      'utf8',
+    )
   } catch {
     return ''
   }
 }
 ---
 
-<div class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]} aria-hidden="true" data-wallpaper-fallback={fallbackTheme}>
-  {presets.map(({ id }) => (
-    <Fragment>
-      <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-light>
-        <div class="wl-static" style={`background-image:url(/wallpapers/${SCENE[id].light}-bg.svg)`}></div>
-        <div class="wl-anim-layer" set:html={animSvg(SCENE[id].light)}></div>
-      </div>
-      <div class="wallpaper-base" data-wallpaper-theme={id} data-wallpaper-dark>
-        <div class="wl-static" style={`background-image:url(/wallpapers/${SCENE[id].dark}-bg.svg)`}></div>
-        <div class="wl-anim-layer" set:html={animSvg(SCENE[id].dark)}></div>
-      </div>
-    </Fragment>
-  ))}
+<div
+  class:list={['wallpaper', { 'wallpaper-hidden': !enabled }]}
+  aria-hidden="true"
+  data-wallpaper-fallback={fallbackTheme}
+>
+  {
+    presets.map(({ id }) => (
+      <Fragment>
+        <div
+          class="wallpaper-base"
+          data-wallpaper-theme={id}
+          data-wallpaper-light
+        >
+          <div
+            class="wl-static"
+            style={`background-image:url(/wallpapers/${SCENE[id].light}-bg.svg)`}
+          />
+          <div class="wl-anim-layer" set:html={animSvg(SCENE[id].light)} />
+        </div>
+        <div
+          class="wallpaper-base"
+          data-wallpaper-theme={id}
+          data-wallpaper-dark
+        >
+          <div
+            class="wl-static"
+            style={`background-image:url(/wallpapers/${SCENE[id].dark}-bg.svg)`}
+          />
+          <div class="wl-anim-layer" set:html={animSvg(SCENE[id].dark)} />
+        </div>
+      </Fragment>
+    ))
+  }
   <div class="wallpaper-overlay"></div>
 </div>
 
@@ -67,23 +90,36 @@ const animSvg = (name: string) => {
     inset: 0;
     display: none;
   }
-  html[data-theme='gray'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
-  html[data-theme='gray'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark],
-  html[data-theme='yellow'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-light],
-  html[data-theme='yellow'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-dark],
-  html[data-theme='purple'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-light],
-  html[data-theme='purple'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
-  html[data-theme='white'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
-  html[data-theme='white'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark],
-  html[data-theme='friends'][data-mode='light'] .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-light],
-  html[data-theme='friends'][data-mode='dark'] .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-dark] {
+  html[data-theme='gray'][data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html[data-theme='gray'][data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark],
+  html[data-theme='yellow'][data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-light],
+  html[data-theme='yellow'][data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='yellow'][data-wallpaper-dark],
+  html[data-theme='purple'][data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-light],
+  html[data-theme='purple'][data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='purple'][data-wallpaper-dark],
+  html[data-theme='white'][data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-light],
+  html[data-theme='white'][data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='white'][data-wallpaper-dark],
+  html[data-theme='friends'][data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-light],
+  html[data-theme='friends'][data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-dark] {
     display: block;
     animation: wl-fade-in 0.45s var(--ease-soft) both;
   }
   /* 兜底:JS 未运行 */
-  html:not([data-theme]):not([data-mode]) .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
-  html:not([data-theme])[data-mode='light'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
-  html:not([data-theme])[data-mode='dark'] .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
+  html:not([data-theme]):not([data-mode])
+    .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='light']
+    .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-light],
+  html:not([data-theme])[data-mode='dark']
+    .wallpaper-base[data-wallpaper-theme='gray'][data-wallpaper-dark] {
     display: block;
   }
   @keyframes wl-fade-in {

@@ -1,11 +1,16 @@
 /** 控制台 API 客户端(React 侧) */
-export async function api<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+export async function api<T = unknown>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const res = await fetch(path, {
     headers: { 'Content-Type': 'application/json' },
     ...init,
   })
   if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { error?: string } | null
+    const body = (await res.json().catch(() => null)) as {
+      error?: string
+    } | null
     throw new Error(body?.error ?? `请求失败 (${res.status})`)
   }
   return (await res.json()) as T

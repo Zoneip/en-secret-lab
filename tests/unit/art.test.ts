@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { CHARACTERS, PAW, paletteFor, mix } from '../../src/components/mascot/art'
+import {
+  CHARACTERS,
+  PAW,
+  paletteFor,
+  mix,
+} from '../../src/components/mascot/art'
 
 describe('吉祥物画稿', () => {
   const names = ['DCH', 'FWB', 'Coulyer', 'Zoneip']
@@ -26,7 +31,10 @@ describe('吉祥物画稿', () => {
 
   it('只使用合法调色板字符', () => {
     const valid = new Set(['1', '2', '3', '4', '5', 'f', 'F', 'w', '.'])
-    const all = Object.values(CHARACTERS).flatMap((c) => [...c.boy.rows, ...c.furry.rows])
+    const all = Object.values(CHARACTERS).flatMap((c) => [
+      ...c.boy.rows,
+      ...c.furry.rows,
+    ])
     for (const row of all) {
       for (const ch of row) expect(valid.has(ch)).toBe(true)
     }
@@ -35,7 +43,10 @@ describe('吉祥物画稿', () => {
   it('角色间造型互不相同', () => {
     const sig = (rows: string[]) => rows.join('')
     const sigs = new Set(
-      Object.values(CHARACTERS).flatMap((c) => [sig(c.boy.rows), sig(c.furry.rows)])
+      Object.values(CHARACTERS).flatMap((c) => [
+        sig(c.boy.rows),
+        sig(c.furry.rows),
+      ]),
     )
     expect(sigs.size).toBe(8)
   })

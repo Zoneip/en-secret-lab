@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { parsePostFile, serializePost, type PostDraft } from '../../src/lib/admin/posts-store'
+import {
+  parsePostFile,
+  serializePost,
+  type PostDraft,
+} from '../../src/lib/admin/posts-store'
 
 const draft: PostDraft = {
   slug: 'test-post',
@@ -59,7 +63,8 @@ describe('posts-store 序列化往返', () => {
   })
 
   it('解析单个标签', () => {
-    const raw = '---\ntitle: t\npubDate: 2026-01-01\ncategory: c\ntags: [furry]\ndraft: false\n---\n'
+    const raw =
+      '---\ntitle: t\npubDate: 2026-01-01\ncategory: c\ntags: [furry]\ndraft: false\n---\n'
     const parsed = parsePostFile('single.md', raw)
     expect(parsed.draft.tags).toEqual(['furry'])
   })

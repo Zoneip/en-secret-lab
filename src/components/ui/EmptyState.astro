@@ -1,18 +1,64 @@
 ---
-/** 空状态:带像素吉祥物的可爱提示 */
+/** 空状态:带像素吉祥物的可爱提示,跟随全局主题自动切换角色,并响应控制台 mascot 配置 */
 import Mascot from '../mascot/Mascot.astro'
+import { getSiteConfig } from '../../lib/config'
 
 interface Props {
   title?: string
   description?: string
+  /** 强制指定主题(栏目页可用);不传则跟随访问者当前全局主题 */
+  theme?: string
 }
 
-const { title = '这里空空如也', description = '还没有内容,过阵子再来看看吧' } = Astro.props
+const {
+  title = '这里空空如也',
+  description = '还没有内容,过阵子再来看看吧',
+  theme,
+} = Astro.props
+const config = getSiteConfig()
+const THEMES = ['gray', 'yellow', 'purple', 'white'] as const
+const forcedMascot =
+  theme && (THEMES as readonly string[]).includes(theme)
+    ? config.mascots[theme as keyof typeof config.mascots]
+    : undefined
 ---
 
 <div class="empty-state card">
   <div class="empty-mascot">
-    <Mascot role="furry" pixel={6} />
+    {
+      theme ? (
+        <Mascot
+          theme={theme}
+          role={forcedMascot?.role ?? 'furry'}
+          character={forcedMascot?.character}
+          name={forcedMascot?.name}
+          imageUrl={forcedMascot?.imageUrl}
+          pixel={6}
+        />
+      ) : (
+        <div class="theme-mascots">
+          {THEMES.map((t) => {
+            const cfg = config.mascots[t] ?? {}
+            return (
+              <span
+                class="mascot-for-theme"
+                data-mascot-theme={t}
+                aria-hidden="true"
+              >
+                <Mascot
+                  theme={t}
+                  role={cfg.role ?? 'furry'}
+                  character={cfg.character}
+                  name={cfg.name}
+                  imageUrl={cfg.imageUrl}
+                  pixel={6}
+                />
+              </span>
+            )
+          })}
+        </div>
+      )
+    }
   </div>
   <p class="empty-title">{title}</p>
   <p class="empty-desc">{description}</p>
@@ -31,6 +77,26 @@ const { title = '这里空空如也', description = '还没有内容,过阵子�
   .empty-mascot {
     opacity: 0.9;
     animation: bob 3s ease-in-out infinite;
+  }
+  .theme-mascots {
+    display: grid;
+    place-items: center;
+  }
+  .mascot-for-theme {
+    display: none;
+    grid-area: 1 / 1;
+  }
+  :root[data-theme='gray'] .mascot-for-theme[data-mascot-theme='gray'],
+  :root[data-theme='yellow'] .mascot-for-theme[data-mascot-theme='yellow'],
+  :root[data-theme='purple'] .mascot-for-theme[data-mascot-theme='purple'],
+  :root[data-theme='white'] .mascot-for-theme[data-mascot-theme='white'],
+  :root[data-theme='friends'] .mascot-for-theme[data-mascot-theme='gray'],
+  :root[data-theme='random'] .mascot-for-theme[data-mascot-theme='gray'] {
+    display: block;
+  }
+  /* 无主题时的兜底 */
+  :root:not([data-theme]) .mascot-for-theme[data-mascot-theme='gray'] {
+    display: block;
   }
   @keyframes bob {
     0%,

@@ -9,7 +9,8 @@ export async function GET(context: APIContext) {
   return rss({
     title: config.title,
     description: config.description,
-    site: process.env.SITE_URL ?? context.site?.toString() ?? 'https://example.com',
+    site:
+      process.env.SITE_URL ?? context.site?.toString() ?? 'https://example.com',
     items: posts.map((post) => ({
       title: post.title,
       description: post.description,

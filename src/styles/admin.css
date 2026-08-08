@@ -103,7 +103,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans:
-    'Noto Sans SC', ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    'Noto Sans SC', ui-sans-serif, system-ui, -apple-system, 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
 }
 
 @layer base {

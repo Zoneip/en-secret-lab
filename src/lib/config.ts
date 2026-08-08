@@ -17,8 +17,12 @@ export const siteConfigSchema = z.object({
   /** 深浅模式各自的默认主题(切换模式时未锁定主题则跟随) */
   themeByMode: z
     .object({
-      light: z.enum(['gray', 'yellow', 'purple', 'white', 'random']).default('gray'),
-      dark: z.enum(['gray', 'yellow', 'purple', 'white', 'random']).default('purple'),
+      light: z
+        .enum(['gray', 'yellow', 'purple', 'white', 'random'])
+        .default('gray'),
+      dark: z
+        .enum(['gray', 'yellow', 'purple', 'white', 'random'])
+        .default('purple'),
     })
     .default({ light: 'gray', dark: 'purple' }),
   /** 全局开关 */
@@ -53,20 +57,18 @@ export const siteConfigSchema = z.object({
   /** 主题级覆盖(控制台写入) */
   themeOverrides: z.record(z.string(), z.any()).default({}),
   /** 页脚/导航自定义 */
-  nav: z
-    .array(z.object({ label: z.string(), url: z.string() }))
-    .default([
-      { label: '首页', url: '/' },
-      { label: '知识', url: '/knowledge' },
-      { label: '幻想', url: '/fantasy' },
-      { label: '思考', url: '/thinking' },
-      { label: '记录', url: '/journal' },
-      { label: '文章', url: '/blog' },
-      { label: '标签', url: '/tags' },
-      { label: '分类', url: '/categories' },
-      { label: '关于', url: '/about' },
-      { label: '友链', url: '/friends' },
-    ]),
+  nav: z.array(z.object({ label: z.string(), url: z.string() })).default([
+    { label: '首页', url: '/' },
+    { label: '知识', url: '/knowledge' },
+    { label: '幻想', url: '/fantasy' },
+    { label: '思考', url: '/thinking' },
+    { label: '记录', url: '/journal' },
+    { label: '文章', url: '/blog' },
+    { label: '标签', url: '/tags' },
+    { label: '分类', url: '/categories' },
+    { label: '关于', url: '/about' },
+    { label: '友链', url: '/friends' },
+  ]),
   /** 备案信息 */
   icp: z.string().default(''),
   police: z.string().default(''),
@@ -77,7 +79,7 @@ export const siteConfigSchema = z.object({
         family: z.string(),
         role: z.enum(['display', 'body', 'mono']),
         files: z.array(z.string()),
-      })
+      }),
     )
     .default([]),
   /** 主页配置(控制台可调控) */
@@ -90,11 +92,28 @@ export const siteConfigSchema = z.object({
       showColumnOverview: z.boolean().default(true),
       motion: z
         .object({
-          hero: z.enum(['none', 'float-slow', 'spin-slow']).default('float-slow'),
-          mascot: z.enum(['none', 'bob', 'ear-tip', 'tail-wag', 'wobble']).default('bob'),
-          cards: z.enum(['none', 'card-lift', 'card-tilt', 'card-sheen', 'card-border-flow', 'card-float-in']).default('card-lift'),
-          topbar: z.enum(['none', 'topbar-gradient', 'nav-underline']).default('nav-underline'),
-          ambient: z.enum(['none', 'pulse-soft', 'scroll-hint']).default('scroll-hint'),
+          hero: z
+            .enum(['none', 'float-slow', 'spin-slow'])
+            .default('float-slow'),
+          mascot: z
+            .enum(['none', 'bob', 'ear-tip', 'tail-wag', 'wobble'])
+            .default('bob'),
+          cards: z
+            .enum([
+              'none',
+              'card-lift',
+              'card-tilt',
+              'card-sheen',
+              'card-border-flow',
+              'card-float-in',
+            ])
+            .default('card-lift'),
+          topbar: z
+            .enum(['none', 'topbar-gradient', 'nav-underline'])
+            .default('nav-underline'),
+          ambient: z
+            .enum(['none', 'pulse-soft', 'scroll-hint'])
+            .default('scroll-hint'),
           speed: z.enum(['slow', 'normal', 'fast']).default('normal'),
         })
         .default({
@@ -121,6 +140,51 @@ export const siteConfigSchema = z.object({
         speed: 'normal',
       },
     }),
+  /** 网页 icon(控制台上传替换) */
+  favicon: z
+    .object({
+      href: z.string().default('/favicon.svg'),
+      type: z.string().default('image/svg+xml'),
+      appleTouchHref: z.string().optional(),
+    })
+    .default({ href: '/favicon.svg', type: 'image/svg+xml' }),
+  /** 吉祥物角色覆盖(控制台可调控) */
+  mascots: z
+    .object({
+      gray: z
+        .object({
+          character: z.enum(['DCH', 'FWB', 'Coulyer', 'Zoneip']).optional(),
+          role: z.enum(['boy', 'furry']).optional(),
+          name: z.string().optional(),
+          imageUrl: z.string().optional(),
+        })
+        .default({}),
+      yellow: z
+        .object({
+          character: z.enum(['DCH', 'FWB', 'Coulyer', 'Zoneip']).optional(),
+          role: z.enum(['boy', 'furry']).optional(),
+          name: z.string().optional(),
+          imageUrl: z.string().optional(),
+        })
+        .default({}),
+      purple: z
+        .object({
+          character: z.enum(['DCH', 'FWB', 'Coulyer', 'Zoneip']).optional(),
+          role: z.enum(['boy', 'furry']).optional(),
+          name: z.string().optional(),
+          imageUrl: z.string().optional(),
+        })
+        .default({}),
+      white: z
+        .object({
+          character: z.enum(['DCH', 'FWB', 'Coulyer', 'Zoneip']).optional(),
+          role: z.enum(['boy', 'furry']).optional(),
+          name: z.string().optional(),
+          imageUrl: z.string().optional(),
+        })
+        .default({}),
+    })
+    .default({ gray: {}, yellow: {}, purple: {}, white: {} }),
 })
 
 export type SiteConfig = z.infer<typeof siteConfigSchema>
@@ -148,14 +212,20 @@ function readDbConfig(): SiteConfig {
     pragma(s: string): void
     exec(s: string): void
     close(): void
-    prepare(s: string): { get(...args: unknown[]): { value?: string } | undefined }
+    prepare(s: string): {
+      get(...args: unknown[]): { value?: string } | undefined
+    }
   }
   const dbPath = process.env.DATABASE_PATH ?? './data/enlab.db'
   mkdirSync(dirname(dbPath), { recursive: true })
   const db = new Database(dbPath)
   db.pragma('journal_mode = WAL')
-  db.exec('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
-  const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('site_config')
+  db.exec(
+    'CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)',
+  )
+  const row = db
+    .prepare('SELECT value FROM settings WHERE key = ?')
+    .get('site_config')
   db.close()
   if (!row?.value) return DEFAULT_SITE_CONFIG
   try {
@@ -182,7 +252,10 @@ export function getSiteConfig(): SiteConfig {
     const raw = readFileSync(path, 'utf8')
     cached = siteConfigSchema.parse(JSON.parse(raw))
   } catch (e) {
-    console.warn(`[config] 读取 ${path} 失败,使用默认配置:`, (e as Error).message)
+    console.warn(
+      `[config] 读取 ${path} 失败,使用默认配置:`,
+      (e as Error).message,
+    )
     cached = DEFAULT_SITE_CONFIG
   }
   return cached

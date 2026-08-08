@@ -12,8 +12,20 @@ import { Switch } from '../ui/switch'
 import { Label } from '../ui/label'
 import { Skeleton } from '../ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
 interface Asset {
   id: string
@@ -33,9 +45,19 @@ interface Preset {
   override: {
     palette?: Record<string, string>
     wallpaper?: { light?: string; dark?: string }
-    topbar?: { style?: string; accent?: boolean; ornament?: string; height?: number }
+    topbar?: {
+      style?: string
+      accent?: boolean
+      ornament?: string
+      height?: number
+    }
   } | null
-  topbar?: { style?: string; accent?: boolean; ornament?: string; height?: number }
+  topbar?: {
+    style?: string
+    accent?: boolean
+    ornament?: string
+    height?: number
+  }
 }
 
 interface SiteConfig {
@@ -62,17 +84,24 @@ const SWATCH_ORDER: Array<{ key: string; label: string }> = [
   { key: 'shadow', label: '阴影' },
 ]
 
-
 export default function ThemeEditorPage() {
   const [presets, setPresets] = useState<Preset[] | null>(null)
   const [active, setActive] = useState('gray')
   const [edits, setEdits] = useState<Record<string, string>>({})
-  const [wallpaper, setWallpaper] = useState<{ light: string; dark: string }>({ light: '', dark: '' })
+  const [wallpaper, setWallpaper] = useState<{ light: string; dark: string }>({
+    light: '',
+    dark: '',
+  })
   const [saving, setSaving] = useState(false)
   const [pickerMode, setPickerMode] = useState<'light' | 'dark' | null>(null)
   const [assets, setAssets] = useState<Asset[]>([])
   const [isDark, setIsDark] = useState(false)
-  const [topbar, setTopbar] = useState({ style: 'glass', accent: false, ornament: 'none', height: 56 })
+  const [topbar, setTopbar] = useState({
+    style: 'glass',
+    accent: false,
+    ornament: 'none',
+    height: 56,
+  })
 
   // 跟随控制台暗色模式:预览使用对应色板
   useEffect(() => {
@@ -94,14 +123,22 @@ export default function ThemeEditorPage() {
       .catch((e) => toast.error(e.message))
   }, [])
 
-  const current = useMemo(() => presets?.find((p) => p.id === active), [presets, active])
+  const current = useMemo(
+    () => presets?.find((p) => p.id === active),
+    [presets, active],
+  )
 
   useEffect(() => {
     if (!current) return
     setTopbar({
-      style: current.override?.topbar?.style ?? current.topbar?.style ?? 'glass',
-      accent: current.override?.topbar?.accent ?? current.topbar?.accent ?? false,
-      ornament: current.override?.topbar?.ornament ?? current.topbar?.ornament ?? 'none',
+      style:
+        current.override?.topbar?.style ?? current.topbar?.style ?? 'glass',
+      accent:
+        current.override?.topbar?.accent ?? current.topbar?.accent ?? false,
+      ornament:
+        current.override?.topbar?.ornament ??
+        current.topbar?.ornament ??
+        'none',
       height: current.override?.topbar?.height ?? current.topbar?.height ?? 56,
     })
   }, [current])
@@ -116,8 +153,12 @@ export default function ThemeEditorPage() {
     }
     setEdits(merged)
     setWallpaper({
-      light: current.override?.wallpaper?.light ?? current.wallpaper.light.replace(/^gradient:/, ''),
-      dark: current.override?.wallpaper?.dark ?? current.wallpaper.dark.replace(/^gradient:/, ''),
+      light:
+        current.override?.wallpaper?.light ??
+        current.wallpaper.light.replace(/^gradient:/, ''),
+      dark:
+        current.override?.wallpaper?.dark ??
+        current.wallpaper.dark.replace(/^gradient:/, ''),
     })
   }, [current])
 
@@ -149,10 +190,21 @@ export default function ThemeEditorPage() {
     if (!current) return
     setSaving(true)
     try {
-      const state = await api<{ presets: Preset[]; site: SiteConfig }>('/admin/api/state')
+      const state = await api<{ presets: Preset[]; site: SiteConfig }>(
+        '/admin/api/state',
+      )
       const overrides = state.site.themeOverrides as Record<
         string,
-        { palette?: Record<string, string>; wallpaper?: { light?: string; dark?: string }; topbar?: { style?: string; accent?: boolean; ornament?: string; height?: number } }
+        {
+          palette?: Record<string, string>
+          wallpaper?: { light?: string; dark?: string }
+          topbar?: {
+            style?: string
+            accent?: boolean
+            ornament?: string
+            height?: number
+          }
+        }
       >
       const merged = { ...overrides }
 
@@ -175,9 +227,12 @@ export default function ThemeEditorPage() {
       }
       const tb = current.override?.topbar
       const topbarChanged =
-        (topbar.style ?? 'glass') !== (tb?.style ?? current.topbar?.style ?? 'glass') ||
-        (topbar.accent ?? false) !== (tb?.accent ?? current.topbar?.accent ?? false) ||
-        (topbar.ornament ?? 'none') !== (tb?.ornament ?? current.topbar?.ornament ?? 'none') ||
+        (topbar.style ?? 'glass') !==
+          (tb?.style ?? current.topbar?.style ?? 'glass') ||
+        (topbar.accent ?? false) !==
+          (tb?.accent ?? current.topbar?.accent ?? false) ||
+        (topbar.ornament ?? 'none') !==
+          (tb?.ornament ?? current.topbar?.ornament ?? 'none') ||
         (topbar.height ?? 56) !== (tb?.height ?? current.topbar?.height ?? 56)
       merged[current.id] = {
         ...merged[current.id],
@@ -203,7 +258,9 @@ export default function ThemeEditorPage() {
     if (!current) return
     if (!window.confirm(`确认将「${current.name}」重置为内置预设?`)) return
     try {
-      const state = await api<{ presets: Preset[]; site: SiteConfig }>('/admin/api/state')
+      const state = await api<{ presets: Preset[]; site: SiteConfig }>(
+        '/admin/api/state',
+      )
       const overrides = state.site.themeOverrides as Record<string, unknown>
       const { [current.id]: _removed, ...rest } = overrides
       void _removed
@@ -231,7 +288,10 @@ export default function ThemeEditorPage() {
       fd.append('themeId', current.id)
       fd.append('file', file)
       try {
-        const res = await fetch('/admin/api/assets', { method: 'POST', body: fd })
+        const res = await fetch('/admin/api/assets', {
+          method: 'POST',
+          body: fd,
+        })
         if (!res.ok) throw new Error((await res.json()).error ?? '上传失败')
         const d = await res.json()
         setWallpaper((w) => ({ ...w, [mode]: `url:${d.asset.path}` }))
@@ -249,7 +309,9 @@ export default function ThemeEditorPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold">{current?.name}</h3>
-            <p className="text-xs text-muted-foreground">{current?.description}</p>
+            <p className="text-xs text-muted-foreground">
+              {current?.description}
+            </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={reset}>
@@ -278,10 +340,16 @@ export default function ThemeEditorPage() {
             E
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium transition-colors" style={{ color: pv('fg') }}>
+            <p
+              className="text-sm font-medium transition-colors"
+              style={{ color: pv('fg') }}
+            >
               预览示例 · {previewMode === 'dark' ? '深色模式' : '浅色模式'}
             </p>
-            <p className="truncate text-xs transition-colors" style={{ color: pv('fg-muted') }}>
+            <p
+              className="truncate text-xs transition-colors"
+              style={{ color: pv('fg-muted') }}
+            >
               这是卡片文本 · 主色 {edits[`${previewMode}.primary`] ?? ''}
             </p>
           </div>
@@ -301,7 +369,11 @@ export default function ThemeEditorPage() {
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-4">
-        <Tabs value={active} onValueChange={setActive} className="lg:col-span-1">
+        <Tabs
+          value={active}
+          onValueChange={setActive}
+          className="lg:col-span-1"
+        >
           <TabsList className="h-auto w-full flex-col items-stretch gap-1 bg-transparent p-0">
             {presets?.map((p) => (
               <TabsTrigger
@@ -311,7 +383,11 @@ export default function ThemeEditorPage() {
               >
                 <span className="flex -space-x-1">
                   {(['bg', 'primary', 'accent'] as const).map((k) => (
-                    <span key={k} className="size-3.5 rounded-full border border-black/5" style={{ background: p.palette.light[k] }} />
+                    <span
+                      key={k}
+                      className="size-3.5 rounded-full border border-black/5"
+                      style={{ background: p.palette.light[k] }}
+                    />
                   ))}
                 </span>
                 {p.name}
@@ -332,8 +408,13 @@ export default function ThemeEditorPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-1.5">
                 <Label>背景样式</Label>
-                <Select value={topbar.style} onValueChange={(v) => setTopbar({ ...topbar, style: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={topbar.style}
+                  onValueChange={(v) => setTopbar({ ...topbar, style: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="glass">毛玻璃(半透明+模糊)</SelectItem>
                     <SelectItem value="solid">实色</SelectItem>
@@ -343,8 +424,13 @@ export default function ThemeEditorPage() {
               </div>
               <div className="grid gap-1.5">
                 <Label>像素装饰</Label>
-                <Select value={topbar.ornament} onValueChange={(v) => setTopbar({ ...topbar, ornament: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={topbar.ornament}
+                  onValueChange={(v) => setTopbar({ ...topbar, ornament: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">无</SelectItem>
                     <SelectItem value="dots">圆点</SelectItem>
@@ -356,13 +442,26 @@ export default function ThemeEditorPage() {
               <div className="grid gap-1.5">
                 <Label>底部渐变线</Label>
                 <div className="flex h-9 items-center gap-2">
-                  <Switch checked={topbar.accent} onCheckedChange={(v) => setTopbar({ ...topbar, accent: v })} />
-                  <span className="text-xs text-muted-foreground">{topbar.accent ? '启用' : '关闭'}</span>
+                  <Switch
+                    checked={topbar.accent}
+                    onCheckedChange={(v) => setTopbar({ ...topbar, accent: v })}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {topbar.accent ? '启用' : '关闭'}
+                  </span>
                 </div>
               </div>
               <div className="grid gap-1.5">
                 <Label>高度(px)</Label>
-                <Input type="number" min={44} max={96} value={topbar.height} onChange={(e) => setTopbar({ ...topbar, height: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  min={44}
+                  max={96}
+                  value={topbar.height}
+                  onChange={(e) =>
+                    setTopbar({ ...topbar, height: Number(e.target.value) })
+                  }
+                />
               </div>
             </div>
           </Card>
@@ -370,23 +469,41 @@ export default function ThemeEditorPage() {
             <h4 className="mb-3 text-sm font-semibold">色板</h4>
             {(['light', 'dark'] as const).map((mode) => (
               <div key={mode} className="mb-4">
-                <p className="mb-2 text-xs font-medium text-muted-foreground">{mode === 'light' ? '浅色模式' : '深色模式'}</p>
+                <p className="mb-2 text-xs font-medium text-muted-foreground">
+                  {mode === 'light' ? '浅色模式' : '深色模式'}
+                </p>
                 <div className="grid gap-x-5 gap-y-2 sm:grid-cols-2">
                   {SWATCH_ORDER.map((s) => (
-                    <div key={`${mode}.${s.key}`} className="flex items-center gap-2">
-                      <span className="min-w-0 flex-1 truncate text-[13px]" title={s.key}>
+                    <div
+                      key={`${mode}.${s.key}`}
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className="min-w-0 flex-1 truncate text-[13px]"
+                        title={s.key}
+                      >
                         {s.label}
                       </span>
                       <input
                         type="color"
                         value={edits[`${mode}.${s.key}`] ?? '#888888'}
-                        onChange={(e) => setEdits((prev) => ({ ...prev, [`${mode}.${s.key}`]: e.target.value }))}
+                        onChange={(e) =>
+                          setEdits((prev) => ({
+                            ...prev,
+                            [`${mode}.${s.key}`]: e.target.value,
+                          }))
+                        }
                         className="size-7 cursor-pointer rounded-md border bg-transparent p-0.5"
                         aria-label={`${s.label}(${mode})`}
                       />
                       <Input
                         value={edits[`${mode}.${s.key}`] ?? ''}
-                        onChange={(e) => setEdits((prev) => ({ ...prev, [`${mode}.${s.key}`]: e.target.value }))}
+                        onChange={(e) =>
+                          setEdits((prev) => ({
+                            ...prev,
+                            [`${mode}.${s.key}`]: e.target.value,
+                          }))
+                        }
                         className="h-7 w-24 font-mono text-xs"
                         spellCheck={false}
                       />
@@ -409,14 +526,28 @@ export default function ThemeEditorPage() {
                   <div className="flex gap-2">
                     <Input
                       value={wallpaper[mode]}
-                      onChange={(e) => setWallpaper((w) => ({ ...w, [mode]: e.target.value }))}
+                      onChange={(e) =>
+                        setWallpaper((w) => ({ ...w, [mode]: e.target.value }))
+                      }
                       className="font-mono text-xs"
                       placeholder="渐变 CSS 或 url:/uploads/…"
                     />
-                    <Button type="button" variant="outline" size="icon" title="从资产库选择" onClick={() => setPickerMode(mode)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      title="从资产库选择"
+                      onClick={() => setPickerMode(mode)}
+                    >
                       <FolderOpen />
                     </Button>
-                    <Button type="button" variant="outline" size="icon" title="上传新壁纸" onClick={() => uploadWallpaper(mode)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      title="上传新壁纸"
+                      onClick={() => uploadWallpaper(mode)}
+                    >
                       <ImagePlus />
                     </Button>
                   </div>
@@ -426,7 +557,10 @@ export default function ThemeEditorPage() {
                         src={wallpaper[mode].slice(4)}
                         alt=""
                         className="size-full object-cover"
-                        onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+                        onError={(e) =>
+                          ((e.target as HTMLImageElement).style.display =
+                            'none')
+                        }
                       />
                     </div>
                   )}
@@ -434,16 +568,22 @@ export default function ThemeEditorPage() {
               ))}
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              建议流程:先在「资产」页上传壁纸 → 回到这里用文件夹按钮从资产库选中,更稳定。
+              建议流程:先在「资产」页上传壁纸 →
+              回到这里用文件夹按钮从资产库选中,更稳定。
             </p>
           </Card>
 
           {/* 壁纸资产选择器 */}
-          <Dialog open={pickerMode !== null} onOpenChange={(o) => !o && setPickerMode(null)}>
+          <Dialog
+            open={pickerMode !== null}
+            onOpenChange={(o) => !o && setPickerMode(null)}
+          >
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>从资产库选择壁纸</DialogTitle>
-                <DialogDescription>选择一张已上传的壁纸(pickerMode ? 浅色 : 深色)</DialogDescription>
+                <DialogDescription>
+                  选择一张已上传的壁纸(pickerMode ? 浅色 : 深色)
+                </DialogDescription>
               </DialogHeader>
               {assets.length === 0 ? (
                 <div className="py-10 text-center text-sm text-muted-foreground">
@@ -456,7 +596,11 @@ export default function ThemeEditorPage() {
                       key={a.id}
                       type="button"
                       onClick={() => {
-                        if (pickerMode) setWallpaper((w) => ({ ...w, [pickerMode]: `url:${a.path}` }))
+                        if (pickerMode)
+                          setWallpaper((w) => ({
+                            ...w,
+                            [pickerMode]: `url:${a.path}`,
+                          }))
                         setPickerMode(null)
                       }}
                       className="group overflow-hidden rounded-xl border text-left transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
@@ -470,7 +614,10 @@ export default function ThemeEditorPage() {
                         />
                       </div>
                       <div className="p-2">
-                        <p className="truncate text-xs font-medium" title={a.fileName}>
+                        <p
+                          className="truncate text-xs font-medium"
+                          title={a.fileName}
+                        >
                           {a.fileName}
                         </p>
                         <p className="text-[11px] text-muted-foreground">

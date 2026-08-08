@@ -28,7 +28,10 @@ const CATEGORY_PATTERN: Array<[string, string]> = [
   ['Kemono', 'kemono-ear'],
 ]
 
-export function resolveCoverPattern(category: string | undefined, fallback: string): string {
+export function resolveCoverPattern(
+  category: string | undefined,
+  fallback: string,
+): string {
   for (const [kw, slug] of CATEGORY_PATTERN) {
     if (category?.includes(kw)) return slug
   }

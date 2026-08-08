@@ -12,18 +12,40 @@ const { enabled = true } = Astro.props
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 const animSvg = (name: string) => {
   try {
-    return readFileSync(join(root, 'public', 'wallpapers', `${name}-anim.svg`), 'utf8')
+    return readFileSync(
+      join(root, 'public', 'wallpapers', `${name}-anim.svg`),
+      'utf8',
+    )
   } catch {
     return ''
   }
 }
 ---
 
-<div class:list={['friends-wallpaper', { 'friends-wallpaper-hidden': !enabled }]} aria-hidden="true">
-  <div class="fw-base" data-fw-light data-fw-static style="background-image:url(/wallpapers/friends-shrine-day-bg.svg)"></div>
-  <div class="fw-base" data-fw-dark data-fw-static style="background-image:url(/wallpapers/friends-shrine-night-bg.svg)"></div>
-  <div class="fw-anim" data-fw-light set:html={animSvg('friends-shrine-day')}></div>
-  <div class="fw-anim" data-fw-dark set:html={animSvg('friends-shrine-night')}></div>
+<div
+  class:list={['friends-wallpaper', { 'friends-wallpaper-hidden': !enabled }]}
+  aria-hidden="true"
+>
+  <div
+    class="fw-base"
+    data-fw-light
+    data-fw-static
+    style="background-image:url(/wallpapers/friends-shrine-day-bg.svg)"
+  >
+  </div>
+  <div
+    class="fw-base"
+    data-fw-dark
+    data-fw-static
+    style="background-image:url(/wallpapers/friends-shrine-night-bg.svg)"
+  >
+  </div>
+  <div class="fw-anim" data-fw-light set:html={animSvg('friends-shrine-day')} />
+  <div
+    class="fw-anim"
+    data-fw-dark
+    set:html={animSvg('friends-shrine-night')}
+  />
   <div class="fw-overlay"></div>
 </div>
 

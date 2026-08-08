@@ -46,7 +46,16 @@ interface Props {
 
 const config = getSiteConfig()
 const overrideCss = themeOverrideCss(getThemeOverrides())
-const { title, description, image, type, forceTheme, hideFooter = false, fillViewport = false, noWallpaper = false } = Astro.props
+const {
+  title,
+  description,
+  image,
+  type,
+  forceTheme,
+  hideFooter = false,
+  fillViewport = false,
+  noWallpaper = false,
+} = Astro.props
 const resolvedTheme = forceTheme ?? config.defaultTheme
 const lightDefault = config.themeByMode.light
 const darkDefault = config.themeByMode.dark
@@ -67,17 +76,24 @@ const meta = buildMeta({
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-theme={resolvedTheme} {...(forceTheme ? { 'data-force-theme': forceTheme } : {})}>
+<html
+  lang="zh-CN"
+  data-theme={resolvedTheme}
+  {...forceTheme ? { 'data-force-theme': forceTheme } : {}}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={config.favicon.href} type={config.favicon.type} />
+    {
+      config.favicon.appleTouchHref && (
+        <link rel="apple-touch-icon" href={config.favicon.appleTouchHref} />
+      )
+    }
     <title>{meta.find((m) => 'title' in m)?.title ?? title}</title>
-    {meta
-      .filter((m) => !('title' in m))
-      .map((m) => <meta {...m} />)}
-    {overrideCss && <style set:html={overrideCss}></style>}
-    <script set:html={bootScript(lightDefault, darkDefault)} />
+    {meta.filter((m) => !('title' in m)).map((m) => <meta {...m} />)}
+    {overrideCss && <style set:html={overrideCss} />}
+    <script is:inline set:html={bootScript(lightDefault, darkDefault)} />
     <script>
       // 主题切换时附加过渡动画类(由 ThemeSwitcher 触发)
       window.addEventListener('enlab:theme-change', () => {
@@ -93,11 +109,20 @@ const meta = buildMeta({
     data-is-server-runtime={String(isServer)}
     data-default-theme-light={lightDefault}
     data-default-theme-dark={darkDefault}
-    {...(fillViewport ? { 'data-fill-viewport': 'true' } : {})}
-    {...(noWallpaper ? { 'data-no-wallpaper': 'true' } : {})}
-    data-motion-hero={motion.hero} data-motion-mascot={motion.mascot} data-motion-cards={motion.cards} data-motion-topbar={motion.topbar} data-motion-ambient={motion.ambient} style={`--motion-duration:${motionSpeed}`}>
+    {...fillViewport ? { 'data-fill-viewport': 'true' } : {}}
+    {...noWallpaper ? { 'data-no-wallpaper': 'true' } : {}}
+    data-motion-hero={motion.hero}
+    data-motion-mascot={motion.mascot}
+    data-motion-cards={motion.cards}
+    data-motion-topbar={motion.topbar}
+    data-motion-ambient={motion.ambient}
+    style={`--motion-duration:${motionSpeed}`}
+  >
     <SkipLink />
-    <WallpaperLayer theme={resolvedTheme} enabled={config.features.wallpapers} />
+    <WallpaperLayer
+      theme={resolvedTheme}
+      enabled={config.features.wallpapers}
+    />
     <SiteHeader />
     <main id="main">
       <slot />
@@ -108,7 +133,12 @@ const meta = buildMeta({
     <script>
       // 动效预设应用(控制台"站点设置→主页"调控)
       const MOTION_CLASSES: Record<string, Record<string, string>> = {
-        mascot: { bob: 'motion-bob', 'ear-tip': 'motion-ear-tip', 'tail-wag': 'motion-tail-wag', wobble: 'motion-wobble' },
+        mascot: {
+          bob: 'motion-bob',
+          'ear-tip': 'motion-ear-tip',
+          'tail-wag': 'motion-tail-wag',
+          wobble: 'motion-wobble',
+        },
         cards: {
           'card-lift': 'motion-card-lift',
           'card-tilt': 'motion-card-tilt',
@@ -116,14 +146,20 @@ const meta = buildMeta({
           'card-border-flow': 'motion-card-border-flow',
           'card-float-in': 'motion-card-float-in',
         },
-        topbar: { 'topbar-gradient': 'motion-topbar-gradient', 'nav-underline': 'motion-nav-underline' },
+        topbar: {
+          'topbar-gradient': 'motion-topbar-gradient',
+          'nav-underline': 'motion-nav-underline',
+        },
         ambient: {
           'pulse-soft': 'motion-pulse-soft',
           'scroll-hint': 'motion-scroll-hint',
           'float-slow': 'motion-float-slow',
           'spin-slow': 'motion-spin-slow',
         },
-        hero: { 'float-slow': 'motion-float-slow', 'spin-slow': 'motion-spin-slow' },
+        hero: {
+          'float-slow': 'motion-float-slow',
+          'spin-slow': 'motion-spin-slow',
+        },
       }
       const groups = ['mascot', 'cards', 'topbar', 'ambient', 'hero']
       for (const group of groups) {
@@ -131,7 +167,9 @@ const meta = buildMeta({
         const effect = document.body.dataset[key]
         const cls = MOTION_CLASSES[group]?.[effect ?? 'none']
         if (!cls) continue
-        document.querySelectorAll(`[data-motion-group="${group}"]`).forEach((el) => el.classList.add(cls))
+        document
+          .querySelectorAll(`[data-motion-group="${group}"]`)
+          .forEach((el) => el.classList.add(cls))
       }
     </script>
     <style>

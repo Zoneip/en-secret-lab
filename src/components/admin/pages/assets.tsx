@@ -19,7 +19,13 @@ import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 import { Skeleton } from '../ui/skeleton'
 import {
   DropdownMenu,
@@ -89,12 +95,13 @@ export default function AssetsPage() {
     if (!assets) return []
     return assets.filter((a) => {
       if (filter !== 'all' && a.kind !== filter) return false
-      if (query && !a.fileName.toLowerCase().includes(query.toLowerCase())) return false
+      if (query && !a.fileName.toLowerCase().includes(query.toLowerCase()))
+        return false
       return true
     })
   }, [assets, filter, query])
 
-  async function upload(e: React.FormEvent) {
+  async function upload(e: React.SubmitEvent) {
     e.preventDefault()
     if (!file) {
       toast.error('请选择文件')
@@ -187,7 +194,11 @@ export default function AssetsPage() {
             )}
             <div className="grid gap-1.5">
               <Label>文件</Label>
-              <Input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} accept="image/*,.woff2,.woff,.ttf,.otf" />
+              <Input
+                type="file"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                accept="image/*,.woff2,.woff,.ttf,.otf"
+              />
             </div>
           </div>
           <div>
@@ -215,7 +226,9 @@ export default function AssetsPage() {
                 key={key}
                 onClick={() => setFilter(key)}
                 className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                  filter === key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent'
+                  filter === key
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-accent'
                 }`}
               >
                 {label}
@@ -247,7 +260,8 @@ export default function AssetsPage() {
           ) : (
             <>
               <div className="mb-3 text-xs text-muted-foreground">
-                共 {visible.length} 项{filter !== 'all' ? ` · ${KIND_LABEL[filter]}` : ''}
+                共 {visible.length} 项
+                {filter !== 'all' ? ` · ${KIND_LABEL[filter]}` : ''}
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {visible.map((a) => {
@@ -259,11 +273,18 @@ export default function AssetsPage() {
                     >
                       <div className="flex h-24 items-center justify-center bg-muted/40">
                         {a.kind === 'wallpaper' ? (
-                          <img src={a.path} alt="" loading="lazy" className="size-full object-cover" />
+                          <img
+                            src={a.path}
+                            alt=""
+                            loading="lazy"
+                            className="size-full object-cover"
+                          />
                         ) : (
                           <Icon className="size-8 text-primary" />
                         )}
-                        <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-medium ${KIND_COLOR[a.kind] ?? KIND_COLOR.misc}`}>
+                        <span
+                          className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-medium ${KIND_COLOR[a.kind] ?? KIND_COLOR.misc}`}
+                        >
                           {KIND_LABEL[a.kind] ?? a.kind}
                         </span>
                         {copied === a.id && (
@@ -276,7 +297,10 @@ export default function AssetsPage() {
                         )}
                       </div>
                       <div className="p-2.5">
-                        <p className="truncate text-xs font-medium" title={a.fileName}>
+                        <p
+                          className="truncate text-xs font-medium"
+                          title={a.fileName}
+                        >
                           {a.fileName}
                         </p>
                         <p className="mt-0.5 text-[11px] text-muted-foreground">
@@ -295,7 +319,9 @@ export default function AssetsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => window.open(a.path, '_blank')}>
+                          <DropdownMenuItem
+                            onClick={() => window.open(a.path, '_blank')}
+                          >
                             <ExternalLink />
                             打开
                           </DropdownMenuItem>
@@ -304,7 +330,10 @@ export default function AssetsPage() {
                             复制路径
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem variant="destructive" onClick={() => setDeleteTarget(a)}>
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={() => setDeleteTarget(a)}
+                          >
                             <Trash2 />
                             删除
                           </DropdownMenuItem>
@@ -320,17 +349,24 @@ export default function AssetsPage() {
       </Card>
 
       {/* 删除确认 */}
-      <AlertDialog open={deleteTarget !== null} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(o) => !o && setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>删除资产?</AlertDialogTitle>
             <AlertDialogDescription>
-              「{deleteTarget?.fileName}」将从资产库和磁盘中永久删除,使用它的主题壁纸会失效。
+              「{deleteTarget?.fileName}
+              」将从资产库和磁盘中永久删除,使用它的主题壁纸会失效。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={doDelete}>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              onClick={doDelete}
+            >
               <Trash2 />
               删除
             </AlertDialogAction>

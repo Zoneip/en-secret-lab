@@ -24,13 +24,18 @@ const WIDTH = 20
 function art(rows: string[], width = WIDTH): PixelArt {
   for (let i = 0; i < rows.length; i++) {
     if (rows[i].length !== width) {
-      throw new Error(`像素画稿行宽错误:第 ${i} 行长度 ${rows[i].length} ≠ ${width} -> "${rows[i]}"`)
+      throw new Error(
+        `像素画稿行宽错误:第 ${i} 行长度 ${rows[i].length} ≠ ${width} -> "${rows[i]}"`,
+      )
     }
   }
   return { width, height: rows.length, rows }
 }
 
-function applyPatches(base: string[], patches: Record<number, string>): string[] {
+function applyPatches(
+  base: string[],
+  patches: Record<number, string>,
+): string[] {
   const out = base.slice()
   for (const [i, row] of Object.entries(patches)) out[Number(i)] = row
   return out
@@ -178,7 +183,10 @@ export interface CharacterSet {
   furry: PixelArt
 }
 
-export const CHARACTERS: Record<'gray' | 'yellow' | 'purple' | 'white', CharacterSet> = {
+export const CHARACTERS: Record<
+  'gray' | 'yellow' | 'purple' | 'white',
+  CharacterSet
+> = {
   gray: {
     name: 'DCH',
     boy: art(applyPatches(BOY_BASE, P_DCH_BOY)),
@@ -208,19 +216,33 @@ export const THEME_TO_CHARACTER: Record<string, keyof typeof CHARACTERS> = {
   white: 'white',
 }
 
+/** 角色名 → theme id(用于 character 字段反向映射到 CHARACTERS 索引) */
+export const CHARACTER_TO_THEME: Record<
+  'DCH' | 'FWB' | 'Coulyer' | 'Zoneip',
+  keyof typeof CHARACTERS
+> = {
+  DCH: 'gray',
+  FWB: 'yellow',
+  Coulyer: 'purple',
+  Zoneip: 'white',
+}
+
 /* ============ 爪印(小装饰) ============ */
 
-export const PAW: PixelArt = art([
-  '..1.1..1.1..',
-  '...1....1...',
-  '..1.1..1.1..',
-  '.1..1..1..1.',
-  '....1111....',
-  '...111111...',
-  '..11111111..',
-  '...111111...',
-  '....1111....',
-], 12)
+export const PAW: PixelArt = art(
+  [
+    '..1.1..1.1..',
+    '...1....1...',
+    '..1.1..1.1..',
+    '.1..1..1..1.',
+    '....1111....',
+    '...111111...',
+    '..11111111..',
+    '...111111...',
+    '....1111....',
+  ],
+  12,
+)
 
 /* ============ 调色板 ============ */
 
@@ -245,7 +267,10 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 function toHex(r: number, g: number, b: number): string {
-  const c = (v: number) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')
+  const c = (v: number) =>
+    Math.max(0, Math.min(255, Math.round(v)))
+      .toString(16)
+      .padStart(2, '0')
   return `#${c(r)}${c(g)}${c(b)}`
 }
 
@@ -256,7 +281,10 @@ export function mix(a: string, b: string, t: number): string {
   return toHex(ar + (br - ar) * t, ag + (bg - ag) * t, ab + (bb - ab) * t)
 }
 
-export function paletteFor(mascot: { primary: string; secondary: string }): PixelPalette {
+export function paletteFor(mascot: {
+  primary: string
+  secondary: string
+}): PixelPalette {
   return {
     primary: mascot.primary,
     secondary: mascot.secondary,

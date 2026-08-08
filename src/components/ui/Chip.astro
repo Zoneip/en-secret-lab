@@ -7,12 +7,14 @@ interface Props {
 const { href } = Astro.props
 ---
 
-{href ? (
-  <a class="chip" href={href}>
-    <slot />
-  </a>
-) : (
-  <span class="chip">
-    <slot />
-  </span>
-)}
+{
+  href ? (
+    <a class="chip" href={href}>
+      <slot />
+    </a>
+  ) : (
+    <span class="chip">
+      <slot />
+    </span>
+  )
+}

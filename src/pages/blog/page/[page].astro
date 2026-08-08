@@ -18,7 +18,11 @@ export async function getStaticPaths() {
     const page = i + 2
     return {
       params: { page: String(page) },
-      props: { page, totalPages, posts: all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) },
+      props: {
+        page,
+        totalPages,
+        posts: all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+      },
     }
   })
 }
@@ -27,30 +31,35 @@ const config = getSiteConfig()
 const { page, totalPages, posts } = Astro.props
 ---
 
-<BaseLayout title={`文章 · 第 ${page} 页`} description={`${config.title} 的文章列表`}>
+<BaseLayout
+  title={`文章 · 第 ${page} 页`}
+  description={`${config.title} 的文章列表`}
+>
   <div class="page-enter container" style="zoom:1.1">
     <header class="page-head">
       <h1>文章</h1>
       <p>第 {page} 页 · 共 {totalPages} 页</p>
     </header>
 
-    {posts.length > 0 ? (
-      <div class="grid">
-        {posts.map((p) => (
-          <PostCard
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-          />
-        ))}
-      </div>
-    ) : (
-      <EmptyState />
-    )}
+    {
+      posts.length > 0 ? (
+        <div class="grid">
+          {posts.map((p) => (
+            <PostCard
+              slug={p.slug}
+              title={p.title}
+              description={p.description}
+              pubDate={p.pubDate}
+              category={p.category}
+              tags={p.tags}
+              cover={p.cover}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState />
+      )
+    }
 
     <Pagination page={page} totalPages={totalPages} base="/blog" />
   </div>

@@ -1,8 +1,12 @@
 /* ============ 基础变量与兜底主题(无 JS 时默认灰糖浅色) ============ */
 :root {
   /* 字体 */
-  --font-display: 'ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', ui-rounded, sans-serif;
-  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    'ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', ui-rounded,
+    sans-serif;
+  --font-body:
+    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* 圆角体系:全局禁用尖锐角 */
@@ -43,8 +47,18 @@
   --accent-fg: #2b2e35;
   --wallpaper-overlay: rgba(244, 245, 247, 0.72);
   --shadow: 0 8px 24px rgba(43, 46, 53, 0.08);
-  --wallpaper-light-src: linear-gradient(180deg, #edeff2 0%, #dce0e6 60%, #cdd2da 100%);
-  --wallpaper-dark-src: linear-gradient(180deg, #17191e 0%, #121419 55%, #0d0f13 100%);
+  --wallpaper-light-src: linear-gradient(
+    180deg,
+    #edeff2 0%,
+    #dce0e6 60%,
+    #cdd2da 100%
+  );
+  --wallpaper-dark-src: linear-gradient(
+    180deg,
+    #17191e 0%,
+    #121419 55%,
+    #0d0f13 100%
+  );
   --mascot-primary: #5c677d;
   --mascot-secondary: #9aa5b5;
 }
@@ -78,7 +92,9 @@ body {
   background: var(--bg);
   color: var(--fg);
   min-height: 100vh;
-  transition: background-color 0.35s var(--ease-soft), color 0.35s var(--ease-soft);
+  transition:
+    background-color 0.35s var(--ease-soft),
+    color 0.35s var(--ease-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -229,8 +245,11 @@ main {
   cursor: pointer;
   background: var(--primary);
   color: var(--primary-fg);
-  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-soft),
-    background 0.2s var(--ease-soft), opacity 0.2s;
+  transition:
+    transform 0.2s var(--ease-spring),
+    box-shadow 0.2s var(--ease-soft),
+    background 0.2s var(--ease-soft),
+    opacity 0.2s;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 .btn:hover {
@@ -267,7 +286,9 @@ main {
   font-size: 0.8rem;
   background: var(--primary-soft);
   color: var(--primary);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 a.chip:hover {
   background: var(--primary);
@@ -279,7 +300,9 @@ a.chip:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
-  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-soft),
+  transition:
+    transform 0.25s var(--ease-spring),
+    box-shadow 0.25s var(--ease-soft),
     border-color 0.25s var(--ease-soft);
 }
 
@@ -300,7 +323,8 @@ a.chip:hover {
 
 /* 页面切换时 html 上的过渡类(由 ThemeProvider 注入) */
 html.anim-theme * {
-  transition-property: background-color, color, border-color, box-shadow, opacity;
+  transition-property:
+    background-color, color, border-color, box-shadow, opacity;
   transition-duration: 0.35s;
   transition-timing-function: var(--ease-soft);
 }

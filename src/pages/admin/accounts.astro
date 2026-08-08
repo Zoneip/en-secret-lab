@@ -1,0 +1,12 @@
+---
+/** 账号管理:站主账号资料 + 访客账号管理 */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import AccountsPage from '../../components/admin/pages/accounts'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="账号管理" active="accounts">
+  <AccountsPage client:only="react" />
+</AdminLayout>

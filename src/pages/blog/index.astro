@@ -26,23 +26,25 @@ const posts = all.slice(0, PAGE_SIZE)
       <p>第 {page} 页 · 共 {totalPages} 页</p>
     </header>
 
-    {posts.length > 0 ? (
-      <div class="grid">
-        {posts.map((p) => (
-          <PostCard
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-          />
-        ))}
-      </div>
-    ) : (
-      <EmptyState />
-    )}
+    {
+      posts.length > 0 ? (
+        <div class="grid">
+          {posts.map((p) => (
+            <PostCard
+              slug={p.slug}
+              title={p.title}
+              description={p.description}
+              pubDate={p.pubDate}
+              category={p.category}
+              tags={p.tags}
+              cover={p.cover}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState />
+      )
+    }
 
     <Pagination page={page} totalPages={totalPages} base="/blog" />
   </div>

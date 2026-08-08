@@ -1,0 +1,12 @@
+---
+/** 资源管理:资源列表、新建、编辑、删除 */
+import { isServer } from '../../lib/utils'
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import ResourcesPage from '../../components/admin/pages/resources'
+
+export const prerender = !isServer
+---
+
+<AdminLayout title="资源管理" active="resources">
+  <ResourcesPage client:only="react" />
+</AdminLayout>

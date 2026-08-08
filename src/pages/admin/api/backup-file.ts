@@ -9,18 +9,24 @@ import { backupFile } from '../../../lib/admin/backup'
 export const prerender = !isServer
 
 export const DELETE: APIRoute = ({ url }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const kind = url.searchParams.get('kind')
   const name = url.searchParams.get('name')
   if ((kind !== 'backup' && kind !== 'export') || !name) {
     return new Response(JSON.stringify({ error: '参数无效' }), { status: 400 })
   }
   const file = backupFile(kind, name)
-  if (!file) return new Response(JSON.stringify({ error: '文件不存在' }), { status: 404 })
+  if (!file)
+    return new Response(JSON.stringify({ error: '文件不存在' }), {
+      status: 404,
+    })
   try {
     unlinkSync(file)
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 500,
+    })
   }
   return new Response(JSON.stringify({ ok: true }))
 }

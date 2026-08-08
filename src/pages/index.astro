@@ -8,7 +8,11 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import { featured } from '../lib/content/posts'
 import { getSiteConfig } from '../lib/config'
 import { getAllPosts } from '../lib/content/data'
-import { getSiteColumns, getSiteOcs, getSiteAbout } from '../lib/content/site-content'
+import {
+  getSiteColumns,
+  getSiteOcs,
+  getSiteAbout,
+} from '../lib/content/site-content'
 import { getTheme } from '../lib/theme/presets'
 import { wallpaperCss } from '../lib/theme/engine'
 import Mascot from '../components/mascot/Mascot.astro'
@@ -18,10 +22,19 @@ const config = getSiteConfig()
 const hp = config.homepage
 const visible = await getAllPosts()
 const featuredPosts = featured(visible)
-const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(0, 6)
-const columns = (await getSiteColumns()).sort((a, b) => ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) - ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme))
+const recent = [...featuredPosts, ...visible.filter((p) => !p.featured)].slice(
+  0,
+  6,
+)
+const columns = (await getSiteColumns()).sort(
+  (a, b) =>
+    ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme),
+)
 const ocs = (await getSiteOcs()).sort(
-  (a, b) => ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) - ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
+  (a, b) =>
+    ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme),
 )
 const about = await getSiteAbout()
 const themeIds = ['gray', 'yellow', 'purple', 'white']
@@ -35,15 +48,47 @@ const techStack = [
   { name: 'Node.js', desc: '动态版运行时', color: '#4a90d9' },
 ]
 
-const countByCategory = (cat: string) => visible.filter((p) => p.category === cat).length
-const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', purple: '葡萄', white: '棉花糖' }
-const ocNameByTheme: Record<string, string> = Object.fromEntries(ocs.map((o) => [o.theme, o.name]))
-const THEME_COLORS: Record<string, string> = { gray: '#5c677d', yellow: '#e59b2e', purple: '#8b5cf6', white: '#8fa3b8' }
+const countByCategory = (cat: string) =>
+  visible.filter((p) => p.category === cat).length
+const themeNames: Record<string, string> = {
+  gray: '灰糖',
+  yellow: '蜜糖',
+  purple: '葡萄',
+  white: '棉花糖',
+}
+const ocNameByTheme: Record<string, string> = Object.fromEntries(
+  ocs.map((o) => [o.theme, o.name]),
+)
+const mascotCfg = config.mascots
+const heroMascots = themeIds.map((t) => {
+  const cfg = mascotCfg[t as keyof typeof mascotCfg] ?? {}
+  const fallbackName = ocNameByTheme[t] ?? themeNames[t]
+  return {
+    theme: t,
+    character: cfg.character,
+    role: cfg.role,
+    name: cfg.name ?? fallbackName,
+    imageUrl: cfg.imageUrl,
+  }
+})
+const THEME_COLORS: Record<string, string> = {
+  gray: '#5c677d',
+  yellow: '#e59b2e',
+  purple: '#8b5cf6',
+  white: '#8fa3b8',
+}
 const col = (theme: string) => THEME_COLORS[theme] ?? '#5c677d'
 const ocBg = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.light)
 const ocBgDark = (theme: string) => wallpaperCss(getTheme(theme).wallpaper.dark)
-const ocOverlay = (theme: string, mode: 'light' | 'dark') => getTheme(theme).palette[mode]['wallpaper-overlay']
-const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) => infer T ? T : never)['palette']['light'], mode: 'light' | 'dark') => getTheme(theme).palette[mode][key]
+const ocOverlay = (theme: string, mode: 'light' | 'dark') =>
+  getTheme(theme).palette[mode]['wallpaper-overlay']
+const ocTok = (
+  theme: string,
+  key: keyof (typeof getTheme extends (t: string) => infer T
+    ? T
+    : never)['palette']['light'],
+  mode: 'light' | 'dark',
+) => getTheme(theme).palette[mode][key]
 ---
 
 <BaseLayout title={config.title} description={config.description}>
@@ -51,11 +96,13 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
     <!-- Hero:角色全家福 -->
     <section class="hero">
       <div class="hero-text">
-        {about?.avatar ? (
-          <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
-        ) : (
-          <p class="hero-greet">这里的主人回来啦</p>
-        )}
+        {
+          about?.avatar ? (
+            <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
+          ) : (
+            <p class="hero-greet">这里的主人回来啦</p>
+          )
+        }
         <h1>{config.title}</h1>
         <p class="hero-desc">{config.description}</p>
         <div class="hero-actions">
@@ -65,10 +112,17 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
       </div>
       <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
         {
-          themeIds.map((t) => (
+          heroMascots.map((m) => (
             <div class="hero-mascot-item">
-              <Mascot role="furry" theme={t} pixel={7} />
-              <span class="hero-mascot-name">{ocNameByTheme[t] ?? themeNames[t]}</span>
+              <Mascot
+                role={m.role ?? 'furry'}
+                theme={m.theme}
+                character={m.character}
+                name={m.name}
+                imageUrl={m.imageUrl}
+                pixel={7}
+              />
+              <span class="hero-mascot-name">{m.name}</span>
             </div>
           ))
         }
@@ -92,10 +146,17 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
           <h2 class="section-title">探索实验室</h2>
           <div class="column-grid">
             {columns.map((c) => (
-              <a class="column-card" data-motion-group="cards" href={`/${c.id}`} style={`--oc-color:${col(c.theme)}`}>
+              <a
+                class="column-card"
+                data-motion-group="cards"
+                href={`/${c.id}`}
+                style={`--oc-color:${col(c.theme)}`}
+              >
                 <div class="column-card-head">
                   <Mascot role="furry" theme={c.theme} pixel={5} />
-                  <span class="column-count">{countByCategory(c.category)} 篇</span>
+                  <span class="column-count">
+                    {countByCategory(c.category)} 篇
+                  </span>
                 </div>
                 <p class="column-name">{c.title}</p>
                 <p class="column-sub">{c.subtitle}</p>
@@ -128,9 +189,7 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
                 <p class="oc-card-sub">{oc.subtitle}</p>
                 <div class="oc-card-traits">
                   {oc.traits.slice(0, 3).map((t) => (
-                    <span class="oc-card-trait">
-                      {t}
-                    </span>
+                    <span class="oc-card-trait">{t}</span>
                   ))}
                 </div>
                 {oc.quote && <p class="oc-card-quote">「{oc.quote}」</p>}
@@ -148,17 +207,19 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
         <a class="more underline-tail" href="/blog">全部文章</a>
       </h2>
       <div class="grid">
-        {recent.map((p) => (
-          <PostCard
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-          />
-        ))}
+        {
+          recent.map((p) => (
+            <PostCard
+              slug={p.slug}
+              title={p.title}
+              description={p.description}
+              pubDate={p.pubDate}
+              category={p.category}
+              tags={p.tags}
+              cover={p.cover}
+            />
+          ))
+        }
       </div>
     </section>
 
@@ -170,7 +231,7 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
           <div class="tech-grid">
             {techStack.map((t) => (
               <div class="tech-card" style={`--tc:${t.color}`}>
-                <span class="tech-dot" aria-hidden="true"></span>
+                <span class="tech-dot" aria-hidden="true" />
                 <span class="tech-name">{t.name}</span>
                 <span class="tech-desc">{t.desc}</span>
               </div>
@@ -181,8 +242,6 @@ const ocTok = (theme: string, key: keyof (typeof getTheme extends (t: string) =>
     }
   </div>
 </BaseLayout>
-
-
 
 <style>
   .hero {

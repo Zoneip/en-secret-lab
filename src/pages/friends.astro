@@ -10,7 +10,13 @@ const friends = await getSiteFriends()
 const config = getSiteConfig()
 ---
 
-<BaseLayout fillViewport title="友链" description="交换友链的伙伴们" forceTheme="friends" noWallpaper>
+<BaseLayout
+  fillViewport
+  title="友链"
+  description="交换友链的伙伴们"
+  forceTheme="friends"
+  noWallpaper
+>
   <FriendsWallpaper enabled={config.features.friendsWallpaper} />
   <div class="page-enter container">
     <div class="shrine-quote" aria-hidden="true">
@@ -26,27 +32,40 @@ const config = getSiteConfig()
       </div>
     </header>
 
-    {friends.length === 0 ? (
-      <EmptyState title="还没有友链" description="想交换友链的话,点右上角申请吧" />
-    ) : (
-      <div class="friend-wall">
-        {friends.map((f) => (
-          <a class="friend-card" data-motion-group="cards" href={f.url} target="_blank" rel="noopener noreferrer">
-            <span class="fc-icon" aria-hidden="true">
-              {f.avatar ? (
-                <img src={f.avatar} alt="" loading="lazy" />
-              ) : (
-                <span class="fc-fallback">{f.name.slice(0, 1)}</span>
-              )}
-            </span>
-            <span class="fc-info">
-              <span class="fc-name">{f.name}</span>
-              <span class="fc-desc">{f.description ?? '这位伙伴还没有简介'}</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    )}
+    {
+      friends.length === 0 ? (
+        <EmptyState
+          title="还没有友链"
+          description="想交换友链的话,点右上角申请吧"
+        />
+      ) : (
+        <div class="friend-wall">
+          {friends.map((f) => (
+            <a
+              class="friend-card"
+              data-motion-group="cards"
+              href={f.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="fc-icon" aria-hidden="true">
+                {f.avatar ? (
+                  <img src={f.avatar} alt="" loading="lazy" />
+                ) : (
+                  <span class="fc-fallback">{f.name.slice(0, 1)}</span>
+                )}
+              </span>
+              <span class="fc-info">
+                <span class="fc-name">{f.name}</span>
+                <span class="fc-desc">
+                  {f.description ?? '这位伙伴还没有简介'}
+                </span>
+              </span>
+            </a>
+          ))}
+        </div>
+      )
+    }
   </div>
 
   <!-- 申请表单弹窗 -->
@@ -54,7 +73,12 @@ const config = getSiteConfig()
     <form class="apply-card" data-apply-form>
       <div class="apply-head">
         <h2>申请友链</h2>
-        <button type="button" class="apply-close" data-apply-close aria-label="关闭">×</button>
+        <button
+          type="button"
+          class="apply-close"
+          data-apply-close
+          aria-label="关闭">×</button
+        >
       </div>
       <p class="apply-tip">提交后等待主人审核,通过后会显示在这里。</p>
       <label class="apply-field">
@@ -63,7 +87,12 @@ const config = getSiteConfig()
       </label>
       <label class="apply-field">
         <span>站点链接 *</span>
-        <input name="url" required placeholder="https://example.com" type="url" />
+        <input
+          name="url"
+          required
+          placeholder="https://example.com"
+          type="url"
+        />
       </label>
       <label class="apply-field">
         <span>头像 URL</span>
@@ -71,14 +100,20 @@ const config = getSiteConfig()
       </label>
       <label class="apply-field">
         <span>一句话简介</span>
-        <input name="description" maxlength="60" placeholder="这个站点是做什么的" />
+        <input
+          name="description"
+          maxlength="60"
+          placeholder="这个站点是做什么的"
+        />
       </label>
       <label class="apply-field">
         <span>联系邮箱</span>
         <input name="email" placeholder="用于审核通知(可选)" type="email" />
       </label>
       <p class="apply-error" data-apply-error></p>
-      <button type="submit" class="btn apply-submit" data-apply-submit>提交申请</button>
+      <button type="submit" class="btn apply-submit" data-apply-submit
+        >提交申请</button
+      >
     </form>
   </div>
 </BaseLayout>
@@ -97,9 +132,11 @@ const config = getSiteConfig()
         'mailto:?subject=友链申请&body=站点名称:%0A站点链接:%0A简介:'
     }
   })
-  document.querySelector('[data-apply-close]')?.addEventListener('click', () => {
-    backdrop.hidden = true
-  })
+  document
+    .querySelector('[data-apply-close]')
+    ?.addEventListener('click', () => {
+      backdrop.hidden = true
+    })
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) backdrop.hidden = true
   })
@@ -107,7 +144,9 @@ const config = getSiteConfig()
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
     const error = document.querySelector<HTMLElement>('[data-apply-error]')!
-    const submit = document.querySelector<HTMLButtonElement>('[data-apply-submit]')!
+    const submit = document.querySelector<HTMLButtonElement>(
+      '[data-apply-submit]',
+    )!
     error.textContent = ''
     submit.disabled = true
     const fd = new FormData(form)
@@ -125,7 +164,8 @@ const config = getSiteConfig()
       })
       const body = await res.json().catch(() => null)
       if (res.ok) {
-        form.innerHTML = '<p class="apply-success">申请已提交,等主人审核通过后就会显示出来。</p>'
+        form.innerHTML =
+          '<p class="apply-success">申请已提交,等主人审核通过后就会显示出来。</p>'
       } else {
         error.textContent = body?.error ?? '提交失败,请稍后再试'
       }
@@ -281,7 +321,10 @@ const config = getSiteConfig()
     text-decoration: none;
     box-shadow: var(--shadow);
     text-align: center;
-    transition: transform 0.22s var(--ease-spring), border-color 0.22s, box-shadow 0.22s;
+    transition:
+      transform 0.22s var(--ease-spring),
+      border-color 0.22s,
+      box-shadow 0.22s;
   }
   .friend-card:hover {
     transform: translateY(-4px);

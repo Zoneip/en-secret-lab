@@ -4,7 +4,6 @@ import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 import TagCloud from '../../components/blog/TagCloud.astro'
-import PixelPaw from '../../components/mascot/PixelPaw.astro'
 
 const posts = await getAllPosts()
 ---
@@ -12,14 +11,11 @@ const posts = await getAllPosts()
 <BaseLayout fillViewport title="标签" description="全站标签总览">
   <div class="page-enter container">
     <header class="page-head">
-      <span class="paw-deco" aria-hidden="true">
-        <PixelPaw pixel={3} />
-      </span>
       <h1>标签</h1>
-      <p>共 {posts.reduce((n, p) => n + p.tags.length, 0)} 枚标签 · 用爪印标记你的热爱</p>
+      <p>共 {posts.reduce((n, p) => n + p.tags.length, 0)} 枚标签</p>
     </header>
-    <div class="glass-card cloud-card">
-      <TagCloud posts={posts} />
+    <div class="card cloud-card">
+      <TagCloud posts={posts} maxSize={1.9} />
     </div>
   </div>
 </BaseLayout>
@@ -36,36 +32,6 @@ const posts = await getAllPosts()
   .page-head p {
     color: var(--fg-subtle);
     font-size: 0.85rem;
-  }
-  /* kemono 装饰:像素爪印 */
-  .paw-deco {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 54px;
-    height: 54px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--surface) 60%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow:
-      inset -3px -3px 0 0 color-mix(in srgb, var(--primary) 18%, transparent),
-      inset 3px 3px 0 0 color-mix(in srgb, #ffffff 40%, transparent);
-    margin-bottom: 14px;
-  }
-  .paw-deco svg {
-    width: 30px;
-    height: 30px;
-  }
-  /* 玻璃卡(替代白卡) */
-  .glass-card {
-    border: 1.5px solid color-mix(in srgb, var(--border-strong) 75%, transparent);
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--surface) 70%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 4px 18px color-mix(in srgb, var(--primary) 8%, transparent);
   }
   .cloud-card {
     padding: 32px 24px;

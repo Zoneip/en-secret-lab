@@ -10,8 +10,12 @@ export function getStaticPaths() {
 }
 
 export const DELETE: APIRoute = ({ params }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const ok = deleteAsset(params.id ?? '')
-  if (!ok) return new Response(JSON.stringify({ error: '资产不存在' }), { status: 404 })
+  if (!ok)
+    return new Response(JSON.stringify({ error: '资产不存在' }), {
+      status: 404,
+    })
   return new Response(JSON.stringify({ ok: true }))
 }

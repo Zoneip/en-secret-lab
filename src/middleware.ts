@@ -13,8 +13,16 @@ import { isServer } from './lib/utils'
 import { SESSION_COOKIE, isAuthed } from './lib/admin/auth'
 import { assetFileOnDisk, MIME_BY_EXT } from './lib/admin/assets'
 
-const PUBLIC_ADMIN = new Set(['/admin/login', '/admin/api/login', '/admin/api/logout'])
-const FORM_LIKE = ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain']
+const PUBLIC_ADMIN = new Set([
+  '/admin/login',
+  '/admin/api/login',
+  '/admin/api/logout',
+])
+const FORM_LIKE = [
+  'application/x-www-form-urlencoded',
+  'multipart/form-data',
+  'text/plain',
+]
 const MUTATING = ['POST', 'PUT', 'PATCH', 'DELETE']
 
 /**
@@ -40,8 +48,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // CSRF 校验(替代 Astro 内置 checkOrigin)
   if (MUTATING.includes(context.request.method)) {
     const ct = context.request.headers.get('content-type')?.toLowerCase() ?? ''
-    if (FORM_LIKE.some((t) => ct.includes(t)) && !isSameOrigin(context.request)) {
-      return new Response('Cross-site POST form submissions are forbidden', { status: 403 })
+    if (
+      FORM_LIKE.some((t) => ct.includes(t)) &&
+      !isSameOrigin(context.request)
+    ) {
+      return new Response('Cross-site POST form submissions are forbidden', {
+        status: 403,
+      })
     }
   }
 

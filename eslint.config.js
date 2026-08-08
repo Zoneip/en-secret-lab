@@ -2,16 +2,29 @@
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import astro from 'eslint-plugin-astro'
+import { defineConfig } from 'eslint/config'
 
-export default tseslint.config(
+export default defineConfig(
   {
-    ignores: ['dist/**', 'dist-static/**', 'dist-server/**', '.astro/**', 'node_modules/**', 'src/styles/theme-tokens.generated.css', 'public/vendor/**'],
+    ignores: [
+      'dist/**',
+      'dist-static/**',
+      'dist-server/**',
+      '.astro/**',
+      'node_modules/**',
+      'src/styles/theme-tokens.generated.css',
+      'public/vendor/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
   {
-    files: ['src/**/*.{ts,js,mjs}', 'scripts/**/*.{ts,js,mjs}', 'tests/**/*.{ts,js}'],
+    files: [
+      'src/**/*.{ts,js,mjs}',
+      'scripts/**/*.{ts,js,mjs}',
+      'tests/**/*.{ts,js}',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-imports': 'error',
@@ -28,5 +41,5 @@ export default tseslint.config(
     rules: {
       'no-undef': 'off',
     },
-  }
+  },
 )

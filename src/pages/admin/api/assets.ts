@@ -9,14 +9,17 @@ import { saveUpload } from '../../../lib/admin/assets'
 export const prerender = !isServer
 
 export const POST: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   try {
     const form = await request.formData()
     const kind = String(form.get('kind') ?? 'misc')
     const themeId = form.get('themeId') ? String(form.get('themeId')) : null
     const fileEntry = form.get('file')
     if (!(fileEntry instanceof File)) {
-      return new Response(JSON.stringify({ error: '缺少文件' }), { status: 400 })
+      return new Response(JSON.stringify({ error: '缺少文件' }), {
+        status: 400,
+      })
     }
     const asset = saveUpload(kind, themeId, {
       name: fileEntry.name,
@@ -25,10 +28,11 @@ export const POST: APIRoute = async ({ request }) => {
     })
     return new Response(JSON.stringify({ ok: true, asset }))
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 400 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 400,
+    })
   }
 }
 
 /** 静态构建占位:静态站无 POST,返回 404 */
 export const GET: APIRoute = () => new Response(null, { status: 404 })
-

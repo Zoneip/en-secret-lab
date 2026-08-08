@@ -32,17 +32,26 @@ export interface SavedAsset {
   created_at: number
 }
 
-export function saveUpload(kind: string, themeId: string | null, file: {
-  name: string
-  type: string
-  data: Uint8Array
-}): SavedAsset {
+export function saveUpload(
+  kind: string,
+  themeId: string | null,
+  file: {
+    name: string
+    type: string
+    data: Uint8Array
+  },
+): SavedAsset {
   const env = loadEnv(process.env)
   const ext = extname(file.name).toLowerCase()
   if (!MIME_BY_EXT[ext]) throw new Error(`不支持的文件类型:${ext}`)
 
   const id = randomUUID()
-  const subDir = kind === 'font' ? 'fonts' : kind === 'wallpaper' ? `themes/${themeId ?? 'shared'}` : 'misc'
+  const subDir =
+    kind === 'font'
+      ? 'fonts'
+      : kind === 'wallpaper'
+        ? `themes/${themeId ?? 'shared'}`
+        : 'misc'
   const safeName = file.name.replace(/[^\w.\-\u4e00-\u9fff]/g, '_')
   const dir = join(dirname(env.DATABASE_PATH), 'uploads', subDir)
   mkdirSync(dir, { recursive: true })
@@ -62,7 +71,7 @@ export function saveUpload(kind: string, themeId: string | null, file: {
   getDb()
     .prepare(
       `INSERT INTO assets (id, kind, theme_id, file_name, path, size, mime, created_at)
-       VALUES (@id, @kind, @themeId, @fileName, @path, @size, @mime, @createdAt)`
+       VALUES (@id, @kind, @themeId, @fileName, @path, @size, @mime, @createdAt)`,
     )
     .run({ ...asset, createdAt: asset.created_at })
   return asset
@@ -70,13 +79,17 @@ export function saveUpload(kind: string, themeId: string | null, file: {
 
 export function listAssets(kind?: string): SavedAsset[] {
   const rows = kind
-    ? getDb().prepare('SELECT * FROM assets WHERE kind = ? ORDER BY created_at DESC').all(kind)
+    ? getDb()
+        .prepare('SELECT * FROM assets WHERE kind = ? ORDER BY created_at DESC')
+        .all(kind)
     : getDb().prepare('SELECT * FROM assets ORDER BY created_at DESC').all()
   return rows as unknown as SavedAsset[]
 }
 
 export function deleteAsset(id: string): boolean {
-  const row = getDb().prepare('SELECT path FROM assets WHERE id = ?').get(id) as { path: string } | undefined
+  const row = getDb()
+    .prepare('SELECT path FROM assets WHERE id = ?')
+    .get(id) as { path: string } | undefined
   if (!row) return false
   getDb().prepare('DELETE FROM assets WHERE id = ?').run(id)
   // 清理磁盘文件

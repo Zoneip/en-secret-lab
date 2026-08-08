@@ -60,11 +60,13 @@ for (const file of readdirSync(postsDir)) {
   if (!fm.pubDate || Number.isNaN(Date.parse(fm.pubDate)))
     errors.push(`${file}:pubDate 缺失或不可解析`)
   if (!fm.category) errors.push(`${file}:缺少 category`)
-  if (fm.tags !== undefined && !Array.isArray(fm.tags)) errors.push(`${file}:tags 必须是数组`)
+  if (fm.tags !== undefined && !Array.isArray(fm.tags))
+    errors.push(`${file}:tags 必须是数组`)
 
   if (fm.cover) {
     const coverPath = join(root, 'public', 'assets', 'blog', slug, fm.cover)
-    if (!existsSync(coverPath)) errors.push(`${file}:封面 ${fm.cover} 不存在(${coverPath})`)
+    if (!existsSync(coverPath))
+      errors.push(`${file}:封面 ${fm.cover} 不存在(${coverPath})`)
   }
 
   if (fm.pubDate) {

@@ -22,28 +22,28 @@ const categories = [...new Set(resources.map((r) => r.category))]
         <p class="res-desc">分享一些好用的东西:工具、文件、素材,随取随用。</p>
         <div class="res-meta">
           <span class="chip">{resources.length} 项资源</span>
-          {categories.map((c) => (
-            <span class="chip">{c}</span>
-          ))}
+          {categories.map((c) => <span class="chip">{c}</span>)}
         </div>
       </div>
     </section>
 
     <div class="grid">
-      {resources.map((r) => (
-        <a class="res-card card" href={`/resources/${r.id}`}>
-          <div class="res-head">
-            <span class="res-icon" aria-hidden="true"></span>
-            <span class="chip">{r.category}</span>
-          </div>
-          <h2 class="res-title">{r.title}</h2>
-          <p class="res-desc-text">{r.description}</p>
-          <div class="res-foot">
-            <span class="res-size">{r.size ?? '—'}</span>
-            <span class="res-dl">下载 {r.downloads}</span>
-          </div>
-        </a>
-      ))}
+      {
+        resources.map((r) => (
+          <a class="res-card card" href={`/resources/${r.id}`}>
+            <div class="res-head">
+              <span class="res-icon" aria-hidden="true" />
+              <span class="chip">{r.category}</span>
+            </div>
+            <h2 class="res-title">{r.title}</h2>
+            <p class="res-desc-text">{r.description}</p>
+            <div class="res-foot">
+              <span class="res-size">{r.size ?? '—'}</span>
+              <span class="res-dl">下载 {r.downloads}</span>
+            </div>
+          </a>
+        ))
+      }
     </div>
   </div>
 </BaseLayout>

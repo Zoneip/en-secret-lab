@@ -9,11 +9,65 @@ const dir = join(root, 'public', 'wallpapers')
 
 // 各场景顶层动画 class(前缀匹配)
 const TOP_CLASSES = {
-  'gray-tech': ['fl', 'tx1', 'tx2', 'cursor', 'ufo', 'sign1', 'sign2', 'tw0', 'tw1', 'tw2', 'sunspin'],
-  'yellow-field': ['bfly1', 'bfly2', 'wing', 'bf1', 'bf2', 'glow', 'halo', 'warm', 'bg0', 'bg1', 'bg2', 'bg3', 'moonp'],
+  'gray-tech': [
+    'fl',
+    'tx1',
+    'tx2',
+    'cursor',
+    'ufo',
+    'sign1',
+    'sign2',
+    'tw0',
+    'tw1',
+    'tw2',
+    'sunspin',
+  ],
+  'yellow-field': [
+    'bfly1',
+    'bfly2',
+    'wing',
+    'bf1',
+    'bf2',
+    'glow',
+    'halo',
+    'warm',
+    'bg0',
+    'bg1',
+    'bg2',
+    'bg3',
+    'moonp',
+  ],
   'purple-library': ['beam', 'mbeam', 'dust', 'sheen', 'tw0', 'tw1', 'tw2'],
-  'white-sea': ['f1', 'f2', 'gl1', 'gl2', 'wing1', 'wing2', 'jump', 'splash', 'boat', 'lantern', 'sweep', 'mp0', 'mp1', 'warm'],
-  'friends-shrine': ['pt', 'pf', 'bg0', 'bg1', 'bg2', 'bg3', 'lantern', 'lhalo', 'lhalo2', 'mp0', 'mp1', 'shoot'],
+  'white-sea': [
+    'f1',
+    'f2',
+    'gl1',
+    'gl2',
+    'wing1',
+    'wing2',
+    'jump',
+    'splash',
+    'boat',
+    'lantern',
+    'sweep',
+    'mp0',
+    'mp1',
+    'warm',
+  ],
+  'friends-shrine': [
+    'pt',
+    'pf',
+    'bg0',
+    'bg1',
+    'bg2',
+    'bg3',
+    'lantern',
+    'lhalo',
+    'lhalo2',
+    'mp0',
+    'mp1',
+    'shoot',
+  ],
 }
 
 function extractTop(svg, tops) {
@@ -45,7 +99,13 @@ function extractTop(svg, tops) {
   return { bg, anim: animParts.join('\n'), groups: grouped.size }
 }
 
-for (const file of readdirSync(dir).filter((f) => f.endsWith('.svg') && !f.includes('-static') && !f.includes('-bg') && !f.includes('-anim'))) {
+for (const file of readdirSync(dir).filter(
+  (f) =>
+    f.endsWith('.svg') &&
+    !f.includes('-static') &&
+    !f.includes('-bg') &&
+    !f.includes('-anim'),
+)) {
   const scene = file.replace(/(?:-light|-dark|-day|-night)\.svg$/, '')
   const tops = TOP_CLASSES[scene] ?? []
   if (!tops.length) continue
@@ -60,6 +120,8 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith('.svg') && !f.inclu
   const animSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">\n${styleMatch ? styleMatch[0] : ''}\n${anim}\n</svg>`
   writeFileSync(join(dir, file.replace('.svg', '-bg.svg')), bgSvg)
   writeFileSync(join(dir, file.replace('.svg', '-anim.svg')), animSvg)
-  console.log(`✓ ${file} → bg(${Math.round(bgSvg.length / 1024)}KB) + anim(${Math.round(animSvg.length / 1024)}KB, ${groups} 组)`)
+  console.log(
+    `✓ ${file} → bg(${Math.round(bgSvg.length / 1024)}KB) + anim(${Math.round(animSvg.length / 1024)}KB, ${groups} 组)`,
+  )
 }
 console.log('done')

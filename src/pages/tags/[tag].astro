@@ -32,24 +32,25 @@ const { tag, posts } = Astro.props
       <p>{posts.length} 篇文章</p>
     </header>
 
-    {posts.length > 0 ? (
-      <div class="grid">
-        {posts.map((p) => (
-          <PostCard
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-           
-          />
-        ))}
-      </div>
-    ) : (
-      <EmptyState title="这个标签下还没有文章" />
-    )}
+    {
+      posts.length > 0 ? (
+        <div class="grid">
+          {posts.map((p) => (
+            <PostCard
+              slug={p.slug}
+              title={p.title}
+              description={p.description}
+              pubDate={p.pubDate}
+              category={p.category}
+              tags={p.tags}
+              cover={p.cover}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="这个标签下还没有文章" />
+      )
+    }
   </div>
 </BaseLayout>
 

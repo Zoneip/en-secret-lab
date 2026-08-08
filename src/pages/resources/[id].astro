@@ -10,7 +10,8 @@ import { getDownloads } from '../../lib/admin/resources-store'
 
 export const getStaticPaths = (async () => {
   if (!import.meta.env.ASTRO_MODE || import.meta.env.ASTRO_MODE === 'static') {
-    const { getSiteResources } = await import('../../lib/content/site-resources')
+    const { getSiteResources } =
+      await import('../../lib/content/site-resources')
     const resources = await getSiteResources()
     return resources.map((r) => ({ params: { id: r.id } }))
   }
@@ -39,18 +40,23 @@ const hasFile = Boolean(resource.file || resource.externalUrl)
       <h1>{resource.title}</h1>
       <p class="desc">{resource.description}</p>
       <div class="tags">
-        {resource.tags.map((t) => (
-          <span class="tag">
-            #{t}
-          </span>
-        ))}
+        {resource.tags.map((t) => <span class="tag">#{t}</span>)}
       </div>
       <div class="dl-row">
         <span class="size">{resource.size ?? '大小未知'}</span>
         <a class="btn" href={`/api/resource/${resource.id}/download`}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
-            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4"></path>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
           </svg>
           下载
         </a>

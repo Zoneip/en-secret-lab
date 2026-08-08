@@ -27,12 +27,20 @@ const backupsDir = () => join(dataDir(), 'backups')
 const exportsDir = () => join(dataDir(), 'exports')
 
 /** 归档目录(支持不存在目录容错) */
-async function tarGz(sources: Array<{ path: string; base: string }>, outFile: string): Promise<void> {
-  const tar = require('tar') as { c: (opts: Record<string, unknown>, files: string[]) => Promise<void> }
+async function tarGz(
+  sources: Array<{ path: string; base: string }>,
+  outFile: string,
+): Promise<void> {
+  const tar = require('tar') as {
+    c: (opts: Record<string, unknown>, files: string[]) => Promise<void>
+  }
   const files = sources
     .filter((s) => existsSync(s.path))
     .map((s) => relative(process.cwd(), s.path))
-  await tar.c({ gzip: true, file: outFile, portable: true, cwd: process.cwd() }, files)
+  await tar.c(
+    { gzip: true, file: outFile, portable: true, cwd: process.cwd() },
+    files,
+  )
 }
 
 export async function createBackup(): Promise<BackupEntry> {
@@ -41,16 +49,22 @@ export async function createBackup(): Promise<BackupEntry> {
   const ts = new Date().toISOString().replace(/[:.]/g, '-')
   const name = `backup-${ts}.tar.gz`
   const outFile = join(backupsDir(), name)
-  const contentRoot = process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
+  const contentRoot =
+    process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
   await tarGz(
     [
       { path: env.DATABASE_PATH, base: 'data' },
       { path: join(dataDir(), 'uploads'), base: 'data' },
       { path: contentRoot, base: 'content' },
     ],
-    outFile
+    outFile,
   )
-  const entry = { name, kind: 'backup' as const, size: statSync(outFile).size, createdAt: Date.now() }
+  const entry = {
+    name,
+    kind: 'backup' as const,
+    size: statSync(outFile).size,
+    createdAt: Date.now(),
+  }
   // 记录备份时间 + 冗余清理
   settingSet('backup_last_at', String(entry.createdAt))
   pruneBackups()
@@ -62,16 +76,22 @@ export async function exportContent(): Promise<BackupEntry> {
   const ts = new Date().toISOString().replace(/[:.]/g, '-')
   const name = `export-${ts}.tar.gz`
   const outFile = join(exportsDir(), name)
-  const contentRoot = process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
+  const contentRoot =
+    process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
   const siteConfig = join(process.cwd(), 'public', 'site-config.json')
   await tarGz(
     [
       { path: contentRoot, base: 'content' },
       { path: siteConfig, base: 'config' },
     ],
-    outFile
+    outFile,
   )
-  return { name, kind: 'export', size: statSync(outFile).size, createdAt: Date.now() }
+  return {
+    name,
+    kind: 'export',
+    size: statSync(outFile).size,
+    createdAt: Date.now(),
+  }
 }
 
 export function listBackups(): BackupEntry[] {
@@ -80,7 +100,12 @@ export function listBackups(): BackupEntry[] {
     .filter((f) => f.endsWith('.tar.gz'))
     .map((name) => {
       const stat = statSync(join(backupsDir(), name))
-      return { name, kind: 'backup' as const, size: stat.size, createdAt: stat.mtimeMs }
+      return {
+        name,
+        kind: 'backup' as const,
+        size: stat.size,
+        createdAt: stat.mtimeMs,
+      }
     })
     .sort((a, b) => b.createdAt - a.createdAt)
 }
@@ -91,12 +116,20 @@ export function listExports(): BackupEntry[] {
     .filter((f) => f.endsWith('.tar.gz'))
     .map((name) => {
       const stat = statSync(join(exportsDir(), name))
-      return { name, kind: 'export' as const, size: stat.size, createdAt: stat.mtimeMs }
+      return {
+        name,
+        kind: 'export' as const,
+        size: stat.size,
+        createdAt: stat.mtimeMs,
+      }
     })
     .sort((a, b) => b.createdAt - a.createdAt)
 }
 
-export function backupFile(kind: 'backup' | 'export', name: string): string | null {
+export function backupFile(
+  kind: 'backup' | 'export',
+  name: string,
+): string | null {
   const dir = kind === 'backup' ? backupsDir() : exportsDir()
   const file = join(dir, name)
   if (name.includes('..') || !existsSync(file)) return null
@@ -105,7 +138,11 @@ export function backupFile(kind: 'backup' | 'export', name: string): string | nu
 
 /* ---------- 定时与冗余 ---------- */
 
-export function getBackupConfig(): { intervalHours: number; keep: number; enabled: boolean } {
+export function getBackupConfig(): {
+  intervalHours: number
+  keep: number
+  enabled: boolean
+} {
   return {
     intervalHours: Number(settingGet('backup_interval_hours') ?? 24),
     keep: Number(settingGet('backup_keep') ?? 5),
@@ -113,7 +150,11 @@ export function getBackupConfig(): { intervalHours: number; keep: number; enable
   }
 }
 
-export function setBackupConfig(cfg: { intervalHours: number; keep: number; enabled: boolean }): void {
+export function setBackupConfig(cfg: {
+  intervalHours: number
+  keep: number
+  enabled: boolean
+}): void {
   settingSet('backup_interval_hours', String(cfg.intervalHours))
   settingSet('backup_keep', String(cfg.keep))
   settingSet('backup_enabled', String(cfg.enabled))
@@ -125,7 +166,9 @@ export function autoBackupIfDue(): void {
   if (!cfg.enabled) return
   const last = Number(settingGet('backup_last_at') ?? 0)
   if (Date.now() - last < cfg.intervalHours * 3600_000) return
-  createBackup().catch((e) => console.error('[backup] 自动备份失败:', (e as Error).message))
+  createBackup().catch((e) =>
+    console.error('[backup] 自动备份失败:', (e as Error).message),
+  )
 }
 
 /** 冗余清理:保留最近 keep 个备份,删除更旧的 */

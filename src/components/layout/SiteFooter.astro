@@ -15,36 +15,54 @@ const hasPolice = Boolean(config.police.trim())
   <div class="container">
     <div class="footer-line" aria-hidden="true">
       <span class="line"></span>
-      <svg class="paw" viewBox="0 0 32 16" width="40" height="20" aria-hidden="true">
+      <svg
+        class="paw"
+        viewBox="0 0 32 16"
+        width="40"
+        height="20"
+        aria-hidden="true"
+      >
         <g fill="currentColor" opacity="0.35">
-          <circle cx="4" cy="6" r="2.2" />
-          <circle cx="11" cy="4" r="2.2" />
-          <circle cx="18" cy="4" r="2.2" />
-          <circle cx="25" cy="6" r="2.2" />
-          <path d="M8 11c2-1.6 4.5-1.8 6.5-.8l3 1.4c1 .5 1 2 .1 2.8l-1 1c-.7.7-1.8.9-2.7.4L8 14c-1.8-.9-2-3.3 0-3z" transform="translate(1 0) scale(0.9)" />
+          <circle cx="4" cy="6" r="2.2"></circle>
+          <circle cx="11" cy="4" r="2.2"></circle>
+          <circle cx="18" cy="4" r="2.2"></circle>
+          <circle cx="25" cy="6" r="2.2"></circle>
+          <path
+            d="M8 11c2-1.6 4.5-1.8 6.5-.8l3 1.4c1 .5 1 2 .1 2.8l-1 1c-.7.7-1.8.9-2.7.4L8 14c-1.8-.9-2-3.3 0-3z"
+            transform="translate(1 0) scale(0.9)"></path>
         </g>
       </svg>
       <span class="line"></span>
     </div>
     <p class="copyright">
-      © {year} {config.author} · {config.title}
+      © {year}
+      {config.author} · {config.title}
     </p>
     <p class="meta">
       <a href="/rss.xml" class="meta-link">RSS</a>
-      {hasIcp && (
-        <>
-          <span aria-hidden="true">·</span>
-          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="meta-link">
-            {config.icp}
-          </a>
-        </>
-      )}
-      {hasPolice && (
-        <>
-          <span aria-hidden="true">·</span>
-          <span class="meta-plain">{config.police}</span>
-        </>
-      )}
+      {
+        hasIcp && (
+          <>
+            <span aria-hidden="true">·</span>
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="meta-link"
+            >
+              {config.icp}
+            </a>
+          </>
+        )
+      }
+      {
+        hasPolice && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span class="meta-plain">{config.police}</span>
+          </>
+        )
+      }
       <span aria-hidden="true">·</span>
       <span class="meta-plain">用爱和像素搭的</span>
     </p>

@@ -1,5 +1,10 @@
 /** 访客偏好(L3):localStorage 读写,客户端专用 */
-import { PREFS_KEY, type ThemePrefs, type ThemeId, type ColorMode } from './engine'
+import {
+  PREFS_KEY,
+  type ThemePrefs,
+  type ThemeId,
+  type ColorMode,
+} from './engine'
 
 export const DEFAULT_PREFS: ThemePrefs = { themeLocked: false, mode: 'system' }
 
@@ -23,7 +28,10 @@ export function writePrefs(storage: Storage, prefs: ThemePrefs): void {
 }
 
 /** 解析模式:system → 跟随操作系统 */
-export function resolveMode(mode: ColorMode | 'system', systemDark: boolean): ColorMode {
+export function resolveMode(
+  mode: ColorMode | 'system',
+  systemDark: boolean,
+): ColorMode {
   return mode === 'system' ? (systemDark ? 'dark' : 'light') : mode
 }
 

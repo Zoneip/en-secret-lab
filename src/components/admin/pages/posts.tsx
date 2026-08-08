@@ -20,6 +20,7 @@ import {
 import { toast } from 'sonner'
 import { api, fmtDate } from '../lib/api'
 import DocsManager from './docs-manager'
+import PostMetaForm, { type PostMetaValues } from './post-meta-form'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
@@ -32,7 +33,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
@@ -87,7 +87,8 @@ interface MetaInfo {
 }
 
 type Filter = 'all' | 'published' | 'draft'
-type SortBy = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'updated-desc'
+type SortBy =
+  'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'updated-desc'
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   { value: 'date-desc', label: '最新发布' },
@@ -99,7 +100,12 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<PostRow[]>([])
-  const [pagination, setPagination] = useState<PaginationInfo>({ total: 0, page: 1, pageSize: 20, totalPages: 1 })
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    total: 0,
+    page: 1,
+    pageSize: 20,
+    totalPages: 1,
+  })
   const [meta, setMeta] = useState<MetaInfo>({ categories: [], tags: [] })
   const [loading, setLoading] = useState(true)
 
@@ -114,7 +120,9 @@ export default function PostsPage() {
   const [createOpen, setCreateOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<PostRow | null>(null)
   const [batchDeleteOpen, setBatchDeleteOpen] = useState(false)
-  const [batchPublish, setBatchPublish] = useState<'publish' | 'draft' | null>(null)
+  const [batchPublish, setBatchPublish] = useState<'publish' | 'draft' | null>(
+    null,
+  )
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   const load = useCallback(async () => {
@@ -131,7 +139,7 @@ export default function PostsPage() {
       if (tagFilter) params.set('tag', tagFilter)
 
       const d = await api<{ posts: PostRow[]; pagination: PaginationInfo }>(
-        `/admin/api/posts?${params}`
+        `/admin/api/posts?${params}`,
       )
       setPosts(d.posts)
       setPagination(d.pagination)
@@ -147,7 +155,9 @@ export default function PostsPage() {
     try {
       const d = await api<MetaInfo>('/admin/api/posts-meta')
       setMeta(d)
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, [])
 
   useEffect(() => {
@@ -247,7 +257,9 @@ export default function PostsPage() {
           draft: isDraft,
         }),
       })
-      toast.success(`已${isDraft ? '转为草稿' : '发布'} ${selected.size} 篇文章`)
+      toast.success(
+        `已${isDraft ? '转为草稿' : '发布'} ${selected.size} 篇文章`,
+      )
       setBatchPublish(null)
       await load()
     } catch (e) {
@@ -266,7 +278,7 @@ export default function PostsPage() {
           <TabsTrigger value="docs">文档库</TabsTrigger>
         </TabsList>
         <TabsContent value="docs" className="mt-4">
-          <DocsManager />
+          <DocsManager onDocPublished={load} />
         </TabsContent>
         <TabsContent value="articles" className="mt-4">
           {/* 工具栏 */}
@@ -301,9 +313,11 @@ export default function PostsPage() {
                         <button
                           onClick={() => {
                             if (f.startsWith('搜索:')) setSearch('')
-                            else if (f.startsWith('分类:')) setCategoryFilter('')
+                            else if (f.startsWith('分类:'))
+                              setCategoryFilter('')
                             else if (f.startsWith('标签:')) setTagFilter('')
-                            else if (f === '草稿' || f === '已发布') setFilter('all')
+                            else if (f === '草稿' || f === '已发布')
+                              setFilter('all')
                           }}
                           className="hover:text-foreground"
                         >
@@ -343,7 +357,11 @@ export default function PostsPage() {
                 {/* 筛选 */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" onClick={() => setFiltersOpen(!filtersOpen)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setFiltersOpen(!filtersOpen)}
+                    >
                       <Filter />
                       筛选
                     </Button>
@@ -393,10 +411,16 @@ export default function PostsPage() {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`flex-1 rounded-md px-2 py-1.5 text-xs transition-colors ${
-                              filter === f ? 'bg-primary text-primary-foreground' : 'bg-accent hover:bg-accent/80'
+                              filter === f
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-accent hover:bg-accent/80'
                             }`}
                           >
-                            {f === 'all' ? '全部' : f === 'draft' ? '草稿' : '已发布'}
+                            {f === 'all'
+                              ? '全部'
+                              : f === 'draft'
+                                ? '草稿'
+                                : '已发布'}
                           </button>
                         ))}
                       </div>
@@ -415,7 +439,11 @@ export default function PostsPage() {
             {selected.size > 0 && (
               <div className="flex items-center justify-between border-b bg-accent/50 px-5 py-2">
                 <span className="text-sm text-muted-foreground">
-                  已选择 <span className="font-medium text-foreground">{selected.size}</span> 篇文章
+                  已选择{' '}
+                  <span className="font-medium text-foreground">
+                    {selected.size}
+                  </span>{' '}
+                  篇文章
                 </span>
                 <div className="flex items-center gap-2">
                   <Button
@@ -441,7 +469,11 @@ export default function PostsPage() {
                     <Trash2 />
                     批量删除
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelected(new Set())}
+                  >
                     取消选择
                   </Button>
                 </div>
@@ -471,21 +503,38 @@ export default function PostsPage() {
                       <TableHead className="w-10 pl-5">
                         <Checkbox
                           checked={allSelected}
-                          data-state={someSelected ? 'indeterminate' : allSelected ? 'checked' : 'unchecked'}
+                          data-state={
+                            someSelected
+                              ? 'indeterminate'
+                              : allSelected
+                                ? 'checked'
+                                : 'unchecked'
+                          }
                           onCheckedChange={toggleSelectAll}
                         />
                       </TableHead>
                       <TableHead>标题</TableHead>
-                      <TableHead className="hidden md:table-cell">分类</TableHead>
-                      <TableHead className="hidden sm:table-cell">标签</TableHead>
-                      <TableHead className="hidden lg:table-cell">日期</TableHead>
-                      <TableHead className="hidden sm:table-cell">状态</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        分类
+                      </TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        标签
+                      </TableHead>
+                      <TableHead className="hidden lg:table-cell">
+                        日期
+                      </TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        状态
+                      </TableHead>
                       <TableHead className="pr-5 text-right">操作</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {posts.map((p) => (
-                      <TableRow key={p.slug} className={selected.has(p.slug) ? 'bg-accent/30' : ''}>
+                      <TableRow
+                        key={p.slug}
+                        className={selected.has(p.slug) ? 'bg-accent/30' : ''}
+                      >
                         <TableCell className="pl-5">
                           <Checkbox
                             checked={selected.has(p.slug)}
@@ -500,7 +549,9 @@ export default function PostsPage() {
                             {p.title}
                           </a>
                           {p.description && (
-                            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{p.description}</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
+                              {p.description}
+                            </p>
                           )}
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
@@ -511,7 +562,11 @@ export default function PostsPage() {
                         <TableCell className="hidden sm:table-cell">
                           <div className="flex flex-wrap gap-1">
                             {p.tags.slice(0, 3).map((t) => (
-                              <Badge key={t} variant="secondary" className="text-xs">
+                              <Badge
+                                key={t}
+                                variant="secondary"
+                                className="text-xs"
+                              >
                                 #{t}
                               </Badge>
                             ))}
@@ -525,7 +580,9 @@ export default function PostsPage() {
                         <TableCell className="hidden lg:table-cell text-muted-foreground">
                           {fmtDate(p.pubDate)}
                           {p.updatedDate && p.updatedDate !== p.pubDate && (
-                            <span className="ml-1 text-xs text-muted-foreground">(更新于 {fmtDate(p.updatedDate)})</span>
+                            <span className="ml-1 text-xs text-muted-foreground">
+                              (更新于 {fmtDate(p.updatedDate)})
+                            </span>
                           )}
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
@@ -534,7 +591,10 @@ export default function PostsPage() {
                               {p.draft ? '草稿' : '已发布'}
                             </Badge>
                             {p.featured && (
-                              <Badge variant="outline" className="border-amber-500 text-amber-500">
+                              <Badge
+                                variant="outline"
+                                className="border-amber-500 text-amber-500"
+                              >
                                 精选
                               </Badge>
                             )}
@@ -543,23 +603,39 @@ export default function PostsPage() {
                         <TableCell className="pr-5 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" aria-label={`操作 ${p.title}`}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`操作 ${p.title}`}
+                              >
                                 <MoreHorizontal />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => (window.location.href = `/admin/posts/${p.slug}`)}
+                                onClick={() =>
+                                  (window.location.href = `/admin/posts/${p.slug}`)
+                                }
                               >
                                 <Pencil />
                                 编辑
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => toggleDraft(p)}>
-                                <Upload className={p.draft ? 'text-emerald-500' : 'text-amber-500'} />
+                                <Upload
+                                  className={
+                                    p.draft
+                                      ? 'text-emerald-500'
+                                      : 'text-amber-500'
+                                  }
+                                />
                                 {p.draft ? '发布' : '转草稿'}
                               </DropdownMenuItem>
                               <DropdownMenuItem asChild>
-                                <a href={`/blog/${p.slug}`} target="_blank" rel="noreferrer">
+                                <a
+                                  href={`/blog/${p.slug}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
                                   <ExternalLink />
                                   查看前台
                                 </a>
@@ -584,7 +660,8 @@ export default function PostsPage() {
                 {pagination.totalPages > 1 && (
                   <div className="flex items-center justify-between border-t px-5 py-3">
                     <span className="text-sm text-muted-foreground">
-                      共 {pagination.total} 篇 · 第 {pagination.page} / {pagination.totalPages} 页
+                      共 {pagination.total} 篇 · 第 {pagination.page} /{' '}
+                      {pagination.totalPages} 页
                     </span>
                     <div className="flex items-center gap-2">
                       <Button
@@ -613,7 +690,11 @@ export default function PostsPage() {
           </Card>
 
           {/* 新建文章 */}
-          <CreatePostDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={load} />
+          <CreatePostDialog
+            open={createOpen}
+            onOpenChange={setCreateOpen}
+            onCreated={load}
+          />
 
           {/* 单篇删除确认 */}
           <AlertDialog
@@ -641,15 +722,13 @@ export default function PostsPage() {
           </AlertDialog>
 
           {/* 批量删除确认 */}
-          <AlertDialog
-            open={batchDeleteOpen}
-            onOpenChange={setBatchDeleteOpen}
-          >
+          <AlertDialog open={batchDeleteOpen} onOpenChange={setBatchDeleteOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>确认批量删除?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  将删除 <strong>{selected.size}</strong> 篇文章,此操作不可恢复。
+                  将删除 <strong>{selected.size}</strong>{' '}
+                  篇文章,此操作不可恢复。
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -681,7 +760,10 @@ export default function PostsPage() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>取消</AlertDialogCancel>
-                <AlertDialogAction className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={doBatchPublish}>
+                <AlertDialogAction
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={doBatchPublish}
+                >
                   确认
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -702,25 +784,18 @@ function CreatePostDialog({
   onOpenChange: (open: boolean) => void
   onCreated: () => void
 }) {
-  const [form, setForm] = useState({
+  const defaultValues: PostMetaValues = {
     title: '',
     slug: '',
     category: '随笔',
     pubDate: new Date().toISOString().slice(0, 10),
     tags: '',
+    description: '',
     draft: true,
-  })
-  const [submitting, setSubmitting] = useState(false)
+    featured: false,
+  }
 
-  useEffect(() => {
-    if (open) {
-      setForm((f) => ({ ...f, pubDate: new Date().toISOString().slice(0, 10), draft: true }))
-    }
-  }, [open])
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault()
-    setSubmitting(true)
+  async function submit(form: PostMetaValues) {
     try {
       const d = await api<{ post: { slug: string } }>('/admin/api/posts', {
         method: 'POST',
@@ -741,8 +816,6 @@ function CreatePostDialog({
       window.location.href = `/admin/posts/${d.post.slug}`
     } catch (err) {
       toast.error((err as Error).message)
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -753,76 +826,12 @@ function CreatePostDialog({
           <DialogTitle>写新文章</DialogTitle>
           <DialogDescription>填写基本信息,创建后进入编辑器。</DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="flex flex-col gap-4">
-          <div className="grid gap-4">
-            <div className="grid gap-1.5">
-              <Label htmlFor="np-title">标题 *</Label>
-              <Input
-                id="np-title"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="文章标题"
-                required
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="np-slug">slug(URL 标识)*</Label>
-              <Input
-                id="np-slug"
-                value={form.slug}
-                onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                placeholder="my-new-post"
-                pattern="[a-z0-9-]+"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-1.5">
-                <Label htmlFor="np-cat">分类</Label>
-                <Input
-                  id="np-cat"
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                />
-              </div>
-              <div className="grid gap-1.5">
-                <Label htmlFor="np-date">日期</Label>
-                <Input
-                  id="np-date"
-                  type="date"
-                  value={form.pubDate}
-                  onChange={(e) => setForm({ ...form, pubDate: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="np-tags">标签(逗号分隔)</Label>
-              <Input
-                id="np-tags"
-                value={form.tags}
-                onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                placeholder="furry, 随笔"
-              />
-            </div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={form.draft}
-                onChange={(e) => setForm({ ...form, draft: e.target.checked })}
-                className="size-4 accent-primary"
-              />
-              保存为草稿
-            </label>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              取消
-            </Button>
-            <Button type="submit" disabled={submitting}>
-              创建并编辑
-            </Button>
-          </DialogFooter>
-        </form>
+        <PostMetaForm
+          defaultValues={defaultValues}
+          submitLabel="创建并编辑"
+          onSubmit={submit}
+          onCancel={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   )

@@ -2,12 +2,21 @@
  * 文章文件存储(动态版):直接读写内容目录下的 posts/*.md
  * 内容目录优先取 CONTENT_DIR 环境变量(Docker 部署用),否则为运行目录下的 src/content
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync, unlinkSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import {
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  unlinkSync,
+  statSync,
+} from 'node:fs'
+import { join, basename, extname } from 'node:path'
+import { parse as parseYaml } from 'yaml'
+import { readDoc } from './docs-store'
 
 const postsDir = join(
   process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content'),
-  'posts'
+  'posts',
 )
 
 export function postsDirOf(): string {
@@ -47,7 +56,8 @@ export interface ListPostsOptions {
   fromDate?: string
   toDate?: string
   /** 排序方式 */
-  sortBy?: 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'updated-desc'
+  sortBy?:
+    'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'updated-desc'
   /** 分页 */
   page?: number
   pageSize?: number
@@ -78,7 +88,12 @@ export interface PostStats {
   totalWords: number
 }
 
-const REQUIRED: Array<keyof PostDraft> = ['slug', 'title', 'pubDate', 'category']
+const REQUIRED: Array<keyof PostDraft> = [
+  'slug',
+  'title',
+  'pubDate',
+  'category',
+]
 
 function assertValid(draft: Partial<PostDraft>): asserts draft is PostDraft {
   for (const key of REQUIRED) {
@@ -90,11 +105,7 @@ function assertValid(draft: Partial<PostDraft>): asserts draft is PostDraft {
 }
 
 export function serializePost(d: PostDraft): string {
-  const lines = [
-    '---',
-    `title: ${d.title}`,
-    `pubDate: ${d.pubDate}`,
-  ]
+  const lines = ['---', `title: ${d.title}`, `pubDate: ${d.pubDate}`]
   if (d.description) lines.push(`description: ${d.description}`)
   if (d.updatedDate) lines.push(`updatedDate: ${d.updatedDate}`)
   lines.push(`category: ${d.category}`)
@@ -153,18 +164,25 @@ export function parsePostFile(fileName: string, raw: string): PostFile {
 /** 原始列表(不分页、不筛选) */
 function _listAllPosts(): PostFile[] {
   mkdirSync(postsDir, { recursive: true })
-  const files = readdirSync(postsDir).filter((f) => /\.(md|mdx)$/.test(f) && statSync(join(postsDir, f)).isFile())
-  return files
-    .map((f) => parsePostFile(f, readFileSync(join(postsDir, f), 'utf8')))
+  const files = readdirSync(postsDir).filter(
+    (f) => /\.(md|mdx)$/.test(f) && statSync(join(postsDir, f)).isFile(),
+  )
+  return files.map((f) =>
+    parsePostFile(f, readFileSync(join(postsDir, f), 'utf8')),
+  )
 }
 
 /** 兼容旧 API:返回全部文章(按日期倒序) */
 export function listPosts(): PostFile[] {
-  return _listAllPosts().sort((a, b) => +new Date(b.draft.pubDate) - +new Date(a.draft.pubDate))
+  return _listAllPosts().sort(
+    (a, b) => +new Date(b.draft.pubDate) - +new Date(a.draft.pubDate),
+  )
 }
 
 /** 增强版列表:支持搜索、筛选、排序、分页 */
-export function listPostsAdvanced(opts: ListPostsOptions = {}): ListPostsResult {
+export function listPostsAdvanced(
+  opts: ListPostsOptions = {},
+): ListPostsResult {
   const {
     search,
     category,
@@ -186,7 +204,7 @@ export function listPostsAdvanced(opts: ListPostsOptions = {}): ListPostsResult 
       (p) =>
         p.draft.title.toLowerCase().includes(kw) ||
         p.draft.description?.toLowerCase().includes(kw) ||
-        p.draft.tags.some((t) => t.toLowerCase().includes(kw))
+        p.draft.tags.some((t) => t.toLowerCase().includes(kw)),
     )
   }
 
@@ -227,7 +245,10 @@ export function listPostsAdvanced(opts: ListPostsOptions = {}): ListPostsResult 
       case 'title-desc':
         return b.draft.title.localeCompare(a.draft.title, 'zh-CN')
       case 'updated-desc':
-        return +new Date(b.draft.updatedDate ?? b.draft.pubDate) - +new Date(a.draft.updatedDate ?? a.draft.pubDate)
+        return (
+          +new Date(b.draft.updatedDate ?? b.draft.pubDate) -
+          +new Date(a.draft.updatedDate ?? a.draft.pubDate)
+        )
       default:
         return 0
     }
@@ -251,7 +272,9 @@ export function getPost(slug: string): PostFile | null {
   return _listAllPosts().find((p) => p.slug === slug) ?? null
 }
 
-export function savePost(draft: Partial<PostDraft> & { slug: string }): PostFile {
+export function savePost(
+  draft: Partial<PostDraft> & { slug: string },
+): PostFile {
   assertValid(draft)
   mkdirSync(postsDir, { recursive: true })
   const fileName = `${draft.slug}.md`
@@ -351,4 +374,123 @@ export function getStats(): PostStats {
 export function getPostPath(slug: string): string | null {
   const post = getPost(slug)
   return post ? join(postsDir, post.fileName) : null
+}
+
+/* ============ 文档库 → 文章发布 ============ */
+
+function slugify(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+}
+
+function slugFromFileName(fileName: string): string {
+  const base = basename(fileName, extname(fileName))
+  const latin = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const slug = latin
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  if (/^[a-z0-9-]+$/.test(slug) && slug.length > 0) return slug
+  // 文件名全非拉丁时回退到拼音式 slug
+  return slugify(base) || 'untitled'
+}
+
+function parseFrontmatter(raw: string): {
+  fm: Record<string, unknown>
+  body: string
+} {
+  const m = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/)
+  if (!m) return { fm: {}, body: raw }
+  try {
+    const fm = parseYaml(m[1]) as Record<string, unknown>
+    return { fm: fm ?? {}, body: m[2].trim() }
+  } catch {
+    return { fm: {}, body: raw }
+  }
+}
+
+function extractFirstHeading(body: string): string | undefined {
+  const m = body.match(/^#\s+(.+)$/m)
+  return m?.[1].trim()
+}
+
+function coerceTags(v: unknown): string[] {
+  if (Array.isArray(v)) {
+    return v.map((i) => String(i).trim()).filter(Boolean)
+  }
+  if (typeof v === 'string') {
+    return v
+      .split(/[,，]/)
+      .map((t) => t.trim())
+      .filter(Boolean)
+  }
+  return []
+}
+
+/**
+ * 把文档库中的文档解析为文章草稿。
+ * 优先读取 frontmatter；缺失时从文件名/正文提取。
+ */
+export function parseDocToDraft(
+  docPath: string,
+  raw: string,
+): { slug: string; body: string } & Partial<Omit<PostDraft, 'slug' | 'body'>> {
+  const { fm, body } = parseFrontmatter(raw)
+  const fileTitle = basename(docPath, extname(docPath))
+  const headingTitle = extractFirstHeading(body)
+  const title = String(fm.title ?? headingTitle ?? fileTitle)
+
+  const slug =
+    typeof fm.slug === 'string' && fm.slug.trim()
+      ? fm.slug.trim()
+      : slugFromFileName(docPath)
+
+  const pubDate =
+    typeof fm.pubDate === 'string' && fm.pubDate.trim()
+      ? fm.pubDate.trim()
+      : new Date().toISOString().slice(0, 10)
+
+  return {
+    title,
+    slug,
+    pubDate,
+    category: String(fm.category ?? '随笔'),
+    tags: coerceTags(fm.tags),
+    description: fm.description ? String(fm.description) : undefined,
+    series: fm.series ? String(fm.series) : undefined,
+    draft: fm.draft === false ? false : true,
+    featured: fm.featured === true,
+    body,
+  }
+}
+
+/**
+ * 把文档库中的一篇文档发布为文章。
+ * 原文档保留不动，仅在 posts 目录新建/覆盖文章文件。
+ */
+export function publishDoc(
+  docPath: string,
+  overrides: Partial<PostDraft> = {},
+): PostFile {
+  const { name: _unused, content } = readDoc(docPath)
+  void _unused
+  const base = parseDocToDraft(docPath, content)
+
+  const merged: Partial<PostDraft> & { slug: string } = {
+    ...base,
+    ...overrides,
+    slug: overrides.slug?.trim() || base.slug,
+    body: overrides.body ?? base.body,
+  }
+
+  // slug 冲突显式报错，避免隐式覆盖
+  if (getPost(merged.slug) && !overrides.slug) {
+    throw new Error(`slug「${merged.slug}」已被占用，请修改后重试`)
+  }
+
+  return savePost(merged)
 }

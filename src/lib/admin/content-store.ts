@@ -2,7 +2,13 @@
  * 内容管理存储(动态版):栏目 / 角色(OC)/ 关于 数据的文件读写
  * 与控制台"内容"页联动,前台数据驱动
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+import {
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  existsSync,
+} from 'node:fs'
 import { join } from 'node:path'
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml'
 
@@ -36,7 +42,8 @@ export interface AboutData {
   links: Array<{ label: string; url: string }>
 }
 
-const contentRoot = () => process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
+const contentRoot = () =>
+  process.env.CONTENT_DIR ?? join(process.cwd(), 'src', 'content')
 const columnsDir = () => join(contentRoot(), 'columns')
 const ocsDir = () => join(contentRoot(), 'ocs')
 const aboutFile = () => join(contentRoot(), 'about', 'me.json')
@@ -49,7 +56,9 @@ export function listColumns(): ColumnData[] {
   return files
     .map((f) => {
       try {
-        const raw = parseYaml(readFileSync(join(columnsDir(), f), 'utf8')) as Partial<ColumnData>
+        const raw = parseYaml(
+          readFileSync(join(columnsDir(), f), 'utf8'),
+        ) as Partial<ColumnData>
         return { id: f.replace(/\.yaml$/, ''), ...raw } as ColumnData
       } catch {
         return null
@@ -58,8 +67,12 @@ export function listColumns(): ColumnData[] {
     .filter((c): c is ColumnData => c !== null)
 }
 
-export function saveColumn(id: string, data: Omit<ColumnData, 'id'>): ColumnData {
-  if (!/^[a-z0-9-]+$/.test(id)) throw new Error('栏目 id 仅允许小写字母、数字与连字符')
+export function saveColumn(
+  id: string,
+  data: Omit<ColumnData, 'id'>,
+): ColumnData {
+  if (!/^[a-z0-9-]+$/.test(id))
+    throw new Error('栏目 id 仅允许小写字母、数字与连字符')
   mkdirSync(columnsDir(), { recursive: true })
   writeFileSync(join(columnsDir(), `${id}.yaml`), stringifyYaml(data))
   return { id, ...data }
@@ -73,7 +86,9 @@ export function listOcs(): OcData[] {
   return files
     .map((f) => {
       try {
-        const raw = parseYaml(readFileSync(join(ocsDir(), f), 'utf8')) as Partial<OcData>
+        const raw = parseYaml(
+          readFileSync(join(ocsDir(), f), 'utf8'),
+        ) as Partial<OcData>
         return {
           id: f.replace(/\.yaml$/, ''),
           traits: [],
@@ -89,7 +104,8 @@ export function listOcs(): OcData[] {
 }
 
 export function saveOc(id: string, data: Omit<OcData, 'id'>): OcData {
-  if (!/^[a-z0-9-]+$/.test(id)) throw new Error('角色 id 仅允许小写字母、数字与连字符')
+  if (!/^[a-z0-9-]+$/.test(id))
+    throw new Error('角色 id 仅允许小写字母、数字与连字符')
   mkdirSync(ocsDir(), { recursive: true })
   writeFileSync(join(ocsDir(), `${id}.yaml`), stringifyYaml(data))
   return { id, ...data }

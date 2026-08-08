@@ -8,7 +8,13 @@ interface Props {
   ariaLabel?: string
 }
 
-const { href, variant = 'primary', type = 'button', disabled = false, ariaLabel } = Astro.props
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  disabled = false,
+  ariaLabel,
+} = Astro.props
 const cls = `btn ${variant === 'ghost' ? 'btn-ghost' : ''}`
 ---
 

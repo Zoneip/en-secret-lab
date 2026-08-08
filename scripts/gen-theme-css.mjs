@@ -10,7 +10,9 @@ const presetsDir = join(root, 'src', 'themes', 'presets')
 const outFile = join(root, 'src', 'styles', 'theme-tokens.generated.css')
 
 const files = readdirSync(presetsDir).filter((f) => f.endsWith('.json'))
-const presets = files.map((f) => JSON.parse(readFileSync(join(presetsDir, f), 'utf8')))
+const presets = files.map((f) =>
+  JSON.parse(readFileSync(join(presetsDir, f), 'utf8')),
+)
 
 /** topbar 配置 → CSS 变量声明(与 src/lib/theme/css.ts 的 topbarVars 保持一致) */
 function topbarVars(topbar, mode) {
@@ -19,14 +21,18 @@ function topbarVars(topbar, mode) {
   const ornament = topbar?.ornament ?? 'none'
   const height = topbar?.height ?? 56
   const text = mode === 'light' ? '%233A3D45' : '%23ffffff'
-  let bg, grad, blur, line = 'none'
+  let bg,
+    grad,
+    blur,
+    line = 'none'
   if (style === 'solid') {
     bg = 'var(--bg)'
     grad = 'none'
     blur = '0px'
   } else if (style === 'gradient') {
     bg = 'var(--bg)'
-    grad = 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 18%, transparent), transparent 78%)'
+    grad =
+      'linear-gradient(180deg, color-mix(in srgb, var(--primary) 18%, transparent), transparent 78%)'
     blur = '0px'
   } else {
     bg = 'color-mix(in srgb, var(--bg) 76%, transparent)'
@@ -34,7 +40,8 @@ function topbarVars(topbar, mode) {
     blur = '12px'
   }
   if (accent) {
-    line = 'linear-gradient(90deg, transparent, var(--primary) 28%, var(--accent) 50%, var(--primary) 72%, transparent)'
+    line =
+      'linear-gradient(90deg, transparent, var(--primary) 28%, var(--accent) 50%, var(--primary) 72%, transparent)'
   }
   let orn = 'none'
   if (ornament === 'dots') {
@@ -44,7 +51,8 @@ function topbarVars(topbar, mode) {
   } else if (ornament === 'leaf') {
     orn = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='14' shape-rendering='crispEdges'%3E%3Crect x='3' y='8' width='3' height='3' fill='%23F2A8C4' opacity='0.65'/%3E%3Crect x='4' y='9' width='1' height='1' fill='%23FFD8E6'/%3E%3Crect x='17' y='5' width='3' height='3' fill='%23F2A8C4' opacity='0.4'/%3E%3Crect x='30' y='9' width='3' height='3' fill='%23F2A8C4' opacity='0.6'/%3E%3Crect x='38' y='4' width='3' height='3' fill='%23F2A8C4' opacity='0.35'/%3E%3C/svg%3E")`
   }
-  const tint = 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 16%, transparent), color-mix(in srgb, var(--accent) 7%, transparent) 100%)'
+  const tint =
+    'linear-gradient(180deg, color-mix(in srgb, var(--primary) 16%, transparent), color-mix(in srgb, var(--accent) 7%, transparent) 100%)'
   return `  --topbar-bg: ${bg};
   --topbar-grad: ${grad};
   --topbar-blur: ${blur};

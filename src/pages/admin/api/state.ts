@@ -9,16 +9,20 @@ import { listPosts } from '../../../lib/admin/posts-store'
 import { autoBackupIfDue } from '../../../lib/admin/backup'
 import { themes } from '../../../lib/theme/presets'
 import { getSiteConfig } from '../../../lib/config'
-import { getCollection } from 'astro:content'
+import { getCollection, type CollectionEntry } from 'astro:content'
 
 export const prerender = !isServer
 
 export const GET: APIRoute = async ({ cookies }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const authed = isAuthed(cookies.get(SESSION_COOKIE)?.value)
   if (authed) autoBackupIfDue()
   const siteConfig = getSiteConfig()
-  const [posts, friends] = await Promise.all([
+  const [posts, friends]: [
+    CollectionEntry<'posts'>[],
+    CollectionEntry<'friends'>[],
+  ] = await Promise.all([
     getCollection('posts').catch(() => []),
     getCollection('friends').catch(() => []),
   ])
@@ -47,7 +51,12 @@ export const GET: APIRoute = async ({ cookies }) => {
     })
   }
   for (const a of assets) {
-    activity.push({ kind: 'upload', title: a.fileName, time: a.created_at, meta: a.kind })
+    activity.push({
+      kind: 'upload',
+      title: a.fileName,
+      time: a.created_at,
+      meta: a.kind,
+    })
   }
   activity.sort((a, b) => b.time - a.time)
 
@@ -68,6 +77,8 @@ export const GET: APIRoute = async ({ cookies }) => {
         police: siteConfig.police,
         homepage: siteConfig.homepage,
         themeOverrides: siteConfig.themeOverrides,
+        mascots: siteConfig.mascots,
+        favicon: siteConfig.favicon,
       },
       stats: {
         posts: posts.length,
@@ -97,6 +108,6 @@ export const GET: APIRoute = async ({ cookies }) => {
       })),
       assets: authed ? assets : [],
     }),
-    { headers: { 'Content-Type': 'application/json' } }
+    { headers: { 'Content-Type': 'application/json' } },
   )
 }

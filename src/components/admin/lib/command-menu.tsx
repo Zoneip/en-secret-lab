@@ -10,8 +10,10 @@ import {
   LayoutGrid,
   LogOut,
   Moon,
+  Package,
   Palette,
   Settings,
+  Users,
 } from 'lucide-react'
 import {
   CommandDialog,
@@ -27,9 +29,11 @@ import {
 const NAV = [
   { label: '仪表盘', href: '/admin', icon: LayoutDashboard },
   { label: '文章管理', href: '/admin/posts', icon: FileText },
-  { label: '内容管理', href: '/admin/content', icon: LayoutGrid },
-  { label: '主题编辑器', href: '/admin/themes', icon: Palette },
-  { label: '站点设置', href: '/admin/site', icon: Settings },
+  { label: '内容管理', href: '/admin/settings?tab=content', icon: LayoutGrid },
+  { label: '资源管理', href: '/admin/resources', icon: Package },
+  { label: '主题编辑器', href: '/admin/settings?tab=themes', icon: Palette },
+  { label: '站点设置', href: '/admin/settings?tab=site', icon: Settings },
+  { label: '账号管理', href: '/admin/accounts', icon: Users },
   { label: '资产库', href: '/admin/assets', icon: ImageIcon },
 ]
 
@@ -78,7 +82,11 @@ export default function CommandMenu() {
         <CommandEmpty>没有找到匹配项</CommandEmpty>
         <CommandGroup heading="导航">
           {NAV.map((item) => (
-            <CommandItem key={item.href} value={`导航 ${item.label}`} onSelect={() => run(() => (window.location.href = item.href))}>
+            <CommandItem
+              key={item.href}
+              value={`导航 ${item.label}`}
+              onSelect={() => run(() => (window.location.href = item.href))}
+            >
               <item.icon />
               {item.label}
             </CommandItem>
@@ -86,17 +94,28 @@ export default function CommandMenu() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="快捷操作">
-          <CommandItem value="动作 写新文章" onSelect={() => run(() => (window.location.href = '/admin/posts/new'))}>
+          <CommandItem
+            value="动作 写新文章"
+            onSelect={() =>
+              run(() => (window.location.href = '/admin/posts/new'))
+            }
+          >
             <FilePlus2 />
             写新文章
             <CommandShortcut>⌘N</CommandShortcut>
           </CommandItem>
-          <CommandItem value="动作 切换深色模式" onSelect={() => run(toggleAdminDark)}>
+          <CommandItem
+            value="动作 切换深色模式"
+            onSelect={() => run(toggleAdminDark)}
+          >
             <Moon />
             切换深色模式
             <CommandShortcut>⌘⇧D</CommandShortcut>
           </CommandItem>
-          <CommandItem value="动作 查看前台" onSelect={() => run(() => window.open('/', '_blank'))}>
+          <CommandItem
+            value="动作 查看前台"
+            onSelect={() => run(() => window.open('/', '_blank'))}
+          >
             <ExternalLink />
             查看前台
           </CommandItem>

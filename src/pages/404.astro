@@ -5,7 +5,9 @@ import Mascot from '../components/mascot/Mascot.astro'
 
 const themes = ['gray', 'yellow', 'purple', 'white']
 const today = new Date()
-const dayIndex = (today.getFullYear() * 12 + today.getMonth() * 31 + today.getDate()) % themes.length
+const dayIndex =
+  (today.getFullYear() * 12 + today.getMonth() * 31 + today.getDate()) %
+  themes.length
 const quote = [
   '这片雪地上没有脚印…',
   '被爪子藏起来了吗?',

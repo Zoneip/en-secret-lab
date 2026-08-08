@@ -4,7 +4,10 @@
  */
 import type { APIRoute } from 'astro'
 import { isServer } from '../../../../lib/utils'
-import { getResource, incrementDownloads } from '../../../../lib/admin/resources-store'
+import {
+  getResource,
+  incrementDownloads,
+} from '../../../../lib/admin/resources-store'
 
 export const prerender = !isServer
 

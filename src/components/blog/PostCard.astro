@@ -17,28 +17,48 @@ interface Props {
   dataMotion?: boolean
 }
 
-const { slug, title, description, pubDate, category, tags = [], cover, dataMotion = false } = Astro.props
+const {
+  slug,
+  title,
+  description,
+  pubDate,
+  category,
+  tags = [],
+  cover,
+  dataMotion = false,
+} = Astro.props
 const coverUrl = cover ? `/assets/blog/${slug}/${cover}` : undefined
 const pixelCover = getSiteConfig().pixelCover
 const fb = coverFallback(category, pixelCover.pattern)
 ---
 
-<article class="post-card card" {...(dataMotion ? { "data-motion-group": "cards" } : {})}>
+<article
+  class="post-card card"
+  {...dataMotion ? { 'data-motion-group': 'cards' } : {}}
+>
   <a href={`/blog/${slug}`} class="post-link" aria-label={title}>
-    {coverUrl ? (
-      <div class="cover">
-        <img src={coverUrl} alt="" loading="lazy" decoding="async" />
-      </div>
-    ) : pixelCover.enabled ? (
-      <div class="cover cover-pixel" aria-hidden="true">
-        <div class="cp-layer cp-light" style={`background-image:url(${fb.light})`}></div>
-        <div class="cp-layer cp-dark" style={`background-image:url(${fb.dark})`}></div>
-      </div>
-    ) : (
-      <div class="cover cover-placeholder">
-        <PixelPaw pixel={4} />
-      </div>
-    )}
+    {
+      coverUrl ? (
+        <div class="cover">
+          <img src={coverUrl} alt="" loading="lazy" decoding="async" />
+        </div>
+      ) : pixelCover.enabled ? (
+        <div class="cover cover-pixel" aria-hidden="true">
+          <div
+            class="cp-layer cp-light"
+            style={`background-image:url(${fb.light})`}
+          />
+          <div
+            class="cp-layer cp-dark"
+            style={`background-image:url(${fb.dark})`}
+          />
+        </div>
+      ) : (
+        <div class="cover cover-placeholder">
+          <PixelPaw pixel={4} />
+        </div>
+      )
+    }
     <div class="body">
       <div class="meta">
         {category && <span class="chip">{category}</span>}
@@ -47,11 +67,7 @@ const fb = coverFallback(category, pixelCover.pattern)
       <h2 class="title">{title}</h2>
       {description && <p class="desc">{description}</p>}
       <div class="tags">
-        {tags.map((tag) => (
-          <span class="tag">
-            #{tag}
-          </span>
-        ))}
+        {tags.map((tag) => <span class="tag">#{tag}</span>)}
       </div>
     </div>
   </a>
@@ -110,7 +126,11 @@ const fb = coverFallback(category, pixelCover.pattern)
   .cover-placeholder {
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+    background: linear-gradient(
+      135deg,
+      var(--primary-soft),
+      var(--accent-soft)
+    );
     opacity: 0.8;
   }
   .body {

@@ -20,39 +20,61 @@ interface Props {
 }
 
 const { oc, flip } = Astro.props
-const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', purple: '葡萄', white: '棉花糖' }
+const themeNames: Record<string, string> = {
+  gray: '灰糖',
+  yellow: '蜜糖',
+  purple: '葡萄',
+  white: '棉花糖',
+}
 ---
 
-<section class:list={['snap-section', 'oc-screen', { flip }]} data-screen data-oc-theme={oc.theme} aria-labelledby={`oc-name-${oc.theme}`}>
+<section
+  class:list={['snap-section', 'oc-screen', { flip }]}
+  data-screen
+  data-oc-theme={oc.theme}
+  aria-labelledby={`oc-name-${oc.theme}`}
+>
   <div class="oc-inner">
     <div class="oc-art" data-motion-group="mascot" aria-hidden="true">
-      {oc.art ? (
-        <img src={oc.art} alt="" class="oc-art-img" loading="lazy" />
-      ) : (
-        <>
-          <Mascot role="furry" theme={oc.theme} pixel={9} />
-          <Mascot role="boy" theme={oc.theme} pixel={7} />
-        </>
-      )}
+      {
+        oc.art ? (
+          <img src={oc.art} alt="" class="oc-art-img" loading="lazy" />
+        ) : (
+          <>
+            <Mascot role="furry" theme={oc.theme} pixel={9} />
+            <Mascot role="boy" theme={oc.theme} pixel={7} />
+          </>
+        )
+      }
     </div>
     <div class="oc-text">
       <p class="oc-theme-tag">主题 · {themeNames[oc.theme]}</p>
       <h2 class="oc-name" id={`oc-name-${oc.theme}`}>{oc.name}</h2>
       {oc.subtitle && <p class="oc-subtitle">{oc.subtitle}</p>}
       {oc.description && <p class="oc-desc">{oc.description}</p>}
-      {oc.traits.length > 0 && (
-        <ul class="oc-traits">
-          {oc.traits.map((t) => (
-            <li class="oc-trait">{t}</li>
-          ))}
-        </ul>
-      )}
-      {oc.quote && (
-        <p class="oc-quote" data-quote-effect={oc.quoteEffect} data-quote-speed={oc.quoteSpeed}>
-          <span class="quote-text" data-quote-full={oc.quote}>「{oc.quote}」</span>
-          <span class="quote-caret" aria-hidden="true"></span>
-        </p>
-      )}
+      {
+        oc.traits.length > 0 && (
+          <ul class="oc-traits">
+            {oc.traits.map((t) => (
+              <li class="oc-trait">{t}</li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        oc.quote && (
+          <p
+            class="oc-quote"
+            data-quote-effect={oc.quoteEffect}
+            data-quote-speed={oc.quoteSpeed}
+          >
+            <span class="quote-text" data-quote-full={oc.quote}>
+              「{oc.quote}」
+            </span>
+            <span class="quote-caret" aria-hidden="true" />
+          </p>
+        )
+      }
     </div>
   </div>
   <footer class="screen-footer">
@@ -69,7 +91,9 @@ const themeNames: Record<string, string> = { gray: '灰糖', yellow: '蜜糖', p
     max-width: 860px;
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.6s var(--ease-soft) 0.1s, transform 0.6s var(--ease-soft) 0.1s;
+    transition:
+      opacity 0.6s var(--ease-soft) 0.1s,
+      transform 0.6s var(--ease-soft) 0.1s;
   }
   .snap-section.active .oc-inner {
     opacity: 1;

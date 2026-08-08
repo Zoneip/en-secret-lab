@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "dev": "ASTRO_MODE=server astro dev",
+    "dev:static": "ASTRO_MODE=static astro dev",
+    "start": "ASTRO_MODE=server astro dev",
     "gen:themes": "node scripts/gen-theme-css.mjs",
     "validate:content": "node scripts/validate-content.mjs",
     "build": "npm run gen:themes && astro build",

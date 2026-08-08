@@ -5,6 +5,7 @@ import type { GetStaticPaths } from 'astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 import { aggregateByKey } from '../../lib/content/taxonomy'
+import { getSiteColumns } from '../../lib/content/site-content'
 import PostCard from '../../components/blog/PostCard.astro'
 import EmptyState from '../../components/ui/EmptyState.astro'
 
@@ -20,6 +21,8 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 const { category, posts } = Astro.props
+const columns = await getSiteColumns()
+const columnTheme = columns.find((c) => c.category === category)?.theme
 ---
 
 <BaseLayout title={category} description={`分类 ${category} 的文章`}>
@@ -29,24 +32,25 @@ const { category, posts } = Astro.props
       <p>{posts.length} 篇文章</p>
     </header>
 
-    {posts.length > 0 ? (
-      <div class="grid">
-        {posts.map((p) => (
-          <PostCard
-            slug={p.slug}
-            title={p.title}
-            description={p.description}
-            pubDate={p.pubDate}
-            category={p.category}
-            tags={p.tags}
-            cover={p.cover}
-           
-          />
-        ))}
-      </div>
-    ) : (
-      <EmptyState />
-    )}
+    {
+      posts.length > 0 ? (
+        <div class="grid">
+          {posts.map((p) => (
+            <PostCard
+              slug={p.slug}
+              title={p.title}
+              description={p.description}
+              pubDate={p.pubDate}
+              category={p.category}
+              tags={p.tags}
+              cover={p.cover}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState theme={columnTheme} />
+      )
+    }
   </div>
 </BaseLayout>
 

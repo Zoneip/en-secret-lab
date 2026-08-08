@@ -6,7 +6,8 @@
 
 /* 大漂浮:上下 ±12px,8s(基础时长 ×2.667),适合 hero 装饰 */
 .motion-float-slow {
-  animation: motion-float-slow calc(var(--motion-duration, 3s) * 2.667) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+  animation: motion-float-slow calc(var(--motion-duration, 3s) * 2.667)
+    var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
 }
 @keyframes motion-float-slow {
   0%,
@@ -23,7 +24,8 @@
 
 /* 缓慢旋转:12s 一圈(基础时长 ×4),适合像素星星/装饰 */
 .motion-spin-slow {
-  animation: motion-spin-slow calc(var(--motion-duration, 3s) * 4) linear infinite;
+  animation: motion-spin-slow calc(var(--motion-duration, 3s) * 4) linear
+    infinite;
 }
 @keyframes motion-spin-slow {
   from {
@@ -36,7 +38,8 @@
 
 /* 柔和脉冲:opacity 0.7 → 1,2.4s(基础时长 ×0.8),适合公告标签 */
 .motion-pulse-soft {
-  animation: motion-pulse-soft calc(var(--motion-duration, 3s) * 0.8) var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
+  animation: motion-pulse-soft calc(var(--motion-duration, 3s) * 0.8)
+    var(--ease-soft, cubic-bezier(0.4, 0, 0.2, 1)) infinite;
 }
 @keyframes motion-pulse-soft {
   0%,
@@ -56,7 +59,8 @@
 }
 .motion-marquee > * {
   display: inline-block;
-  animation: motion-marquee calc(var(--motion-duration, 3s) * 6.667) linear infinite;
+  animation: motion-marquee calc(var(--motion-duration, 3s) * 6.667) linear
+    infinite;
 }
 @keyframes motion-marquee {
   from {
@@ -69,7 +73,8 @@
 
 /* 滚动提示:上下浮动 + 箭头随动位移 + 透明度呼吸,约 2.1s(基础时长 ×0.7) */
 .motion-scroll-hint {
-  animation: motion-scroll-hint calc(var(--motion-duration, 3s) * 0.7) var(--ease-in-out, ease-in-out) infinite;
+  animation: motion-scroll-hint calc(var(--motion-duration, 3s) * 0.7)
+    var(--ease-in-out, ease-in-out) infinite;
 }
 @keyframes motion-scroll-hint {
   0%,
@@ -87,11 +92,29 @@
  * 全库统一:任一文件被单独引入时也保证动画/过渡被禁用。
  * 伪元素与子元素的动画需要单独点名,父级 animation: none 不会停止它们。 */
 @media (prefers-reduced-motion: reduce) {
-  .motion-bob, .motion-bob-fast, .motion-ear-tip, .motion-tail-wag, .motion-blink, .motion-wobble,
-  .motion-card-lift, .motion-card-tilt, .motion-card-sheen, .motion-card-border-flow, .motion-card-float-in,
-  .motion-topbar-gradient, .motion-topbar-shrink, .motion-nav-underline, .motion-float-slow, .motion-spin-slow,
-  .motion-pulse-soft, .motion-marquee, .motion-scroll-hint,
-  .motion-card-sheen::after, .motion-card-border-flow::before, .motion-marquee > *, .motion-stagger > * {
+  .motion-bob,
+  .motion-bob-fast,
+  .motion-ear-tip,
+  .motion-tail-wag,
+  .motion-blink,
+  .motion-wobble,
+  .motion-card-lift,
+  .motion-card-tilt,
+  .motion-card-sheen,
+  .motion-card-border-flow,
+  .motion-card-float-in,
+  .motion-topbar-gradient,
+  .motion-topbar-shrink,
+  .motion-nav-underline,
+  .motion-float-slow,
+  .motion-spin-slow,
+  .motion-pulse-soft,
+  .motion-marquee,
+  .motion-scroll-hint,
+  .motion-card-sheen::after,
+  .motion-card-border-flow::before,
+  .motion-marquee > *,
+  .motion-stagger > * {
     animation: none !important;
     transition: none !important;
   }

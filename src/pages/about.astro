@@ -11,7 +11,7 @@ const about = await getSiteAbout()
 const ocs = (await getSiteOcs()).sort(
   (a, b) =>
     ['gray', 'yellow', 'purple', 'white'].indexOf(a.theme) -
-    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme)
+    ['gray', 'yellow', 'purple', 'white'].indexOf(b.theme),
 )
 const screenThemes = ['', ...ocs.map((o) => o.theme)]
 ---
@@ -22,56 +22,82 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
       <!-- 屏1:hero(默认主题) -->
       <section class="snap-section hero-screen" data-screen>
         <div class="hero-inner">
-          {about && (
-            <>
-              <div class="hero-avatar-wrap">
-                {about.avatar ? (
-                  <img src={about.avatar} alt={about.nickname} class="hero-avatar" />
-                ) : (
-                  <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
-                    <Mascot role="furry" pixel={7} />
-                    <Mascot role="boy" pixel={6} />
+          {
+            about && (
+              <>
+                <div class="hero-avatar-wrap">
+                  {about.avatar ? (
+                    <img
+                      src={about.avatar}
+                      alt={about.nickname}
+                      class="hero-avatar"
+                    />
+                  ) : (
+                    <div
+                      class="hero-mascots"
+                      data-motion-group="mascot"
+                      aria-hidden="true"
+                    >
+                      <Mascot role="furry" pixel={7} />
+                      <Mascot role="boy" pixel={6} />
+                    </div>
+                  )}
+                </div>
+                <p class="hero-nickname">{about.nickname}</p>
+                {about.tagline && <p class="hero-tagline">{about.tagline}</p>}
+                {about.intro.length > 0 && (
+                  <ul class="hero-intro">
+                    {about.intro.map((line) => (
+                      <li>{line}</li>
+                    ))}
+                  </ul>
+                )}
+                {about.links.length > 0 && (
+                  <div class="hero-links">
+                    {about.links.map((link) => (
+                      <a
+                        class="chip"
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
                   </div>
                 )}
-              </div>
-              <p class="hero-nickname">{about.nickname}</p>
-              {about.tagline && <p class="hero-tagline">{about.tagline}</p>}
-              {about.intro.length > 0 && (
-                <ul class="hero-intro">
-                  {about.intro.map((line) => (
-                    <li>{line}</li>
-                  ))}
-                </ul>
-              )}
-              {about.links.length > 0 && (
-                <div class="hero-links">
-                  {about.links.map((link) => (
-                    <a class="chip" href={link.url} target="_blank" rel="noopener noreferrer">
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+              </>
+            )
+          }
           <div class="hero-scroll-hint" aria-hidden="true">
             <span>左右滑动看看四位伙伴</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l-5 6 5 6M19 6l-5 6 5 6" /></svg>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              ><path d="M9 6l-5 6 5 6M19 6l-5 6 5 6"></path></svg
+            >
           </div>
         </div>
       </section>
 
       <!-- 屏2-5:四个 OC(切屏时全局主题跟随) -->
-      {ocs.map((oc, i) => (
-        <OCScreen oc={oc} flip={i % 2 === 1} />
-      ))}
+      {ocs.map((oc, i) => <OCScreen oc={oc} flip={i % 2 === 1} />)}
     </div>
 
     <!-- 圆点导航 + 进度条 -->
     <nav class="about-dots" aria-label="页面导航">
-      {screenThemes.map((_, i) => (
-        <button class="about-dot" data-dot={i} aria-label={`第 ${i + 1} 屏`}></button>
-      ))}
+      {
+        screenThemes.map((_, i) => (
+          <button
+            class="about-dot"
+            data-dot={i}
+            aria-label={`第 ${i + 1} 屏`}
+          />
+        ))
+      }
     </nav>
     <div class="about-track" aria-hidden="true">
       <div class="about-track-fill" data-track-fill></div>
@@ -292,8 +318,8 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
         delete html.dataset.forceTheme
         const dark = html.dataset.mode === 'dark'
         html.dataset.theme = dark
-          ? document.body.dataset.defaultThemeDark ?? 'purple'
-          : document.body.dataset.defaultThemeLight ?? 'gray'
+          ? (document.body.dataset.defaultThemeDark ?? 'purple')
+          : (document.body.dataset.defaultThemeLight ?? 'gray')
         html.dataset.themeLocked = 'false'
       }
       window.dispatchEvent(new CustomEvent('enlab:theme-change'))
@@ -307,7 +333,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
           applyScreenTheme(Math.min(Math.max(0, idx), screens.length - 1))
         })
       },
-      { passive: true }
+      { passive: true },
     )
 
     // 滚轮翻页:垂直滚轮 → 横向平滑切屏;滚动到达目标即解锁(快速连滚灵敏),
@@ -325,7 +351,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
           }
         }
       },
-      { threshold: [0, 0.1, 0.5, 0.9, 1] }
+      { threshold: [0, 0.1, 0.5, 0.9, 1] },
     )
     screens.forEach((s) => inViewIo.observe(s))
 
@@ -334,7 +360,10 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
     const trackFill = document.querySelector('[data-track-fill]')
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => {
-        scroller.scrollTo({ left: i * scroller.clientWidth, behavior: 'smooth' })
+        scroller.scrollTo({
+          left: i * scroller.clientWidth,
+          behavior: 'smooth',
+        })
       })
     })
     const updateProgress = () => {
@@ -368,7 +397,7 @@ const screenThemes = ['', ...ocs.map((o) => o.theme)]
           }, speed)
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.4 },
     )
     screens.forEach((s) => {
       const q = s.querySelector('[data-quote-effect="typing"]')

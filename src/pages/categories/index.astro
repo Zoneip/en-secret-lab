@@ -3,24 +3,32 @@
 import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-import CategoryMap from '../../components/blog/CategoryMap.astro'
-import PixelPaw from '../../components/mascot/PixelPaw.astro'
+import { aggregateByKey } from '../../lib/content/taxonomy'
 
 const posts = await getAllPosts()
-const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
+const categories = aggregateByKey(posts, 'category')
 ---
 
 <BaseLayout fillViewport title="分类" description="全站分类总览">
   <div class="page-enter container">
     <header class="page-head">
-      <span class="paw-deco" aria-hidden="true">
-        <PixelPaw pixel={3} />
-      </span>
       <h1>分类</h1>
-      <p>{categories.length} 个分类 · 顺着爪印去探险</p>
+      <p>{categories.length} 个分类</p>
     </header>
 
-    <CategoryMap posts={posts} />
+    <div class="cats">
+      {
+        categories.map((c) => (
+          <a
+            class="cat-card card"
+            href={`/categories/${encodeURIComponent(c.name)}`}
+          >
+            <span class="cat-name">{c.name}</span>
+            <span class="cat-count">{c.count} 篇</span>
+          </a>
+        ))
+      }
+    </div>
   </div>
 </BaseLayout>
 
@@ -29,26 +37,6 @@ const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
     padding: 40px 0 24px;
     text-align: center;
   }
-  .paw-deco {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 54px;
-    height: 54px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--surface) 60%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow:
-      inset -3px -3px 0 0 color-mix(in srgb, var(--primary) 18%, transparent),
-      inset 3px 3px 0 0 color-mix(in srgb, #ffffff 40%, transparent);
-    margin-bottom: 14px;
-  }
-  .paw-deco svg {
-    width: 30px;
-    height: 30px;
-  }
   .page-head h1 {
     font-size: 2rem;
     margin-bottom: 6px;
@@ -56,5 +44,29 @@ const categories = [...new Set(posts.map((p) => p.category).filter(Boolean))]
   .page-head p {
     color: var(--fg-subtle);
     font-size: 0.85rem;
+  }
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 22px;
+    color: var(--fg);
+  }
+  .cat-card:hover {
+    transform: translateY(-3px);
+  }
+  .cat-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--primary);
+  }
+  .cat-count {
+    font-size: 0.8rem;
+    color: var(--fg-subtle);
   }
 </style>

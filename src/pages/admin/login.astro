@@ -3,11 +3,11 @@
  * 控制台登录页
  */
 import { isServer } from '../../lib/utils'
-import { ensureAdminPassword } from '../../lib/admin/auth'
+import { ensureOwnerAccount } from '../../lib/admin/auth'
 
 export const prerender = !isServer
 
-if (isServer) ensureAdminPassword()
+if (isServer) ensureOwnerAccount()
 ---
 
 <!doctype html>
@@ -94,7 +94,13 @@ if (isServer) ensureAdminPassword()
       <p class="login-title">EN 的秘密实验室</p>
       <p class="login-sub">站长控制台</p>
       <div class="field">
-        <input type="text" name="username" placeholder="用户名" autocomplete="username" required />
+        <input
+          type="text"
+          name="username"
+          placeholder="用户名"
+          autocomplete="username"
+          required
+        />
       </div>
       <div class="field">
         <input

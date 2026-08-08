@@ -56,7 +56,13 @@ interface RenderedPreview {
 const AUTO_SAVE_KEY = 'post-editor-autosave'
 const AUTO_SAVE_DELAY = 2000
 
-export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: boolean }) {
+export default function PostEditorPage({
+  slug,
+  isNew,
+}: {
+  slug?: string
+  isNew: boolean
+}) {
   const [form, setForm] = useState<PostDraft>({
     slug: '',
     title: '',
@@ -71,7 +77,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [previewMode, setPreviewMode] = useState<'split' | 'preview' | 'edit'>('split')
+  const [previewMode, setPreviewMode] = useState<'split' | 'preview' | 'edit'>(
+    'split',
+  )
   const [preview, setPreview] = useState<RenderedPreview | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
   const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null)
@@ -90,7 +98,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
             setForm(data.form)
             toast.info('已恢复上次未保存的内容')
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
       setLoading(false)
       return
@@ -111,16 +121,18 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
     }
     setPreviewLoading(true)
     try {
-      const d = await api<{ html: string; wordCount: number; readingTime: number }>(
-        '/admin/api/render-markdown',
-        {
-          method: 'POST',
-          body: JSON.stringify({ markdown }),
-        }
-      )
+      const d = await api<{
+        html: string
+        wordCount: number
+        readingTime: number
+      }>('/admin/api/render-markdown', {
+        method: 'POST',
+        body: JSON.stringify({ markdown }),
+      })
       setPreview(d)
-    } catch { /* ignore */ }
-    finally {
+    } catch {
+      /* ignore */
+    } finally {
       setPreviewLoading(false)
     }
   }, [])
@@ -146,12 +158,14 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
           JSON.stringify({
             form,
             savedAt: new Date().toISOString(),
-          })
+          }),
         )
         setLastAutoSave(new Date())
         setShowAutoSaveIndicator(true)
         setTimeout(() => setShowAutoSaveIndicator(false), 2000)
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }, AUTO_SAVE_DELAY)
 
     return () => {
@@ -159,7 +173,8 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
     }
   }, [form, isNew])
 
-  const set = <K extends keyof PostDraft>(key: K, value: PostDraft[K]) => setForm((f) => ({ ...f, [key]: value }))
+  const set = <K extends keyof PostDraft>(key: K, value: PostDraft[K]) =>
+    setForm((f) => ({ ...f, [key]: value }))
 
   async function save() {
     setSaving(true)
@@ -171,10 +186,13 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
         tags: form.tags,
         description: form.description?.trim() || undefined,
       }
-      const res = await api(isNew ? '/admin/api/posts' : `/admin/api/posts/${slug}`, {
-        method: isNew ? 'POST' : 'PUT',
-        body: JSON.stringify(payload),
-      })
+      const res = await api(
+        isNew ? '/admin/api/posts' : `/admin/api/posts/${slug}`,
+        {
+          method: isNew ? 'POST' : 'PUT',
+          body: JSON.stringify(payload),
+        },
+      )
       toast.success('已保存')
       // 清除自动保存
       localStorage.removeItem(AUTO_SAVE_KEY)
@@ -250,7 +268,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
             <button
               onClick={() => setPreviewMode('edit')}
               className={`rounded px-2 py-1 text-xs transition-colors ${
-                previewMode === 'edit' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                previewMode === 'edit'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground'
               }`}
             >
               <EyeOff className="size-3" />
@@ -259,7 +279,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
             <button
               onClick={() => setPreviewMode('split')}
               className={`rounded px-2 py-1 text-xs transition-colors ${
-                previewMode === 'split' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                previewMode === 'split'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground'
               }`}
             >
               <Eye className="size-3" />
@@ -268,7 +290,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
             <button
               onClick={() => setPreviewMode('preview')}
               className={`rounded px-2 py-1 text-xs transition-colors ${
-                previewMode === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                previewMode === 'preview'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground'
               }`}
             >
               <FileText className="size-3" />
@@ -343,7 +367,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
             />
           </div>
           <div className="grid gap-1.5 sm:col-span-2">
-            <Label htmlFor="e-series">系列(可选,同系列自动成组便于连续阅读)</Label>
+            <Label htmlFor="e-series">
+              系列(可选,同系列自动成组便于连续阅读)
+            </Label>
             <Input
               id="e-series"
               value={form.series ?? ''}
@@ -362,7 +388,7 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
                   e.target.value
                     .split(/[,，]/)
                     .map((t) => t.trim())
-                    .filter(Boolean)
+                    .filter(Boolean),
                 )
               }
               placeholder="furry, 随笔"
@@ -379,11 +405,17 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
           </div>
           <div className="flex items-center gap-6 sm:col-span-2">
             <label className="flex items-center gap-2 text-sm">
-              <Switch checked={form.draft} onCheckedChange={(v) => set('draft', v)} />
+              <Switch
+                checked={form.draft}
+                onCheckedChange={(v) => set('draft', v)}
+              />
               草稿(不发布)
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <Switch checked={form.featured} onCheckedChange={(v) => set('featured', v)} />
+              <Switch
+                checked={form.featured}
+                onCheckedChange={(v) => set('featured', v)}
+              />
               精选
             </label>
           </div>
@@ -402,13 +434,15 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
               {preview?.wordCount ?? wordCount} 字
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="size-3" />
-              约 {preview?.readingTime ?? readingTime} 分钟阅读
+              <Clock className="size-3" />约{' '}
+              {preview?.readingTime ?? readingTime} 分钟阅读
             </span>
           </div>
         </div>
 
-        <div className={`grid gap-4 ${previewMode === 'split' ? 'lg:grid-cols-2' : ''}`}>
+        <div
+          className={`grid gap-4 ${previewMode === 'split' ? 'lg:grid-cols-2' : ''}`}
+        >
           {/* 编辑区 */}
           {previewMode !== 'preview' && (
             <div>
@@ -458,7 +492,9 @@ export default function PostEditorPage({ slug, isNew }: { slug?: string; isNew: 
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>确认删除?</AlertDialogTitle>
-            <AlertDialogDescription>「{form.title}」将被永久删除,此操作不可恢复。</AlertDialogDescription>
+            <AlertDialogDescription>
+              「{form.title}」将被永久删除,此操作不可恢复。
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>

@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { aggregateByKey } from '../../src/lib/content/taxonomy'
-import { published, featured, paginate, toPostLike } from '../../src/lib/content/posts'
+import {
+  published,
+  featured,
+  paginate,
+  toPostLike,
+} from '../../src/lib/content/posts'
 import type { PostEntry } from '../../src/lib/content/posts'
 
 function entry(slug: string, over: Partial<PostEntry['data']> = {}): PostEntry {
@@ -22,9 +27,23 @@ function entry(slug: string, over: Partial<PostEntry['data']> = {}): PostEntry {
 }
 
 const posts = [
-  entry('a', { pubDate: new Date('2026-01-01'), tags: ['furry', '随笔'], category: '生活' }),
-  entry('b', { pubDate: new Date('2026-02-01'), tags: ['furry'], category: '技术', featured: true }),
-  entry('c', { pubDate: new Date('2026-03-01'), tags: [], category: '技术', draft: true }),
+  entry('a', {
+    pubDate: new Date('2026-01-01'),
+    tags: ['furry', '随笔'],
+    category: '生活',
+  }),
+  entry('b', {
+    pubDate: new Date('2026-02-01'),
+    tags: ['furry'],
+    category: '技术',
+    featured: true,
+  }),
+  entry('c', {
+    pubDate: new Date('2026-03-01'),
+    tags: [],
+    category: '技术',
+    draft: true,
+  }),
 ]
 
 const flat = posts.map(toPostLike)
@@ -47,7 +66,10 @@ describe('taxonomy', () => {
   })
 
   it('忽略无该字段的条目', () => {
-    const result = aggregateByKey([{ tags: undefined, category: undefined }], 'category')
+    const result = aggregateByKey(
+      [{ tags: undefined, category: undefined }],
+      'category',
+    )
     expect(result).toEqual([])
   })
 })

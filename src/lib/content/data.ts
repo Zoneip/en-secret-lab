@@ -16,7 +16,7 @@ export async function getAllPosts(): Promise<PostLike[]> {
   if (isServer) {
     const dir = fsPostsDir()
     const files = readdirSync(dir).filter(
-      (f) => /\.(md|mdx)$/.test(f) && statSync(join(dir, f)).isFile()
+      (f) => /\.(md|mdx)$/.test(f) && statSync(join(dir, f)).isFile(),
     )
     const parsed = files
       .map((f) => parsePostFile(f, readFileSync(join(dir, f), 'utf8')))
@@ -28,9 +28,16 @@ export async function getAllPosts(): Promise<PostLike[]> {
 }
 
 /** 单篇文章 + 原始正文 */
-export async function getPostContent(slug: string): Promise<{ post: PostLike; body: string } | null> {
+export async function getPostContent(
+  slug: string,
+): Promise<{ post: PostLike; body: string } | null> {
   if (isServer) return fsReadPost(slug)
-  const entry = (await getCollection('posts')).find((p) => p.slug === slug && !p.data.draft)
+  const entry = (await getCollection('posts')).find(
+    (p) => p.slug === slug && !p.data.draft,
+  )
   if (!entry) return null
-  return { post: toPostLike({ slug: entry.slug, draft: entry.data } as never), body: entry.body }
+  return {
+    post: toPostLike({ slug: entry.slug, draft: entry.data } as never),
+    body: entry.body,
+  }
 }

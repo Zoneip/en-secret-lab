@@ -54,7 +54,11 @@ export interface PageSlice<T> {
 }
 
 /** 纯分页逻辑 */
-export function paginate<T>(items: T[], page: number, pageSize: number): PageSlice<T> {
+export function paginate<T>(
+  items: T[],
+  page: number,
+  pageSize: number,
+): PageSlice<T> {
   const total = items.length
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const safePage = Math.min(Math.max(1, page), totalPages)

@@ -8,6 +8,7 @@ import { isServer } from '../../../lib/utils'
 import {
   listPostsAdvanced,
   savePost,
+  publishDoc,
   batchUpdate,
   batchDelete,
   type PostDraft,
@@ -17,7 +18,8 @@ import {
 export const prerender = !isServer
 
 export const GET: APIRoute = ({ url }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
 
   const params = new URLSearchParams(url.search)
   const options: ListPostsOptions = {
@@ -49,32 +51,62 @@ export const GET: APIRoute = ({ url }) => {
         totalPages: result.totalPages,
       },
     }),
-    { headers: { 'Content-Type': 'application/json' } }
+    { headers: { 'Content-Type': 'application/json' } },
   )
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
-  const body = (await request.json().catch(() => null)) as Partial<PostDraft> | null
-  if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  const body = (await request.json().catch(() => null)) as
+    (Partial<PostDraft> & { sourceDocPath?: string }) | null
+  if (!body)
+    return new Response(JSON.stringify({ error: '请求体无效' }), {
+      status: 400,
+    })
+
   try {
+    // 从文档库发布为文章
+    if (body.sourceDocPath) {
+      const overrides: Partial<PostDraft> = { ...body }
+      delete (overrides as Partial<PostDraft> & { sourceDocPath?: string })
+        .sourceDocPath
+      const saved = publishDoc(body.sourceDocPath, overrides)
+      return new Response(JSON.stringify({ ok: true, post: saved }))
+    }
+
     const saved = savePost(body as Partial<PostDraft> & { slug: string })
     return new Response(JSON.stringify({ ok: true, post: saved }))
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 422 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 422,
+    })
   }
 }
 
 /** 批量操作端点 */
 export const PATCH: APIRoute = async ({ request }) => {
-  if (!isServer) return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
+  if (!isServer)
+    return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   const body = (await request.json().catch(() => null)) as
     | { action: 'delete'; slugs: string[] }
-    | { action: 'update'; slugs: string[]; draft?: boolean; category?: string; featured?: boolean }
+    | {
+        action: 'update'
+        slugs: string[]
+        draft?: boolean
+        category?: string
+        featured?: boolean
+      }
     | null
 
-  if (!body) return new Response(JSON.stringify({ error: '请求体无效' }), { status: 400 })
-  if (!body.slugs?.length) return new Response(JSON.stringify({ error: '请选择至少一篇文章' }), { status: 400 })
+  if (!body)
+    return new Response(JSON.stringify({ error: '请求体无效' }), {
+      status: 400,
+    })
+  if (!body.slugs?.length)
+    return new Response(JSON.stringify({ error: '请选择至少一篇文章' }), {
+      status: 400,
+    })
 
   try {
     if (body.action === 'delete') {
@@ -92,8 +124,15 @@ export const PATCH: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ ok: true, ...result }))
     }
 
-    return new Response(JSON.stringify({ error: `未知操作:${(body as { action?: string })?.action}` }), { status: 400 })
+    return new Response(
+      JSON.stringify({
+        error: `未知操作:${(body as { action?: string })?.action}`,
+      }),
+      { status: 400 },
+    )
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 422 })
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 422,
+    })
   }
 }

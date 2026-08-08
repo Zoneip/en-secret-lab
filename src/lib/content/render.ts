@@ -37,12 +37,13 @@ export function renderBody(body: string): RenderedBody {
 }
 
 function slugifyHeading(text: string): string {
-  return text
-    .trim()
-    .toLowerCase()
-    .replace(/[^\w\u4e00-\u9fff]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    || 'section'
+  return (
+    text
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'section'
+  )
 }
 
 export const serverRendersMarkdown = isServer

@@ -20,24 +20,37 @@ const current = active ?? Astro.url.pathname
 
     <nav class="nav" aria-label="主导航">
       <ul>
-        {config.nav.map((item) => (
-          <li>
-            <a
-              href={item.url}
-              class:list={['nav-link underline-tail', { active: current === item.url }]}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {
+          config.nav.map((item) => (
+            <li>
+              <a
+                href={item.url}
+                class:list={[
+                  'nav-link underline-tail',
+                  { active: current === item.url },
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </nav>
 
     <div class="actions">
       <a href="/search" class="btn btn-ghost btn-icon" aria-label="搜索">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m21 21-4.35-4.35" stroke-linecap="round" />
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m21 21-4.35-4.35" stroke-linecap="round"></path>
         </svg>
         <span class="search-label">搜索</span>
       </a>
@@ -50,9 +63,19 @@ const current = active ?? Astro.url.pathname
     position: sticky;
     top: 0;
     z-index: 30;
-    background-color: var(--topbar-bg, color-mix(in srgb, var(--bg) 76%, transparent));
+    background-color: var(
+      --topbar-bg,
+      color-mix(in srgb, var(--bg) 76%, transparent)
+    );
     background-image:
-      var(--topbar-tint, linear-gradient(180deg, color-mix(in srgb, var(--primary) 16%, transparent), color-mix(in srgb, var(--accent) 7%, transparent) 100%)),
+      var(
+        --topbar-tint,
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--primary) 16%, transparent),
+          color-mix(in srgb, var(--accent) 7%, transparent) 100%
+        )
+      ),
       var(--topbar-grad, none);
     backdrop-filter: blur(var(--topbar-blur, 12px));
     /* 像素风:顶部主题色条纹(呼应壁纸)+ 硬边双线 */
@@ -142,7 +165,8 @@ const current = active ?? Astro.url.pathname
   .nav-link.active {
     background: var(--primary);
     color: var(--primary-fg, #ffffff);
-    box-shadow: inset -2px -2px 0 0 color-mix(in srgb, var(--primary) 65%, #1a1a1a);
+    box-shadow: inset -2px -2px 0 0
+      color-mix(in srgb, var(--primary) 65%, #1a1a1a);
   }
   .actions {
     display: flex;
@@ -170,3 +194,32 @@ const current = active ?? Astro.url.pathname
     }
   }
 </style>
+
+<script is:inline>
+  // 导航自适应滚动:让 active 项尽量居中,顶到边界就停
+  ;(function () {
+    const ul = document.querySelector('.site-header .nav ul')
+    if (!ul) return
+    const links = ul.querySelectorAll('.nav-link')
+    const active = ul.querySelector('.nav-link.active')
+
+    const scrollToLink = function (link, smooth) {
+      const ulRect = ul.getBoundingClientRect()
+      const linkRect = link.getBoundingClientRect()
+      const linkLeftInUl = linkRect.left - ulRect.left + ul.scrollLeft
+      const target = linkLeftInUl - (ul.clientWidth - link.offsetWidth) / 2
+      const max = ul.scrollWidth - ul.clientWidth
+      ul.scrollTo({
+        left: Math.max(0, Math.min(max, target)),
+        behavior: smooth ? 'smooth' : 'auto',
+      })
+    }
+
+    if (active) scrollToLink(active, true)
+    links.forEach(function (link) {
+      link.addEventListener('click', function () {
+        scrollToLink(link, false)
+      })
+    })
+  })()
+</script>

@@ -12,7 +12,13 @@ import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { Textarea } from '../ui/textarea'
 import { Skeleton } from '../ui/skeleton'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 
 interface ColumnData {
@@ -35,19 +41,6 @@ interface OcData {
   quoteEffect: string
   quoteSpeed: string
   art?: string
-}
-
-interface ResourceData {
-  id: string
-  title: string
-  description: string
-  category: string
-  tags: string[]
-  size?: string
-  file?: string
-  externalUrl?: string
-  pubDate: string
-  downloads: number
 }
 
 interface AboutData {
@@ -76,34 +69,51 @@ export default function ContentPage() {
   const [columns, setColumns] = useState<ColumnData[] | null>(null)
   const [ocs, setOcs] = useState<OcData[] | null>(null)
   const [about, setAbout] = useState<AboutData | null>(null)
-  const [resources, setResources] = useState<ResourceData[] | null>(null)
   const [saving, setSaving] = useState(false)
-  const [pixelCover, setPixelCover] = useState<{ enabled: boolean; pattern: string }>({ enabled: true, pattern: 'knowledge-book' })
+  const [pixelCover, setPixelCover] = useState<{
+    enabled: boolean
+    pattern: string
+  }>({ enabled: true, pattern: 'knowledge-book' })
   const [pcSaving, setPcSaving] = useState(false)
 
   const load = () =>
-    api<{ columns: ColumnData[]; ocs: OcData[]; about: AboutData | null; resources: ResourceData[] }>(
-      '/admin/api/content'
+    api<{ columns: ColumnData[]; ocs: OcData[]; about: AboutData | null }>(
+      '/admin/api/content',
     )
-      .then((d: { columns: ColumnData[]; ocs: OcData[]; about: AboutData | null; resources: ResourceData[] }) => {
-        const order = ['gray', 'yellow', 'purple', 'white']
-        setColumns([...d.columns].sort((a, b) => order.indexOf(a.theme) - order.indexOf(b.theme)))
-        setOcs([...d.ocs].sort((a, b) => order.indexOf(a.theme) - order.indexOf(b.theme)))
-        setAbout(d.about)
-        setResources(d.resources)
-      })
+      .then(
+        (d: {
+          columns: ColumnData[]
+          ocs: OcData[]
+          about: AboutData | null
+        }) => {
+          const order = ['gray', 'yellow', 'purple', 'white']
+          setColumns(
+            [...d.columns].sort(
+              (a, b) => order.indexOf(a.theme) - order.indexOf(b.theme),
+            ),
+          )
+          setOcs(
+            [...d.ocs].sort(
+              (a, b) => order.indexOf(a.theme) - order.indexOf(b.theme),
+            ),
+          )
+          setAbout(d.about)
+        },
+      )
       .catch((e: Error) => toast.error(e.message))
 
   useEffect(() => {
     load()
-    api<{ site: { pixelCover?: { enabled: boolean; pattern: string } } }>('/admin/api/state')
+    api<{ site: { pixelCover?: { enabled: boolean; pattern: string } } }>(
+      '/admin/api/state',
+    )
       .then((d) => {
         if (d.site?.pixelCover) setPixelCover(d.site.pixelCover)
       })
       .catch(() => {})
   }, [])
 
-  if (!columns || !ocs || !about || !resources) {
+  if (!columns || !ocs || !about) {
     return (
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
         <Skeleton className="h-10" />
@@ -115,9 +125,14 @@ export default function ContentPage() {
   async function savePixelCover() {
     setPcSaving(true)
     try {
-      const state = await api<{ site: { pixelCover?: { enabled: boolean; pattern: string } } }>('/admin/api/state')
+      const state = await api<{
+        site: { pixelCover?: { enabled: boolean; pattern: string } }
+      }>('/admin/api/state')
       const site = { ...state.site, pixelCover }
-      await api('/admin/api/config', { method: 'PUT', body: JSON.stringify(site) })
+      await api('/admin/api/config', {
+        method: 'PUT',
+        body: JSON.stringify(site),
+      })
       toast.success('像素封面设置已保存')
     } catch (e) {
       toast.error((e as Error).message)
@@ -126,7 +141,7 @@ export default function ContentPage() {
     }
   }
 
-  async function save(part: 'columns' | 'ocs' | 'about' | 'resources') {
+  async function save(part: 'columns' | 'ocs' | 'about') {
     setSaving(true)
     try {
       await api('/admin/api/content', {
@@ -137,9 +152,7 @@ export default function ContentPage() {
               ? toMap(columns!)
               : part === 'ocs'
                 ? toMap(ocs!)
-                : part === 'resources'
-                  ? toMap(resources!)
-                  : about,
+                : about,
         }),
       })
       toast.success('已保存')
@@ -159,34 +172,59 @@ export default function ContentPage() {
           文章像素封面
         </h3>
         <p className="text-xs text-muted-foreground">
-          文章缺少封面图时,用像素资产占位(13 种图案 × 深浅模式);带分类的文章会按分类自动匹配图案。
+          文章缺少封面图时,用像素资产占位(13 种图案 ×
+          深浅模式);带分类的文章会按分类自动匹配图案。
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="grid gap-1.5">
             <Label>启用像素封面</Label>
             <div className="flex h-9 items-center">
-              <Switch checked={pixelCover.enabled} onCheckedChange={(v) => setPixelCover({ ...pixelCover, enabled: v })} />
+              <Switch
+                checked={pixelCover.enabled}
+                onCheckedChange={(v) =>
+                  setPixelCover({ ...pixelCover, enabled: v })
+                }
+              />
             </div>
           </div>
           <div className="grid gap-1.5">
             <Label>默认图案(未匹配分类时)</Label>
-            <Select value={pixelCover.pattern} onValueChange={(v) => setPixelCover({ ...pixelCover, pattern: v })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={pixelCover.pattern}
+              onValueChange={(v) =>
+                setPixelCover({ ...pixelCover, pattern: v })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {COVER_PATTERNS.map((p) => (
-                  <SelectItem key={p.slug} value={p.slug}>{p.label}</SelectItem>
+                  <SelectItem key={p.slug} value={p.slug}>
+                    {p.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
         </div>
         <div className="flex gap-2">
-          {COVER_PATTERNS.filter((p) => p.slug === pixelCover.pattern).map((p) => (
-            <div key={p.slug} className="grid grid-cols-2 gap-2">
-              <img src={`/assets/covers/${p.slug}-light.svg`} alt="" className="h-20 w-36 rounded-lg border object-cover" />
-              <img src={`/assets/covers/${p.slug}-dark.svg`} alt="" className="h-20 w-36 rounded-lg border object-cover" />
-            </div>
-          ))}
+          {COVER_PATTERNS.filter((p) => p.slug === pixelCover.pattern).map(
+            (p) => (
+              <div key={p.slug} className="grid grid-cols-2 gap-2">
+                <img
+                  src={`/assets/covers/${p.slug}-light.svg`}
+                  alt=""
+                  className="h-20 w-36 rounded-lg border object-cover"
+                />
+                <img
+                  src={`/assets/covers/${p.slug}-dark.svg`}
+                  alt=""
+                  className="h-20 w-36 rounded-lg border object-cover"
+                />
+              </div>
+            ),
+          )}
         </div>
         <div>
           <Button onClick={savePixelCover} disabled={pcSaving}>
@@ -200,7 +238,6 @@ export default function ContentPage() {
           <TabsTrigger value="columns">栏目</TabsTrigger>
           <TabsTrigger value="ocs">角色</TabsTrigger>
           <TabsTrigger value="about">关于</TabsTrigger>
-          <TabsTrigger value="resources">资源</TabsTrigger>
         </TabsList>
 
         {/* 栏目 */}
@@ -209,9 +246,13 @@ export default function ContentPage() {
             <Card key={c.id} className="gap-4 p-5">
               <div className="flex items-center justify-between">
                 <h3 className="flex items-center gap-2 text-sm font-semibold">
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] text-primary">{ROLE_LABEL[c.theme]}</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] text-primary">
+                    {ROLE_LABEL[c.theme]}
+                  </span>
                   {c.title}
-                  <span className="text-[11px] font-normal text-muted-foreground">/ {c.id}</span>
+                  <span className="text-[11px] font-normal text-muted-foreground">
+                    / {c.id}
+                  </span>
                 </h3>
                 <span className="text-[11px] text-muted-foreground">
                   {THEME_LABEL[c.theme]} · {c.category}分类
@@ -222,14 +263,28 @@ export default function ContentPage() {
                   <Label>标题</Label>
                   <Input
                     value={c.title}
-                    onChange={(e) => setColumns(columns.map((x) => (x.id === c.id ? { ...x, title: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setColumns(
+                        columns.map((x) =>
+                          x.id === c.id ? { ...x, title: e.target.value } : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5">
                   <Label>副标题</Label>
                   <Input
                     value={c.subtitle}
-                    onChange={(e) => setColumns(columns.map((x) => (x.id === c.id ? { ...x, subtitle: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setColumns(
+                        columns.map((x) =>
+                          x.id === c.id
+                            ? { ...x, subtitle: e.target.value }
+                            : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5 sm:col-span-2">
@@ -237,14 +292,28 @@ export default function ContentPage() {
                   <Textarea
                     value={c.description}
                     rows={2}
-                    onChange={(e) => setColumns(columns.map((x) => (x.id === c.id ? { ...x, description: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setColumns(
+                        columns.map((x) =>
+                          x.id === c.id
+                            ? { ...x, description: e.target.value }
+                            : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5">
                   <Label>主题 / 角色</Label>
                   <Select
                     value={c.theme}
-                    onValueChange={(v) => setColumns(columns.map((x) => (x.id === c.id ? { ...x, theme: v } : x)))}
+                    onValueChange={(v) =>
+                      setColumns(
+                        columns.map((x) =>
+                          x.id === c.id ? { ...x, theme: v } : x,
+                        ),
+                      )
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -261,7 +330,15 @@ export default function ContentPage() {
                   <Label>文章分类</Label>
                   <Input
                     value={c.category}
-                    onChange={(e) => setColumns(columns.map((x) => (x.id === c.id ? { ...x, category: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setColumns(
+                        columns.map((x) =>
+                          x.id === c.id
+                            ? { ...x, category: e.target.value }
+                            : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -283,26 +360,49 @@ export default function ContentPage() {
                 <h3 className="flex items-center gap-2 text-sm font-semibold">
                   <span
                     className="size-3 rounded-full border border-black/10"
-                    style={{ background: { gray: '#5c677d', yellow: '#e59b2e', purple: '#8b5cf6', white: '#8fa3b8' }[oc.theme] }}
+                    style={{
+                      background: {
+                        gray: '#5c677d',
+                        yellow: '#e59b2e',
+                        purple: '#8b5cf6',
+                        white: '#8fa3b8',
+                      }[oc.theme],
+                    }}
                   />
                   {oc.name}
-                  <span className="text-[11px] font-normal text-muted-foreground">/ {oc.id}</span>
+                  <span className="text-[11px] font-normal text-muted-foreground">
+                    / {oc.id}
+                  </span>
                 </h3>
-                <span className="text-[11px] text-muted-foreground">{THEME_LABEL[oc.theme]}主题</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {THEME_LABEL[oc.theme]}主题
+                </span>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-1.5">
                   <Label>名字</Label>
                   <Input
                     value={oc.name}
-                    onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, name: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, name: e.target.value } : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5">
                   <Label>主题</Label>
                   <Select
                     value={oc.theme}
-                    onValueChange={(v) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, theme: v } : x)))}
+                    onValueChange={(v) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, theme: v } : x,
+                        ),
+                      )
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -319,14 +419,28 @@ export default function ContentPage() {
                   <Label>副标题</Label>
                   <Input
                     value={oc.subtitle}
-                    onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, subtitle: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id
+                            ? { ...x, subtitle: e.target.value }
+                            : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5">
                   <Label>名言</Label>
                   <Input
                     value={oc.quote ?? ''}
-                    onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quote: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, quote: e.target.value } : x,
+                        ),
+                      )
+                    }
                     placeholder="「口头禅」(可留空)"
                   />
                 </div>
@@ -334,7 +448,13 @@ export default function ContentPage() {
                   <Label>名言动效</Label>
                   <Select
                     value={oc.quoteEffect || 'typing'}
-                    onValueChange={(v) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quoteEffect: v } : x)))}
+                    onValueChange={(v) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, quoteEffect: v } : x,
+                        ),
+                      )
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -351,7 +471,13 @@ export default function ContentPage() {
                   <Label>动效速度</Label>
                   <Select
                     value={oc.quoteSpeed || 'normal'}
-                    onValueChange={(v) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, quoteSpeed: v } : x)))}
+                    onValueChange={(v) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, quoteSpeed: v } : x,
+                        ),
+                      )
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -368,7 +494,15 @@ export default function ContentPage() {
                   <Textarea
                     value={oc.description}
                     rows={3}
-                    onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, description: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id
+                            ? { ...x, description: e.target.value }
+                            : x,
+                        ),
+                      )
+                    }
                   />
                 </div>
                 <div className="grid gap-1.5">
@@ -386,8 +520,8 @@ export default function ContentPage() {
                                   .map((t) => t.trim())
                                   .filter(Boolean),
                               }
-                            : x
-                        )
+                            : x,
+                        ),
                       )
                     }
                     placeholder="冷静, 可靠"
@@ -397,7 +531,13 @@ export default function ContentPage() {
                   <Label>插图 URL(可选)</Label>
                   <Input
                     value={oc.art ?? ''}
-                    onChange={(e) => setOcs(ocs.map((x) => (x.id === oc.id ? { ...x, art: e.target.value } : x)))}
+                    onChange={(e) =>
+                      setOcs(
+                        ocs.map((x) =>
+                          x.id === oc.id ? { ...x, art: e.target.value } : x,
+                        ),
+                      )
+                    }
                     placeholder="留空则使用像素吉祥物"
                   />
                 </div>
@@ -418,28 +558,48 @@ export default function ContentPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-1.5">
                 <Label>昵称</Label>
-                <Input value={about.nickname} onChange={(e) => setAbout({ ...about, nickname: e.target.value })} />
+                <Input
+                  value={about.nickname}
+                  onChange={(e) =>
+                    setAbout({ ...about, nickname: e.target.value })
+                  }
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label>标语</Label>
-                <Input value={about.tagline} onChange={(e) => setAbout({ ...about, tagline: e.target.value })} />
+                <Input
+                  value={about.tagline}
+                  onChange={(e) =>
+                    setAbout({ ...about, tagline: e.target.value })
+                  }
+                />
               </div>
               <div className="grid gap-1.5 sm:col-span-2">
                 <Label>头像 URL</Label>
-                <Input value={about.avatar ?? ''} onChange={(e) => setAbout({ ...about, avatar: e.target.value })} placeholder="留空则显示吉祥物" />
+                <Input
+                  value={about.avatar ?? ''}
+                  onChange={(e) =>
+                    setAbout({ ...about, avatar: e.target.value })
+                  }
+                  placeholder="留空则显示吉祥物"
+                />
               </div>
               <div className="grid gap-1.5 sm:col-span-2">
                 <Label>介绍(每行一条)</Label>
                 <Textarea
                   value={about.intro.join('\n')}
                   rows={4}
-                  onChange={(e) => setAbout({ ...about, intro: e.target.value.split('\n') })}
+                  onChange={(e) =>
+                    setAbout({ ...about, intro: e.target.value.split('\n') })
+                  }
                 />
               </div>
               <div className="grid gap-1.5 sm:col-span-2">
                 <Label>链接(label url 每行一对,空格分隔)</Label>
                 <Textarea
-                  value={about.links.map((l) => `${l.label} ${l.url}`).join('\n')}
+                  value={about.links
+                    .map((l) => `${l.label} ${l.url}`)
+                    .join('\n')}
                   rows={3}
                   onChange={(e) =>
                     setAbout({
@@ -448,12 +608,19 @@ export default function ContentPage() {
                         .split('\n')
                         .map((line) => {
                           const [label, ...rest] = line.trim().split(/\s+/)
-                          return label && rest.length ? { label, url: rest.join('') } : null
+                          return label && rest.length
+                            ? { label, url: rest.join('') }
+                            : null
                         })
-                        .filter((l): l is { label: string; url: string } => l !== null),
+                        .filter(
+                          (l): l is { label: string; url: string } =>
+                            l !== null,
+                        ),
                     })
                   }
-                  placeholder={'GitHub https://github.com\nBilibili https://bilibili.com'}
+                  placeholder={
+                    'GitHub https://github.com\nBilibili https://bilibili.com'
+                  }
                 />
               </div>
             </div>
@@ -464,108 +631,6 @@ export default function ContentPage() {
               </Button>
             </div>
           </Card>
-        </TabsContent>
-
-        {/* 资源 */}
-        <TabsContent value="resources" className="flex flex-col gap-4">
-          {resources.map((r) => (
-            <Card key={r.id} className="gap-4 p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold">
-                  {r.title}
-                  <span className="ml-2 text-[11px] font-normal text-muted-foreground">/ {r.id}</span>
-                </h3>
-                <span className="text-[11px] text-muted-foreground">下载 {r.downloads} 次</span>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="grid gap-1.5">
-                  <Label>标题</Label>
-                  <Input
-                    value={r.title}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, title: e.target.value } : x)))
-                    }
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>分类</Label>
-                  <Input
-                    value={r.category}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, category: e.target.value } : x)))
-                    }
-                  />
-                </div>
-                <div className="grid gap-1.5 sm:col-span-2">
-                  <Label>描述</Label>
-                  <Textarea
-                    value={r.description}
-                    rows={2}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, description: e.target.value } : x)))
-                    }
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>大小显示(如 12.4 MB)</Label>
-                  <Input
-                    value={r.size ?? ''}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, size: e.target.value } : x)))
-                    }
-                    placeholder="12.4 MB"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>标签(逗号分隔)</Label>
-                  <Input
-                    value={r.tags.join(', ')}
-                    onChange={(e) =>
-                      setResources(
-                        resources.map((x) =>
-                          x.id === r.id
-                            ? {
-                                ...x,
-                                tags: e.target.value
-                                  .split(/[,，]/)
-                                  .map((t) => t.trim())
-                                  .filter(Boolean),
-                              }
-                            : x
-                        )
-                      )
-                    }
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>上传文件路径(/uploads/...)</Label>
-                  <Input
-                    value={r.file ?? ''}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, file: e.target.value } : x)))
-                    }
-                    placeholder="先在资产页上传,再填入路径"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>外部下载链接(可选)</Label>
-                  <Input
-                    value={r.externalUrl ?? ''}
-                    onChange={(e) =>
-                      setResources(resources.map((x) => (x.id === r.id ? { ...x, externalUrl: e.target.value } : x)))
-                    }
-                    placeholder="https://…(优先于文件)"
-                  />
-                </div>
-              </div>
-            </Card>
-          ))}
-          <div className="flex justify-end">
-            <Button onClick={() => save('resources')} disabled={saving}>
-              <Save />
-              保存资源
-            </Button>
-          </div>
         </TabsContent>
       </Tabs>
     </div>
