@@ -10,7 +10,8 @@ export async function GET(context: APIContext) {
     title: config.title,
     description: config.description,
     site:
-      process.env.SITE_URL ?? context.site?.toString() ?? 'https://example.com',
+      // 注意用 || 而非 ??:Actions 未配置 vars.SITE_URL 时 env 是空字符串,?? 不兑底
+      process.env.SITE_URL || context.site?.toString() || 'https://example.com',
     items: posts.map((post) => ({
       title: post.title,
       description: post.description,
