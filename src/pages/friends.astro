@@ -1,7 +1,6 @@
 ---
 /** 友链页:展示 + 申请登记(动态版实时,静态版 mailto 降级) */
 import BaseLayout from '../layouts/BaseLayout.astro'
-import EmptyState from '../components/ui/EmptyState.astro'
 import FriendsWallpaper from '../components/layout/FriendsWallpaper.astro'
 import { getSiteFriends } from '../lib/content/site-friends'
 import { getSiteConfig } from '../lib/config'
@@ -33,12 +32,8 @@ const config = getSiteConfig()
     </header>
 
     {
-      friends.length === 0 ? (
-        <EmptyState
-          title="还没有友链"
-          description="想交换友链的话,点右上角申请吧"
-        />
-      ) : (
+      // 无友链时不渲染空状态卡片,让主题壁纸完整露出(申请入口在页头按钮)
+      friends.length > 0 && (
         <div class="friend-wall">
           {friends.map((f) => (
             <a
