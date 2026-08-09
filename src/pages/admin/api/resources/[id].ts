@@ -10,6 +10,10 @@ import {
 
 export const prerender = !isServer
 
+export function getStaticPaths() {
+  return []
+}
+
 export const DELETE: APIRoute = ({ params }) => {
   if (!isServer)
     return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })

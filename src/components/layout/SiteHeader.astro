@@ -8,7 +8,9 @@ interface Props {
 
 const { active } = Astro.props
 const config = getSiteConfig()
-const current = active ?? Astro.url.pathname
+// 静态部署时 URL 常带尾斜杠(/friends/),与导航配置(/friends)比较前归一化,
+// 否则非首页全部丢失 active 高亮,加载时的导航滚动居中也会被跳过
+const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
 ---
 
 <header class="site-header" data-motion-group="topbar">

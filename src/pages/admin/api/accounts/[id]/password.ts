@@ -10,6 +10,10 @@ import { userGetById } from '../../../../../lib/admin/db'
 
 export const prerender = !isServer
 
+export function getStaticPaths() {
+  return []
+}
+
 export const PUT: APIRoute = async ({ request, params }) => {
   if (!isServer)
     return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })

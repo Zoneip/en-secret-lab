@@ -11,16 +11,14 @@ import EmptyState from '../../components/ui/EmptyState.astro'
 
 export const getStaticPaths = (async () => {
   const posts = await getAllPosts()
+  // 静态构建枚举路径;SSR 下 getStaticPaths 不执行,数据由页面自算
   return aggregateByKey(posts, 'category').map((cat) => ({
     params: { category: cat.name },
-    props: {
-      category: cat.name,
-      posts: posts.filter((p) => p.category === cat.name),
-    },
   }))
 }) satisfies GetStaticPaths
 
-const { category, posts } = Astro.props
+const category = Astro.params.category!
+const posts = (await getAllPosts()).filter((p) => p.category === category)
 const columns = await getSiteColumns()
 const columnTheme = columns.find((c) => c.category === category)?.theme
 ---

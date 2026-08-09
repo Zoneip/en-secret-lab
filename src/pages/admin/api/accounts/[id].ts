@@ -14,6 +14,10 @@ import {
 
 export const prerender = !isServer
 
+export function getStaticPaths() {
+  return []
+}
+
 const USERNAME_RE = /^[a-zA-Z0-9_-]{3,32}$/
 const STATUSES = ['active', 'banned'] as const
 

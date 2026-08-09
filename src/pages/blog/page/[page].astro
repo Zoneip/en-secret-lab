@@ -14,21 +14,18 @@ import { PAGE_SIZE } from '../index.astro'
 export async function getStaticPaths() {
   const all = await getAllPosts()
   const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
-  return Array.from({ length: totalPages - 1 }, (_, i) => {
-    const page = i + 2
-    return {
-      params: { page: String(page) },
-      props: {
-        page,
-        totalPages,
-        posts: all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-      },
-    }
-  })
+  // 静态构建枚举第 2 页起的路径;props 仅作数据传递,SSR 下页面自算
+  return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    params: { page: String(i + 2) },
+  }))
 }
 
+// SSR 渲染不会调用 getStaticPaths,页面从 URL 参数自算数据,两种模式行为一致
+const page = Number(Astro.params.page)
+const all = await getAllPosts()
+const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
+const posts = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 const config = getSiteConfig()
-const { page, totalPages, posts } = Astro.props
 ---
 
 <BaseLayout
