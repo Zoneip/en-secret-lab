@@ -8,7 +8,7 @@ import type { GetStaticPaths, MarkdownHeading } from 'astro'
 import type { AstroComponentFactory } from 'astro/dist/runtime/server/index.js'
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { formatDate, readingTime } from '../../lib/utils'
+import { formatDate, readingTime, withBase } from '../../lib/utils'
 import { isServer } from '../../lib/utils'
 import { getAllPosts, getPostContent } from '../../lib/content/data'
 import { renderBody } from '../../lib/content/render'
@@ -69,7 +69,7 @@ const words = content.body
   <article class="post page-enter container">
     <header class="post-head">
       <div class="post-meta">
-        <Chip href={`/categories/${encodeURIComponent(post.category)}`}
+        <Chip href={withBase(`/categories/${encodeURIComponent(post.category)}`)}
           >{post.category}</Chip
         >
         <time datetime={post.pubDate.toISOString()}
@@ -82,7 +82,7 @@ const words = content.body
       <div class="tags">
         {
           post.tags.map((tag) => (
-            <a class="chip" href={`/tags/${encodeURIComponent(tag)}`}>
+            <a class="chip" href={withBase(`/tags/${encodeURIComponent(tag)}`)}>
               #{tag}
             </a>
           ))
@@ -117,12 +117,12 @@ const words = content.body
             <span class="series-nav-links">
               {[
                 seriesPrev && (
-                  <a href={`/blog/${seriesPrev.slug}`} class="series-link">
+                  <a href={withBase(`/blog/${seriesPrev.slug}`)} class="series-link">
                     上一篇
                   </a>
                 ),
                 seriesNext && (
-                  <a href={`/blog/${seriesNext.slug}`} class="series-link">
+                  <a href={withBase(`/blog/${seriesNext.slug}`)} class="series-link">
                     下一篇
                   </a>
                 ),
@@ -137,7 +137,7 @@ const words = content.body
     <nav class="adjacent" aria-label="上下篇文章">
       {
         prev ? (
-          <a class="adj card" href={`/blog/${prev.slug}`}>
+          <a class="adj card" href={withBase(`/blog/${prev.slug}`)}>
             <span class="adj-label">上一篇</span>
             <span class="adj-title">{prev.title}</span>
           </a>
@@ -147,7 +147,7 @@ const words = content.body
       }
       {
         next ? (
-          <a class="adj card adj-next" href={`/blog/${next.slug}`}>
+          <a class="adj card adj-next" href={withBase(`/blog/${next.slug}`)}>
             <span class="adj-label">下一篇</span>
             <span class="adj-title">{next.title}</span>
           </a>

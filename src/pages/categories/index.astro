@@ -4,6 +4,7 @@ import { getAllPosts } from '../../lib/content/data'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 import { aggregateByKey } from '../../lib/content/taxonomy'
+import { withBase } from '../../lib/utils'
 
 const posts = await getAllPosts()
 const categories = aggregateByKey(posts, 'category')
@@ -21,7 +22,7 @@ const categories = aggregateByKey(posts, 'category')
         categories.map((c) => (
           <a
             class="cat-card card"
-            href={`/categories/${encodeURIComponent(c.name)}`}
+            href={withBase(`/categories/${encodeURIComponent(c.name)}`)}
           >
             <span class="cat-name">{c.name}</span>
             <span class="cat-count">{c.count} 篇</span>

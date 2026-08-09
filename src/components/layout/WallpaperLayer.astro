@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getTheme } from '../../lib/theme/presets'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   theme: string
@@ -52,7 +53,7 @@ const animSvg = (name: string) => {
         >
           <div
             class="wl-static"
-            style={`background-image:url(/wallpapers/${SCENE[id].light}-bg.svg)`}
+            style={`background-image:url(${withBase(`/wallpapers/${SCENE[id].light}-bg.svg`)})`}
           />
           <div class="wl-anim-layer" set:html={animSvg(SCENE[id].light)} />
         </div>
@@ -63,7 +64,7 @@ const animSvg = (name: string) => {
         >
           <div
             class="wl-static"
-            style={`background-image:url(/wallpapers/${SCENE[id].dark}-bg.svg)`}
+            style={`background-image:url(${withBase(`/wallpapers/${SCENE[id].dark}-bg.svg`)})`}
           />
           <div class="wl-anim-layer" set:html={animSvg(SCENE[id].dark)} />
         </div>

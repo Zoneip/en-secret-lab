@@ -1,6 +1,7 @@
 ---
 /** 标签墙:像素风格,权重 3 档(大/中/小),纯 CSS 零 JS,SSR 直出 */
 import { aggregateByKey } from '../../lib/content/taxonomy'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   posts: Array<{ tags?: string[] }>
@@ -22,7 +23,7 @@ const tier = (count: number) =>
   {
     tags.map((t) => (
       <a
-        href={`/tags/${encodeURIComponent(t.name)}`}
+        href={withBase(`/tags/${encodeURIComponent(t.name)}`)}
         class={`tag-chip ${tier(t.count)}`}
         title={`${t.name} · ${t.count} 篇`}
       >

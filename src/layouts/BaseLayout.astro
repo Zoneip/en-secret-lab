@@ -18,7 +18,7 @@ import '../assets/motion/keyframes/topbar.css'
 import '../assets/motion/keyframes/ambient.css'
 
 import { getSiteConfig, getThemeOverrides } from '../lib/config'
-import { isServer } from '../lib/utils'
+import { isServer, withBase } from '../lib/utils'
 import { buildMeta } from '../lib/seo'
 import { absoluteUrl } from '../lib/utils'
 import { bootScript } from '../lib/theme/prefs'
@@ -84,10 +84,10 @@ const meta = buildMeta({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href={config.favicon.href} type={config.favicon.type} />
+    <link rel="icon" href={withBase(config.favicon.href)} type={config.favicon.type} />
     {
       config.favicon.appleTouchHref && (
-        <link rel="apple-touch-icon" href={config.favicon.appleTouchHref} />
+        <link rel="apple-touch-icon" href={withBase(config.favicon.appleTouchHref)} />
       )
     }
     <title>{meta.find((m) => 'title' in m)?.title ?? title}</title>

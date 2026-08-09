@@ -14,6 +14,7 @@ import {
   getSiteAbout,
 } from '../lib/content/site-content'
 import { getTheme } from '../lib/theme/presets'
+import { withBase } from '../lib/utils'
 import { wallpaperCss } from '../lib/theme/engine'
 import Mascot from '../components/mascot/Mascot.astro'
 import PostCard from '../components/blog/PostCard.astro'
@@ -106,8 +107,8 @@ const ocTok = (
         <h1>{config.title}</h1>
         <p class="hero-desc">{config.description}</p>
         <div class="hero-actions">
-          <a class="btn" href="/blog">看文章</a>
-          <a class="btn btn-ghost" href="/about">认识伙伴们</a>
+          <a class="btn" href={withBase('/blog')}>看文章</a>
+          <a class="btn btn-ghost" href={withBase('/about')}>认识 伙伴们</a>
         </div>
       </div>
       <div class="hero-mascots" data-motion-group="mascot" aria-hidden="true">
@@ -149,7 +150,7 @@ const ocTok = (
               <a
                 class="column-card"
                 data-motion-group="cards"
-                href={`/${c.id}`}
+                href={withBase(`/${c.id}`)}
                 style={`--oc-color:${col(c.theme)}`}
               >
                 <div class="column-card-head">
@@ -204,7 +205,7 @@ const ocTok = (
     <section class="section">
       <h2 class="section-title">
         最新消息
-        <a class="more underline-tail" href="/blog">全部文章</a>
+        <a class="more underline-tail" href={withBase('/blog')}>全部文章</a>
       </h2>
       <div class="grid">
         {

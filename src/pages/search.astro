@@ -46,7 +46,7 @@ const config = getSiteConfig()
     let index = null
 
     const loadIndex = () =>
-      fetch('/api/search-index.json')
+      fetch(`${import.meta.env.BASE_URL}/api/search-index.json`)
         .then((r) => r.json())
         .then((d) => {
           index = d
@@ -60,7 +60,7 @@ const config = getSiteConfig()
       results.innerHTML = list
         .map(
           (p) => `
-          <a class="result card" href="/blog/${p.slug}">
+          <a class="result card" href="${import.meta.env.BASE_URL}/blog/${p.slug}">
             <span class="result-title">${p.title}</span>
             <span class="result-meta">${p.tags.map((t) => `#${t}`).join(' ')}</span>
           </a>`,

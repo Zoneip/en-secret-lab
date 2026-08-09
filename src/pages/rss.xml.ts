@@ -2,6 +2,7 @@ import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
 import { getAllPosts } from '../lib/content/data'
 import { getSiteConfig } from '../lib/config'
+import { withBase } from '../lib/utils'
 
 export async function GET(context: APIContext) {
   const config = getSiteConfig()
@@ -16,7 +17,8 @@ export async function GET(context: APIContext) {
       title: post.title,
       description: post.description,
       pubDate: post.pubDate,
-      link: `/blog/${post.slug}/`,
+      // 子路径部署时 link 必须带 base 前缀,否则 new URL(link, site) 会丢掉路径
+      link: withBase(`/blog/${post.slug}/`),
       categories: post.tags,
     })),
     customData: `<language>zh-CN</language>`,

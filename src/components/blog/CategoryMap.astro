@@ -1,6 +1,7 @@
 ---
 /** 分类总览:像素分类系列卡(卡头 + 系列分组 + 文章列表),纯 SSR 零 JS */
 import { aggregateByKey } from '../../lib/content/taxonomy'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   posts: Array<{
@@ -52,7 +53,7 @@ const trees: Array<{
       <section class="cat-card">
         <a
           class="cat-head"
-          href={`/categories/${encodeURIComponent(tree.name)}`}
+          href={withBase(`/categories/${encodeURIComponent(tree.name)}`)}
         >
           <span class="cat-name">{tree.name}</span>
           <span class="cat-count">{tree.count} 篇</span>
@@ -67,7 +68,7 @@ const trees: Array<{
               <ul class="post-list">
                 {s.posts.map((p) => (
                   <li>
-                    <a class="post-link" href={`/blog/${p.slug}`}>
+                    <a class="post-link" href={withBase(`/blog/${p.slug}`)}>
                       <span class="post-date">{fmtDate(p.pubDate)}</span>
                       <span class="post-title">{p.title}</span>
                     </a>
@@ -80,7 +81,7 @@ const trees: Array<{
             <ul class="post-list">
               {tree.loose.map((p) => (
                 <li>
-                  <a class="post-link" href={`/blog/${p.slug}`}>
+                  <a class="post-link" href={withBase(`/blog/${p.slug}`)}>
                     <span class="post-date">{fmtDate(p.pubDate)}</span>
                     <span class="post-title">{p.title}</span>
                   </a>

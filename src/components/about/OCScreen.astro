@@ -1,6 +1,7 @@
 ---
 /** 关于页 v5 - OC 屏内容组件(配色/壁纸跟随全局主题,无独立背景) */
 import Mascot from '../mascot/Mascot.astro'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   oc: {
@@ -79,7 +80,7 @@ const themeNames: Record<string, string> = {
   </div>
   <footer class="screen-footer">
     <span>© {new Date().getFullYear()} EN · 秘密实验室</span>
-    <a href="/rss.xml">RSS</a>
+    <a href={withBase('/rss.xml')}>RSS</a>
   </footer>
 </section>
 

@@ -2,6 +2,7 @@
 /** 像素风 404:找不到页面啦 */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Mascot from '../components/mascot/Mascot.astro'
+import { withBase } from '../lib/utils'
 
 const themes = ['gray', 'yellow', 'purple', 'white']
 const today = new Date()
@@ -24,8 +25,8 @@ const quote = [
     <h1>页面走丢了</h1>
     <p class="nf-quote">{quote}</p>
     <div class="nf-actions">
-      <a class="btn" href="/">回首页</a>
-      <a class="btn btn-ghost" href="/blog">看文章</a>
+      <a class="btn" href={withBase('/')}>回首页</a>
+      <a class="btn btn-ghost" href={withBase('/blog')}>看文章</a>
     </div>
   </div>
 </BaseLayout>

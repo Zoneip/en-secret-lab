@@ -2,6 +2,12 @@
 
 export const isServer = import.meta.env.ASTRO_MODE === 'server'
 
+/** 站点子路径前缀(部署在 GitHub Pages 子路径时由 ASTRO_BASE 注入,base 为 / 时原样返回) */
+export function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
+  return path.startsWith('/') ? base + path : `${base}/${path}`
+}
+
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',

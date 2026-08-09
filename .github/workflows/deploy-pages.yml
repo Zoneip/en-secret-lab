@@ -29,6 +29,8 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           ASTRO_MODE: static
+          # 子路径部署:GitHub Pages 项目站必须带 base,否则资源全部 404
+          ASTRO_BASE: /en-secret-lab
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist-static

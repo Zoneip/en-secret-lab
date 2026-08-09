@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   enabled?: boolean
@@ -30,14 +31,14 @@ const animSvg = (name: string) => {
     class="fw-base"
     data-fw-light
     data-fw-static
-    style="background-image:url(/wallpapers/friends-shrine-day-bg.svg)"
+    style={`background-image:url(${withBase('/wallpapers/friends-shrine-day-bg.svg')})`}
   >
   </div>
   <div
     class="fw-base"
     data-fw-dark
     data-fw-static
-    style="background-image:url(/wallpapers/friends-shrine-night-bg.svg)"
+    style={`background-image:url(${withBase('/wallpapers/friends-shrine-night-bg.svg')})`}
   >
   </div>
   <div class="fw-anim" data-fw-light set:html={animSvg('friends-shrine-day')} />

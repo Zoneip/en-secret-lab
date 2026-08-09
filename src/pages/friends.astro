@@ -151,7 +151,7 @@ const config = getSiteConfig()
     submit.disabled = true
     const fd = new FormData(form)
     try {
-      const res = await fetch('/api/friend-request', {
+      const res = await fetch(`${import.meta.env.BASE_URL}/api/friend-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

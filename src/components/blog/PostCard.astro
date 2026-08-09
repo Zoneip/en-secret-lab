@@ -1,6 +1,6 @@
 ---
 /** 文章卡片:卡片流单元 */
-import { formatDate } from '../../lib/utils'
+import { formatDate, withBase } from '../../lib/utils'
 import PixelPaw from '../mascot/PixelPaw.astro'
 import { getSiteConfig } from '../../lib/config'
 import { coverFallback } from '../../lib/cover-fallback'
@@ -36,7 +36,7 @@ const fb = coverFallback(category, pixelCover.pattern)
   class="post-card card"
   {...dataMotion ? { 'data-motion-group': 'cards' } : {}}
 >
-  <a href={`/blog/${slug}`} class="post-link" aria-label={title}>
+  <a href={withBase(`/blog/${slug}`)} class="post-link" aria-label={title}>
     {
       coverUrl ? (
         <div class="cover">

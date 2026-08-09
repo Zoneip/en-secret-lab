@@ -2,6 +2,7 @@
 /** 空状态:带像素吉祥物的可爱提示,跟随全局主题自动切换角色,并响应控制台 mascot 配置 */
 import Mascot from '../mascot/Mascot.astro'
 import { getSiteConfig } from '../../lib/config'
+import { withBase } from '../../lib/utils'
 
 interface Props {
   title?: string
@@ -62,7 +63,7 @@ const forcedMascot =
   </div>
   <p class="empty-title">{title}</p>
   <p class="empty-desc">{description}</p>
-  <a class="btn btn-ghost" href="/">回首页</a>
+  <a class="btn btn-ghost" href={withBase('/')}>回首页</a>
 </div>
 
 <style>

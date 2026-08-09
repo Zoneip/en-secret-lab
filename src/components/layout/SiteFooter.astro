@@ -4,6 +4,7 @@
  * 备案信息由控制台"站点设置 → 备案信息"录入
  */
 import { getSiteConfig } from '../../lib/config'
+import { withBase } from '../../lib/utils'
 
 const config = getSiteConfig()
 const year = new Date().getFullYear()
@@ -39,7 +40,7 @@ const hasPolice = Boolean(config.police.trim())
       {config.author} · {config.title}
     </p>
     <p class="meta">
-      <a href="/rss.xml" class="meta-link">RSS</a>
+      <a href={withBase('/rss.xml')} class="meta-link">RSS</a>
       {
         hasIcp && (
           <>

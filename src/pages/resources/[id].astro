@@ -5,7 +5,7 @@
 import type { GetStaticPaths } from 'astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getSiteResources } from '../../lib/content/site-resources'
-import { isServer } from '../../lib/utils'
+import { isServer, withBase } from '../../lib/utils'
 import { getDownloads } from '../../lib/admin/resources-store'
 
 export const getStaticPaths = (async () => {
@@ -44,7 +44,7 @@ const hasFile = Boolean(resource.file || resource.externalUrl)
       </div>
       <div class="dl-row">
         <span class="size">{resource.size ?? '大小未知'}</span>
-        <a class="btn" href={`/api/resource/${resource.id}/download`}>
+        <a class="btn" href={withBase(`/api/resource/${resource.id}/download`)}>
           <svg
             width="18"
             height="18"

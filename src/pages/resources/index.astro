@@ -5,6 +5,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getSiteResources } from '../../lib/content/site-resources'
 import Mascot from '../../components/mascot/Mascot.astro'
+import { withBase } from '../../lib/utils'
 
 const resources = await getSiteResources()
 const categories = [...new Set(resources.map((r) => r.category))]
@@ -30,7 +31,7 @@ const categories = [...new Set(resources.map((r) => r.category))]
     <div class="grid">
       {
         resources.map((r) => (
-          <a class="res-card card" href={`/resources/${r.id}`}>
+          <a class="res-card card" href={withBase(`/resources/${r.id}`)}>
             <div class="res-head">
               <span class="res-icon" aria-hidden="true" />
               <span class="chip">{r.category}</span>
