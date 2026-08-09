@@ -10,7 +10,7 @@
     "gen:themes": "node scripts/gen-theme-css.mjs",
     "validate:content": "node scripts/validate-content.mjs",
     "build": "npm run gen:themes && astro build",
-    "build:static": "npm run gen:themes && ASTRO_MODE=static astro build && node scripts/clean-static.mjs && pagefind --site dist-static",
+    "build:static": "bash scripts/build-static.sh",
     "build:server": "npm run gen:themes && ASTRO_MODE=server astro build",
     "preview": "astro preview",
     "sync": "astro sync",

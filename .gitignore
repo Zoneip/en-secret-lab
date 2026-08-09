@@ -6,6 +6,10 @@ dist-server/
 .astro/
 *.tsbuildinfo
 
+# 静态站增量同步(本地状态,不入库)
+.static-sync-state.json
+.admin-build-tmp/
+
 # 运行时数据(动态版)
 data/*.db
 data/*.db-*
