@@ -1,5 +1,7 @@
 /** 主题引擎:类型定义、三层配置合并、Token 映射 */
 
+import { withBase } from '../utils'
+
 export interface ColorTokens {
   bg: string
   surface: string
@@ -79,10 +81,12 @@ export function resolveTheme(
   }
 }
 
-/** 解析壁纸源字符串为可用的 background 值 */
+/** 解析壁纸源字符串为可用的 background 值(路径带子路径前缀) */
 export function wallpaperCss(value: string): string {
   if (value.startsWith('gradient:')) return value.slice('gradient:'.length)
-  if (value.startsWith('url:')) return `url(${value.slice('url:'.length)})`
+  if (value.startsWith('url:')) {
+    return `url(${withBase(value.slice('url:'.length))})`
+  }
   return value
 }
 

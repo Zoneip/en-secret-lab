@@ -1,6 +1,7 @@
 /** 主题覆盖 → 运行时 CSS 变量(控制台修改即时生效,无需重建)
  * 使用 :root:root 提高特异性,确保覆盖内置生成的 theme-tokens CSS */
 import type { ThemeOverride } from './engine'
+import { withBase } from '../utils'
 
 /** topbar 配置 → CSS 变量声明(与 scripts/gen-theme-css.mjs 的 topbarVars 保持一致) */
 export function topbarVars(
@@ -81,7 +82,7 @@ export function themeOverrideCss(
         const cssVal = src.startsWith('gradient:')
           ? src.slice('gradient:'.length)
           : src.startsWith('url:')
-            ? `url(${src.slice('url:'.length)})`
+            ? `url(${withBase(src.slice('url:'.length))})`
             : src
         rules.push(
           `:root:root[data-theme="${themeId}"]{--wallpaper-${mode}-src: ${cssVal};}`,

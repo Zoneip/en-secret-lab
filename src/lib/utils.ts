@@ -4,6 +4,8 @@ export const isServer = import.meta.env.ASTRO_MODE === 'server'
 
 /** 站点子路径前缀(部署在 GitHub Pages 子路径时由 ASTRO_BASE 注入,base 为 / 时原样返回) */
 export function withBase(path: string): string {
+  // 完整 URL/data URI/锚点无需加前缀
+  if (/^(https?:|data:|#)/.test(path)) return path
   const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
   return path.startsWith('/') ? base + path : `${base}/${path}`
 }

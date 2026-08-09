@@ -5,8 +5,7 @@
  *  仅当前主题+模式渲染(其余 display:none,零动画开销)
  */
 import { readFileSync } from 'node:fs'
-import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
 import { getTheme } from '../../lib/theme/presets'
 import { withBase } from '../../lib/utils'
 
@@ -16,7 +15,9 @@ interface Props {
 }
 
 const { theme: fallbackTheme, enabled = true } = Astro.props
-const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
+// 构建/运行时工作目录恒为项目根(dev=src,server=dist-server/server,static=dist-static 层级不同,
+// 用 import.meta.url 上溯会因构建产物目录结构差异指向错误位置导致动画层读空)
+const root = process.cwd()
 const themeIds = ['gray', 'yellow', 'purple', 'white', 'friends'] as const
 const SCENE: Record<string, { light: string; dark: string }> = {
   gray: { light: 'gray-tech-light', dark: 'gray-tech-dark' },
