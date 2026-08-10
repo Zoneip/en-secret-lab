@@ -44,9 +44,16 @@ createServer(async (req, res) => {
     try {
       data = await readFile(file)
     } catch {
-      data = await readFile(join(ROOT, '404.html'))
-      res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
-      return res.end(data)
+      // 无尾斜杠的目录路径(/knowledge → knowledge/index.html)
+      try {
+        data = await readFile(join(ROOT, pathname, 'index.html'))
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+        return res.end(data)
+      } catch {
+        data = await readFile(join(ROOT, '404.html'))
+        res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
+        return res.end(data)
+      }
     }
     res.writeHead(200, { 'Content-Type': MIME[extname(file)] || 'application/octet-stream' })
     res.end(data)
