@@ -138,6 +138,12 @@ const animSvg = (name: string) => {
     background-size: cover;
     background-position: center;
   }
+  /* 手机竖屏优先显示壁纸上半部,避免主体(天空/场景中心)被过度裁切 */
+  @media (max-width: 768px) {
+    .wl-static {
+      background-position: top center;
+    }
+  }
   .wl-anim-layer {
     position: absolute;
     inset: 0;

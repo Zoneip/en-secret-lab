@@ -1,5 +1,5 @@
 ---
-/** 站点头部:Logo + 导航 + 搜索入口 */
+/** 站点头部:Logo + 桌面横向导航/移动端抽屉导航 + 搜索入口 */
 import { getSiteConfig } from '../../lib/config'
 import { withBase } from '../../lib/utils'
 
@@ -12,6 +12,19 @@ const config = getSiteConfig()
 // 静态部署时 URL 常带尾斜杠(/friends/),与导航配置(/friends)比较前归一化,
 // 否则非首页全部丢失 active 高亮,加载时的导航滚动居中也会被跳过
 const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
+const iconMap: Record<string, string> = {
+  首页: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  知识: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20',
+  幻想: 'M9.813 15.904 8 18.188 6.188 15.904 3.5 15.188l1.75-3.469L3.5 8.25l3.469-.469L6.188 4.5 8 6.784 9.813 4.5l1.718 3.281 3.469.469-2.656 2.656 1.219 3.313-3.469-.656-1.281-.659Z',
+  思考: 'M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m12.728 0-.707.707M12 12V8m-4 4a4 4 0 0 1 6.4-3.2',
+  记录: 'M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z',
+  文章: 'M12 19l7-7 3 3V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11.172a2 2 0 0 1 1.414.586',
+  标签: 'M7 7h.01M7 3h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z',
+  分类: 'M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z',
+  关于: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+  友链: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',
+}
+const navItems = config.nav.map((item) => ({ ...item, active: current === item.url, icon: iconMap[item.label] || '' }))
 ---
 
 <header class="site-header" data-motion-group="topbar">
@@ -21,16 +34,15 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
       <span class="brand-name">{config.title}</span>
     </a>
 
-    <nav class="nav" aria-label="主导航">
+    <!-- 桌面端横向导航(>= 768px) -->
+    <nav class="nav nav-desktop" aria-label="主导航">
       <ul>
         {
-          config.nav.map((item) => (
+          navItems.map((item) => (
             <li>
-              <a href={withBase(item.url)}
-                class:list={[
-                  'nav-link underline-tail',
-                  { active: current === item.url },
-                ]}
+              <a
+                href={withBase(item.url)}
+                class:list={['nav-link underline-tail', { active: item.active }]}
               >
                 {item.label}
               </a>
@@ -56,7 +68,91 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
         </svg>
         <span class="search-label">搜索</span>
       </a>
+
+      <button
+        class="btn btn-ghost btn-icon menu-toggle"
+        type="button"
+        aria-label="打开导航菜单"
+        aria-expanded="false"
+        aria-controls="nav-drawer"
+        aria-haspopup="dialog"
+      >
+        <svg
+          class="icon-menu"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg
+          class="icon-close"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
+  </div>
+
+  <!-- 移动端抽屉导航 -->
+  <div class="nav-drawer" id="nav-drawer" aria-hidden="true" aria-modal="true" role="dialog" aria-label="站点导航">
+    <div class="nav-drawer-inner">
+      <div class="drawer-header">
+        <span class="drawer-title">菜单</span>
+        <button class="btn btn-ghost btn-icon drawer-close" type="button" aria-label="关闭导航菜单">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <nav class="nav nav-mobile" aria-label="移动端主导航">
+        <ul>
+          {
+            navItems.map((item) => (
+              <li>
+                <a
+                  href={withBase(item.url)}
+                  class:list={['nav-link nav-link--mobile', { active: item.active }]}
+                >
+                  {item.icon && (
+                    <svg
+                      class="nav-link-icon"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      set:html={item.icon}
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+    <div class="nav-drawer-backdrop" aria-hidden="true"></div>
   </div>
 </header>
 
@@ -86,7 +182,6 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
       inset 0 3px 0 0 var(--topbar-stripe, var(--primary)),
       inset 0 -4px 0 -3px color-mix(in srgb, var(--primary) 30%, transparent);
     image-rendering: pixelated;
-    /* 装饰层(主题绑定):accent 渐变线 + ornament 像素装饰 */
   }
   .site-header::before {
     content: '';
@@ -112,6 +207,7 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
   .header-inner {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
     height: var(--topbar-height, var(--header-h));
   }
@@ -182,7 +278,167 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
     font-size: 0.9rem;
   }
 
-  @media (max-width: 640px) {
+  /* 汉堡按钮:默认隐藏,移动端显示 */
+  .menu-toggle {
+    display: none;
+  }
+  .menu-toggle .icon-close {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] .icon-menu {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] .icon-close {
+    display: block;
+  }
+
+  /* 抽屉基础样式:用 visibility/opacity 做开关,display 保持 flex 以保留滑入动画 */
+  .nav-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.28s var(--ease-soft),
+      visibility 0.28s var(--ease-soft);
+  }
+  .nav-drawer-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-drawer-inner {
+    width: min(360px, 88vw);
+    height: 100%;
+    /* 与顶部栏同材质:主题色条纹 + 半透明 + 模糊,融入整体 */
+    background-color: var(
+      --topbar-bg,
+      color-mix(in srgb, var(--bg) 80%, transparent)
+    );
+    background-image:
+      var(
+        --topbar-tint,
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--primary) 16%, transparent),
+          color-mix(in srgb, var(--accent) 7%, transparent) 100%
+        )
+      ),
+      var(--topbar-grad, none);
+    backdrop-filter: blur(var(--topbar-blur, 14px));
+    border-left: 2px solid var(--border-strong);
+    box-shadow:
+      inset 0 3px 0 0 var(--topbar-stripe, var(--primary)),
+      -8px 0 24px color-mix(in srgb, var(--primary) 18%, transparent);
+    transform: translateX(100%);
+    transition: transform 0.32s var(--ease-spring);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative;
+    z-index: 42;
+  }
+  .nav-drawer-open .nav-drawer-inner {
+    transform: translateX(0);
+  }
+  .nav-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    opacity: 0;
+    transition: opacity 0.28s var(--ease-soft);
+    z-index: 41;
+  }
+  .nav-drawer-open .nav-drawer-backdrop {
+    opacity: 1;
+  }
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    border-bottom: 2px solid var(--border-strong);
+  }
+  .drawer-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--fg);
+    letter-spacing: 0.02em;
+  }
+  .drawer-close {
+    padding: 8px;
+  }
+  .nav-link-icon {
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+  .nav-mobile {
+    flex: 1;
+    padding: 16px 14px 20px;
+  }
+  .nav-mobile ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav-link--mobile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 18px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    border-left: 4px solid transparent;
+    color: var(--fg);
+    background: color-mix(in srgb, var(--primary) 8%, transparent);
+    box-shadow: inset 0 -2px 0 0
+      color-mix(in srgb, var(--primary) 18%, transparent);
+    transition:
+      background 0.2s var(--ease-soft),
+      border-color 0.2s var(--ease-soft),
+      transform 0.15s var(--ease-spring);
+  }
+  .nav-link--mobile:hover {
+    background: var(--primary-soft);
+    border-left-color: var(--primary);
+    transform: translateX(4px);
+  }
+  .nav-link--mobile.active {
+    background: var(--primary);
+    color: var(--primary-fg, #ffffff);
+    border-color: color-mix(in srgb, var(--primary) 80%, #000);
+    border-left-color: var(--accent);
+    box-shadow: inset -2px -2px 0 0
+      color-mix(in srgb, var(--primary) 65%, #1a1a1a);
+  }
+
+  /* === 桌面端(>= 768px):横向导航 + 隐藏汉堡 === */
+  @media (min-width: 768px) {
+    .nav-desktop {
+      display: block;
+    }
+    .menu-toggle {
+      display: none !important;
+    }
+    .nav-drawer {
+      display: none !important;
+    }
+  }
+
+  /* === 平板/手机端(< 768px):汉堡 + 抽屉 === */
+  @media (max-width: 767px) {
+    .nav-desktop {
+      display: none;
+    }
+    .menu-toggle {
+      display: inline-flex;
+    }
     .search-label {
       display: none;
     }
@@ -190,17 +446,84 @@ const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
       padding: 9px;
     }
     .brand-name {
-      max-width: 40vw;
+      max-width: 36vw;
       overflow: hidden;
       text-overflow: ellipsis;
     }
   }
+
+  /* 小屏手机额外收紧 */
+  @media (max-width: 640px) {
+    .brand-name {
+      max-width: 28vw;
+    }
+  }
+
+  /* 抽屉打开时锁定 body 滚动,但不改变布局造成跳动 */
+  :global(body.nav-drawer-body-locked) {
+    overflow: hidden;
+    touch-action: none;
+  }
 </style>
 
 <script is:inline>
-  // 导航自适应滚动:让 active 项尽量居中,顶到边界就停
+  // 移动端抽屉导航控制
   ;(function () {
-    const ul = document.querySelector('.site-header .nav ul')
+    const toggle = document.querySelector('.menu-toggle')
+    const drawer = document.getElementById('nav-drawer')
+    const closeBtn = document.querySelector('.drawer-close')
+    const backdrop = drawer ? drawer.querySelector('.nav-drawer-backdrop') : null
+    const mobileLinks = drawer ? drawer.querySelectorAll('.nav-link--mobile') : []
+
+    if (!toggle || !drawer) return
+
+    function openDrawer() {
+      drawer.classList.add('nav-drawer-open')
+      toggle.setAttribute('aria-expanded', 'true')
+      drawer.setAttribute('aria-hidden', 'false')
+      // 禁止背景滚动,但不改变 body position,避免页面跳动
+      document.body.classList.add('nav-drawer-body-locked')
+      if (closeBtn) closeBtn.focus()
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('nav-drawer-open')
+      toggle.setAttribute('aria-expanded', 'false')
+      drawer.setAttribute('aria-hidden', 'true')
+      // 恢复滚动
+      document.body.classList.remove('nav-drawer-body-locked')
+      toggle.focus()
+    }
+
+    toggle.addEventListener('click', function () {
+      if (drawer.classList.contains('nav-drawer-open')) {
+        closeDrawer()
+      } else {
+        openDrawer()
+      }
+    })
+
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer)
+    if (backdrop) backdrop.addEventListener('click', closeDrawer)
+
+    mobileLinks.forEach(function (link) {
+      link.addEventListener('click', function () {
+        // 延迟关闭,让导航先触发
+        setTimeout(closeDrawer, 0)
+      })
+    })
+
+    // ESC 关闭
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer.classList.contains('nav-drawer-open')) {
+        closeDrawer()
+      }
+    })
+  })()
+
+  // 桌面端导航自适应滚动:让 active 项尽量居中,顶到边界就停
+  ;(function () {
+    const ul = document.querySelector('.nav-desktop .nav ul')
     if (!ul) return
     const links = ul.querySelectorAll('.nav-link')
     const active = ul.querySelector('.nav-link.active')
