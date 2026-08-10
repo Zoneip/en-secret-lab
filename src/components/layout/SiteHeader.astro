@@ -292,20 +292,20 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
     display: block;
   }
 
-  /* 抽屉基础样式:用 visibility/opacity 做开关,display 保持 flex 以保留滑入动画 */
+  /* 全屏抽屉菜单:居中放大展开,不挤压页面布局 */
   .nav-drawer {
     position: fixed;
     inset: 0;
     z-index: 40;
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity 0.28s var(--ease-soft),
-      visibility 0.28s var(--ease-soft);
+      opacity 0.32s var(--ease-soft),
+      visibility 0.32s var(--ease-soft);
   }
   .nav-drawer-open {
     visibility: visible;
@@ -313,7 +313,7 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
     pointer-events: auto;
   }
   .nav-drawer-inner {
-    width: min(360px, 88vw);
+    width: 100%;
     height: 100%;
     /* 与顶部栏同材质:主题色条纹 + 半透明 + 模糊,融入整体 */
     background-color: var(
@@ -331,12 +331,14 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
       ),
       var(--topbar-grad, none);
     backdrop-filter: blur(var(--topbar-blur, 14px));
-    border-left: 2px solid var(--border-strong);
     box-shadow:
       inset 0 3px 0 0 var(--topbar-stripe, var(--primary)),
-      -8px 0 24px color-mix(in srgb, var(--primary) 18%, transparent);
-    transform: translateX(100%);
-    transition: transform 0.32s var(--ease-spring);
+      inset 0 -3px 0 0 var(--topbar-stripe, var(--primary));
+    transform: scale(0.96);
+    opacity: 0;
+    transition:
+      transform 0.32s var(--ease-spring),
+      opacity 0.32s var(--ease-soft);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -344,7 +346,8 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
     z-index: 42;
   }
   .nav-drawer-open .nav-drawer-inner {
-    transform: translateX(0);
+    transform: scale(1);
+    opacity: 1;
   }
   .nav-drawer-backdrop {
     position: absolute;
@@ -379,25 +382,30 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
   }
   .nav-mobile {
     flex: 1;
-    padding: 16px 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px 32px;
   }
   .nav-mobile ul {
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
+    width: 100%;
+    max-width: 420px;
   }
   .nav-link--mobile {
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: center;
+    gap: 16px;
     width: 100%;
-    padding: 16px 18px;
-    font-size: 1.1rem;
-    border-radius: 8px;
+    padding: 18px 24px;
+    font-size: 1.35rem;
+    border-radius: 10px;
     border: 1.5px solid transparent;
-    border-left: 4px solid transparent;
     color: var(--fg);
     background: color-mix(in srgb, var(--primary) 8%, transparent);
-    box-shadow: inset 0 -2px 0 0
+    box-shadow: inset 0 -3px 0 0
       color-mix(in srgb, var(--primary) 18%, transparent);
     transition:
       background 0.2s var(--ease-soft),
@@ -406,14 +414,13 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
   }
   .nav-link--mobile:hover {
     background: var(--primary-soft);
-    border-left-color: var(--primary);
-    transform: translateX(4px);
+    border-color: var(--primary);
+    transform: translateY(-3px);
   }
   .nav-link--mobile.active {
     background: var(--primary);
     color: var(--primary-fg, #ffffff);
     border-color: color-mix(in srgb, var(--primary) 80%, #000);
-    border-left-color: var(--accent);
     box-shadow: inset -2px -2px 0 0
       color-mix(in srgb, var(--primary) 65%, #1a1a1a);
   }
