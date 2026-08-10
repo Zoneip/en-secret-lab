@@ -1,5 +1,5 @@
 ---
-/** 站点头部:Logo + 导航 + 搜索入口 + 移动端抽屉菜单 */
+/** 站点头部:Logo + 导航 + 搜索入口 */
 import { getSiteConfig } from '../../lib/config'
 import { withBase } from '../../lib/utils'
 
@@ -12,10 +12,6 @@ const config = getSiteConfig()
 // 静态部署时 URL 常带尾斜杠(/friends/),与导航配置(/friends)比较前归一化,
 // 否则非首页全部丢失 active 高亮,加载时的导航滚动居中也会被跳过
 const current = (active ?? Astro.url.pathname).replace(/\/+$/, '') || '/'
-const navItems = config.nav.map((item) => ({
-  ...item,
-  active: current === item.url,
-}))
 ---
 
 <header class="site-header" data-motion-group="topbar">
@@ -25,15 +21,16 @@ const navItems = config.nav.map((item) => ({
       <span class="brand-name">{config.title}</span>
     </a>
 
-    <!-- 桌面端横向导航(平板及以上保留) -->
-    <nav class="nav nav-desktop" aria-label="主导航">
+    <nav class="nav" aria-label="主导航">
       <ul>
         {
-          navItems.map((item) => (
+          config.nav.map((item) => (
             <li>
-              <a
-                href={withBase(item.url)}
-                class:list={['nav-link underline-tail', { active: item.active }]}
+              <a href={withBase(item.url)}
+                class:list={[
+                  'nav-link underline-tail',
+                  { active: current === item.url },
+                ]}
               >
                 {item.label}
               </a>
@@ -59,58 +56,7 @@ const navItems = config.nav.map((item) => ({
         </svg>
         <span class="search-label">搜索</span>
       </a>
-
-      <!-- 移动端汉堡按钮 -->
-      <button
-        class="btn btn-ghost menu-toggle"
-        type="button"
-        aria-label="打开导航菜单"
-        aria-expanded="false"
-        aria-controls="nav-drawer"
-      >
-        <svg class="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
     </div>
-  </div>
-
-  <!-- 移动端抽屉导航 -->
-  <div class="nav-drawer" id="nav-drawer" aria-hidden="true">
-    <div class="nav-drawer-inner" role="dialog" aria-modal="true" aria-label="站点导航">
-      <div class="drawer-header">
-        <span class="drawer-title">菜单</span>
-        <button class="btn btn-ghost drawer-close" type="button" aria-label="关闭导航菜单">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <nav class="nav nav-mobile" aria-label="移动端主导航">
-        <ul>
-          {
-            navItems.map((item) => (
-              <li>
-                <a
-                  href={withBase(item.url)}
-                  class:list={['nav-link nav-link--mobile', { active: item.active }]}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </div>
-    <div class="nav-drawer-backdrop" aria-hidden="true"></div>
   </div>
 </header>
 
@@ -121,7 +67,7 @@ const navItems = config.nav.map((item) => ({
     z-index: 30;
     background-color: var(
       --topbar-bg,
-      color-mix(in srgb, var(--bg, #ffffff) 76%, transparent)
+      color-mix(in srgb, var(--bg) 76%, transparent)
     );
     background-image:
       var(
@@ -236,117 +182,6 @@ const navItems = config.nav.map((item) => ({
     font-size: 0.9rem;
   }
 
-  /* 移动端汉堡按钮默认隐藏 */
-  .menu-toggle {
-    display: none;
-    padding: 8px;
-  }
-  .menu-toggle .icon-close,
-  .menu-toggle[aria-expanded='true'] .icon-menu {
-    display: none;
-  }
-  .menu-toggle[aria-expanded='true'] .icon-close {
-    display: block;
-  }
-
-  /* 移动端抽屉导航(默认隐藏) */
-  .nav-drawer {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: none;
-    pointer-events: none;
-  }
-  .nav-drawer[data-open='true'] {
-    display: block;
-    pointer-events: auto;
-  }
-  .nav-drawer-inner {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(320px, 85vw);
-    height: 100vh;
-    height: 100dvh;
-    padding: 16px;
-    background-color: var(
-      --topbar-bg,
-      color-mix(in srgb, var(--bg, #ffffff) 86%, transparent)
-    );
-    background-image:
-      var(
-        --topbar-tint,
-        linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--primary) 16%, transparent),
-          color-mix(in srgb, var(--accent) 7%, transparent) 100%
-        )
-      ),
-      var(--topbar-grad, none);
-    backdrop-filter: blur(var(--topbar-blur, 14px));
-    border-left: 2px solid var(--border-strong);
-    box-shadow:
-      inset 0 4px 0 0 var(--topbar-stripe, var(--primary)),
-      -8px 0 24px rgba(0, 0, 0, 0.12);
-    transform: translateX(100%);
-    transition: transform 0.3s var(--ease-soft);
-    overflow-y: auto;
-  }
-  .nav-drawer[data-open='true'] .nav-drawer-inner {
-    transform: translateX(0);
-  }
-  .nav-drawer-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    transition: opacity 0.3s var(--ease-soft);
-  }
-  .nav-drawer[data-open='true'] .nav-drawer-backdrop {
-    opacity: 1;
-  }
-  .drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .drawer-title {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    color: var(--fg);
-  }
-  .drawer-close {
-    padding: 6px;
-  }
-  .nav-mobile ul {
-    flex-direction: column;
-    gap: 8px;
-    overflow-x: visible;
-  }
-  .nav-link--mobile {
-    display: block;
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 1rem;
-    text-align: left;
-    border-radius: 6px;
-  }
-
-  /* 响应式断点:768px 以下切换为移动端抽屉 */
-  @media (max-width: 768px) {
-    .nav-desktop {
-      display: none;
-    }
-    .menu-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
   @media (max-width: 640px) {
     .search-label {
       display: none;
@@ -363,56 +198,30 @@ const navItems = config.nav.map((item) => ({
 </style>
 
 <script is:inline>
+  // 导航自适应滚动:让 active 项尽量居中,顶到边界就停
   ;(function () {
-    // 桌面端导航 active 项居中(仅桌面端 ul 可见时)
-    const ul = document.querySelector('.site-header .nav-desktop ul')
-    if (ul) {
-      const links = ul.querySelectorAll('.nav-link')
-      const active = ul.querySelector('.nav-link.active')
-      const scrollToLink = function (link, smooth) {
-        const ulRect = ul.getBoundingClientRect()
-        const linkRect = link.getBoundingClientRect()
-        const linkLeftInUl = linkRect.left - ulRect.left + ul.scrollLeft
-        const target = linkLeftInUl - (ul.clientWidth - link.offsetWidth) / 2
-        const max = ul.scrollWidth - ul.clientWidth
-        ul.scrollTo({
-          left: Math.max(0, Math.min(max, target)),
-          behavior: smooth ? 'smooth' : 'auto',
-        })
-      }
-      if (active) scrollToLink(active, true)
-      links.forEach(function (link) {
-        link.addEventListener('click', function () {
-          scrollToLink(link, false)
-        })
+    const ul = document.querySelector('.site-header .nav ul')
+    if (!ul) return
+    const links = ul.querySelectorAll('.nav-link')
+    const active = ul.querySelector('.nav-link.active')
+
+    const scrollToLink = function (link, smooth) {
+      const ulRect = ul.getBoundingClientRect()
+      const linkRect = link.getBoundingClientRect()
+      const linkLeftInUl = linkRect.left - ulRect.left + ul.scrollLeft
+      const target = linkLeftInUl - (ul.clientWidth - link.offsetWidth) / 2
+      const max = ul.scrollWidth - ul.clientWidth
+      ul.scrollTo({
+        left: Math.max(0, Math.min(max, target)),
+        behavior: smooth ? 'smooth' : 'auto',
       })
     }
 
-    // 移动端抽屉导航
-    const header = document.querySelector('.site-header')
-    const toggle = header?.querySelector('.menu-toggle')
-    const drawer = header?.querySelector('.nav-drawer')
-    const closeBtn = header?.querySelector('.drawer-close')
-    const backdrop = header?.querySelector('.nav-drawer-backdrop')
-    const mobileLinks = header?.querySelectorAll('.nav-mobile a')
-
-    function setOpen(open) {
-      if (!toggle || !drawer) return
-      toggle.setAttribute('aria-expanded', String(open))
-      drawer.setAttribute('data-open', String(open))
-      drawer.setAttribute('aria-hidden', String(!open))
-      document.body.style.overflow = open ? 'hidden' : ''
-    }
-
-    toggle?.addEventListener('click', () => setOpen(true))
-    closeBtn?.addEventListener('click', () => setOpen(false))
-    backdrop?.addEventListener('click', () => setOpen(false))
-    mobileLinks?.forEach((link) => link.addEventListener('click', () => setOpen(false)))
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && drawer?.getAttribute('data-open') === 'true') {
-        setOpen(false)
-      }
+    if (active) scrollToLink(active, true)
+    links.forEach(function (link) {
+      link.addEventListener('click', function () {
+        scrollToLink(link, false)
+      })
     })
   })()
 </script>

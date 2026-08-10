@@ -113,9 +113,6 @@ const animSvg = (name: string) => {
   html[data-theme='friends'][data-mode='dark']
     .wallpaper-base[data-wallpaper-theme='friends'][data-wallpaper-dark] {
     display: block;
-  }
-  /* 主题切换时启用淡入动画(首次加载不播放,避免首屏壁纸淡入造成顶部栏背景闪烁) */
-  html.anim-theme .wallpaper-base {
     animation: wl-fade-in 0.45s var(--ease-soft) both;
   }
   /* 兜底:JS 未运行 */
@@ -140,12 +137,6 @@ const animSvg = (name: string) => {
     inset: 0;
     background-size: cover;
     background-position: center;
-  }
-  /* 手机竖屏优先显示壁纸上半部,避免主体被过度裁切 */
-  @media (max-width: 768px) {
-    .wl-static {
-      background-position: top center;
-    }
   }
   .wl-anim-layer {
     position: absolute;

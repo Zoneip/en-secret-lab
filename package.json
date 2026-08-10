@@ -12,7 +12,6 @@
     "build": "npm run gen:themes && astro build",
     "build:static": "bash scripts/build-static.sh",
     "build:server": "npm run gen:themes && ASTRO_MODE=server astro build",
-    "serve:static": "node scripts/serve-static.mjs",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
