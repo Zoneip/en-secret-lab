@@ -11,6 +11,7 @@ export default defineConfig(
       'dist-static/**',
       'dist-server/**',
       '.astro/**',
+      '.vitest-tmp/**',
       'node_modules/**',
       'src/styles/theme-tokens.generated.css',
       'public/vendor/**',
@@ -33,7 +34,18 @@ export default defineConfig(
   {
     files: ['scripts/**/*.mjs', 'astro.config.mjs', 'vitest.config.ts'],
     languageOptions: {
-      globals: { console: 'readonly', process: 'readonly' },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        // Node 18+ 全局对象(no-undef 需显式声明)
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
+        fetch: 'readonly',
+        Buffer: 'readonly',
+      },
     },
   },
   {

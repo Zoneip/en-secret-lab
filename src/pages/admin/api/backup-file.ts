@@ -40,11 +40,13 @@ export const GET: APIRoute = ({ url }) => {
   }
   const file = backupFile(kind, name)
   if (!file) return new Response('文件不存在', { status: 404 })
+  // 净化文件名,防止响应头注入(只保留安全字符)
+  const safeName = name.replace(/[^a-zA-Z0-9._-]/g, '_')
   const stream = createReadStream(file)
   return new Response(stream as unknown as BodyInit, {
     headers: {
       'Content-Type': 'application/gzip',
-      'Content-Disposition': `attachment; filename="${name}"`,
+      'Content-Disposition': `attachment; filename="${safeName}"`,
       'Cache-Control': 'no-store',
     },
   })

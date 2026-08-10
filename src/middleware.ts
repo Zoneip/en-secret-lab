@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs'
 import { extname } from 'node:path'
 import { defineMiddleware } from 'astro:middleware'
 import { isServer } from './lib/utils'
-import { SESSION_COOKIE, isAuthed } from './lib/admin/auth'
+import { SESSION_COOKIE, getSessionUser } from './lib/admin/auth'
 import { assetFileOnDisk, MIME_BY_EXT } from './lib/admin/assets'
 
 const PUBLIC_ADMIN = new Set([
@@ -18,17 +18,13 @@ const PUBLIC_ADMIN = new Set([
   '/admin/api/login',
   '/admin/api/logout',
 ])
-const FORM_LIKE = [
-  'application/x-www-form-urlencoded',
-  'multipart/form-data',
-  'text/plain',
-]
 const MUTATING = ['POST', 'PUT', 'PATCH', 'DELETE']
 
 /**
- * 同源校验:浏览器发起的跨站表单请求会被 Origin 头标记。
+ * 同源校验:浏览器跨站请求会携带 Origin 头。
  * 比较 hostname(忽略端口,避免 Astro 内置检查的端口丢失误判),
  * 无 Origin 头(非浏览器/同站表单)放行。
+ * 覆盖所有 mutating 请求(含 JSON API),不依赖 SameSite cookie 单兵作战
  */
 function isSameOrigin(request: Request): boolean {
   const origin = request.headers.get('origin')
@@ -45,17 +41,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const url = new URL(context.request.url)
 
-  // CSRF 校验(替代 Astro 内置 checkOrigin)
-  if (MUTATING.includes(context.request.method)) {
-    const ct = context.request.headers.get('content-type')?.toLowerCase() ?? ''
-    if (
-      FORM_LIKE.some((t) => ct.includes(t)) &&
-      !isSameOrigin(context.request)
-    ) {
-      return new Response('Cross-site POST form submissions are forbidden', {
-        status: 403,
-      })
-    }
+  // CSRF 校验(替代 Astro 内置 checkOrigin):所有 mutating 请求均要求同源
+  if (MUTATING.includes(context.request.method) && !isSameOrigin(context.request)) {
+    return new Response('Cross-site mutating requests are forbidden', {
+      status: 403,
+    })
   }
 
   // 上传资产静态服务
@@ -73,19 +63,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
     })
   }
 
-  // admin 守卫
+  // admin 守卫:仅站主(owner)可访问,访客会话一律拒绝(防越权)
   if (url.pathname.startsWith('/admin') && !PUBLIC_ADMIN.has(url.pathname)) {
     const token = context.cookies.get(SESSION_COOKIE)?.value
-    const authed = isAuthed(token)
+    const user = getSessionUser(token)
+    const isOwner = user?.role === 'owner'
     const isApi = url.pathname.startsWith('/admin/api')
     if (isApi) {
-      if (!authed) {
+      if (!isOwner) {
         return new Response(JSON.stringify({ error: '未登录' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json' },
         })
       }
-    } else if (!authed) {
+    } else if (!isOwner) {
       return context.redirect('/admin/login', 302)
     }
   }

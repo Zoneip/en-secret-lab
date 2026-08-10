@@ -9,6 +9,10 @@ import {
   ensureOwnerAccount,
   verifyLogin,
   createSession,
+  clientIp,
+  loginBlocked,
+  recordLoginFailure,
+  clearLoginFailures,
 } from '../../../lib/admin/auth'
 
 export const prerender = !isServer
@@ -17,6 +21,13 @@ export const POST: APIRoute = async ({ request }) => {
   if (!isServer)
     return new Response(JSON.stringify({ error: '不可用' }), { status: 404 })
   ensureOwnerAccount()
+  const ip = clientIp(request)
+  if (loginBlocked(ip)) {
+    return new Response(
+      JSON.stringify({ error: '尝试次数过多,请稍后再试' }),
+      { status: 429 },
+    )
+  }
   const body = (await request.json().catch(() => null)) as {
     username?: string
     password?: string
@@ -28,11 +39,13 @@ export const POST: APIRoute = async ({ request }) => {
   }
   const result = verifyLogin(body.username, body.password)
   if (!result.ok) {
+    recordLoginFailure(ip)
     return new Response(JSON.stringify({ error: result.error }), {
       status: 401,
     })
   }
-  const token = createSession()
+  clearLoginFailures(ip)
+  const token = createSession(result.user.id)
   return new Response(JSON.stringify({ ok: true, token, user: result.user }), {
     headers: { 'Content-Type': 'application/json' },
   })

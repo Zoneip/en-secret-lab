@@ -4,7 +4,7 @@
  */
 import { randomUUID } from 'node:crypto'
 import { mkdirSync, writeFileSync, statSync, unlinkSync } from 'node:fs'
-import { join, dirname, extname } from 'node:path'
+import { join, dirname, extname, sep } from 'node:path'
 import { loadEnv } from '../env'
 import { getDb } from './db'
 
@@ -44,6 +44,10 @@ export function saveUpload(
   const env = loadEnv(process.env)
   const ext = extname(file.name).toLowerCase()
   if (!MIME_BY_EXT[ext]) throw new Error(`不支持的文件类型:${ext}`)
+  // themeId 白名单校验,防止拼接 ../ 逃逸出 uploads 目录
+  if (themeId && !/^[a-z0-9-]+$/.test(themeId)) {
+    throw new Error('themeId 仅允许小写字母、数字与连字符')
+  }
 
   const id = randomUUID()
   const subDir =
@@ -53,7 +57,10 @@ export function saveUpload(
         ? `themes/${themeId ?? 'shared'}`
         : 'misc'
   const safeName = file.name.replace(/[^\w.\-\u4e00-\u9fff]/g, '_')
-  const dir = join(dirname(env.DATABASE_PATH), 'uploads', subDir)
+  const uploadsRoot = join(dirname(env.DATABASE_PATH), 'uploads')
+  const dir = join(uploadsRoot, subDir)
+  // 双保险:目标目录必须位于 uploads 根内(纵深防御)
+  if (!dir.startsWith(uploadsRoot + sep)) throw new Error('非法上传路径')
   mkdirSync(dir, { recursive: true })
   const path = `/uploads/${subDir}/${id}${ext}`
   writeFileSync(join(dir, `${id}${ext}`), file.data)
@@ -107,7 +114,10 @@ export function deleteAsset(id: string): boolean {
 export function assetFileOnDisk(path: string): string | null {
   const env = loadEnv(process.env)
   const rel = path.replace(/^\/uploads\//, '')
-  const file = join(dirname(env.DATABASE_PATH), 'uploads', rel)
+  const uploadsRoot = join(dirname(env.DATABASE_PATH), 'uploads')
+  const file = join(uploadsRoot, rel)
+  // 包含性校验:解析后必须仍在 uploads 根内(纵深防御路径逃逸)
+  if (!file.startsWith(uploadsRoot + sep)) return null
   try {
     if (statSync(file).isFile()) return file
   } catch {

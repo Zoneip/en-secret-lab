@@ -68,9 +68,11 @@ background-image 的 SVG 动画会导致**整屏重栅格化**(性能瓶颈)。�
 
 ## 8. 安全与运维
 
-- 管理登录:bcrypt + 会话 cookie(8 位密码下限)
-- CSRF:自实现同源校验(Origin hostname 比较)
-- 上传:类型白名单(MIME + 扩展名)、路径逃逸防护
+- 管理登录:bcrypt + 会话 cookie(8 位密码下限);默认密码 `change-me` 启动即报错(fail-fast)
+- 会话绑定用户:sessions 表存 user_id,/admin 守卫仅放行 owner 角色(访客会话不可越权)
+- 登录限流:应用层内存计数(5 次失败锁 15 分钟)+ nginx limit_req 互补;IP 取 X-Real-IP/XFF 右端(防伪造)
+- CSRF:自实现同源校验(Origin hostname 比较),覆盖所有 mutating 请求(含 JSON API)
+- 上传:类型白名单(MIME + 扩展名)、themeId 白名单 + uploads 根包含性双重校验
 - HTML no-cache + 静态资源 immutable 缓存
 - Docker:`docker/Dockerfile` + nginx 反代示例
 
@@ -82,5 +84,5 @@ background-image 的 SVG 动画会导致**整屏重栅格化**(性能瓶颈)。�
 
 ## 10. 质量
 
-- `npm run check`(tsc)0 错误 · `npm run lint` 0 错误 · `npm run test` 33 通过
+- `npm run check`(tsc)0 错误 · `npm run lint` 0 错误 · `npm run test` 37 通过
 - 双构建(static/server)通过

@@ -30,8 +30,9 @@ export const GET: APIRoute = ({ url }) => {
     fromDate: params.get('fromDate') ?? undefined,
     toDate: params.get('toDate') ?? undefined,
     sortBy: (params.get('sortBy') as ListPostsOptions['sortBy']) ?? 'date-desc',
-    page: Number(params.get('page') ?? '1'),
-    pageSize: Number(params.get('pageSize') ?? '20'),
+    // 分页参数夹在合法区间,防止超大 pageSize 全量拉取
+    page: Math.max(1, Number(params.get('page') ?? '1') || 1),
+    pageSize: Math.min(Math.max(1, Number(params.get('pageSize') ?? '20') || 20), 100),
   }
 
   const result = listPostsAdvanced(options)

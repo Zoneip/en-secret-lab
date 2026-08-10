@@ -76,7 +76,7 @@ src/
 | --------------------------------------- | ---------------------- |
 | `npm run gen:themes`                    | 主题预设 → CSS 变量    |
 | `npm run build:static` / `build:server` | 双构建                 |
-| `npm run check` / `lint` / `test`       | 类型 / 规范 / 测试(33) |
+| `npm run check` / `lint` / `test`       | 类型 / 规范 / 测试(37) |
 | `npm run format`                        | Prettier 全量格式化    |
 
 ## ⚖️ 协议

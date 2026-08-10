@@ -105,11 +105,17 @@ function assertValid(draft: Partial<PostDraft>): asserts draft is PostDraft {
 }
 
 export function serializePost(d: PostDraft): string {
-  const lines = ['---', `title: ${d.title}`, `pubDate: ${d.pubDate}`]
-  if (d.description) lines.push(`description: ${d.description}`)
-  if (d.updatedDate) lines.push(`updatedDate: ${d.updatedDate}`)
-  lines.push(`category: ${d.category}`)
-  if (d.series) lines.push(`series: ${d.series}`)
+  // 标量字段压平换行,防止换行符注入额外 frontmatter 字段
+  const flat = (v: string) => v.replace(/\r?\n/g, ' ').trim()
+  const lines = [
+    '---',
+    `title: ${flat(d.title)}`,
+    `pubDate: ${flat(d.pubDate)}`,
+  ]
+  if (d.description) lines.push(`description: ${flat(d.description)}`)
+  if (d.updatedDate) lines.push(`updatedDate: ${flat(d.updatedDate)}`)
+  lines.push(`category: ${flat(d.category)}`)
+  if (d.series) lines.push(`series: ${flat(d.series)}`)
   if (d.tags.length > 0) {
     lines.push(`tags: ${JSON.stringify(d.tags).replace(/"/g, "'")}`)
   }

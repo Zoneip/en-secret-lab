@@ -29,6 +29,7 @@ function migrate(d: Database.Database): void {
 
     CREATE TABLE IF NOT EXISTS sessions (
       token      TEXT PRIMARY KEY,
+      user_id    TEXT,
       created_at INTEGER NOT NULL,
       expires_at INTEGER NOT NULL
     );
@@ -66,9 +67,18 @@ function migrate(d: Database.Database): void {
       status        TEXT NOT NULL DEFAULT 'active',    -- active | banned
       created_at    INTEGER NOT NULL,
       last_login_at INTEGER,
-      login_count   INTEGER NOT NULL DEFAULT 0
+      login_count INTEGER NOT NULL DEFAULT 0
     );
   `)
+  // 存量库升级:sessions 补充 user_id(会话绑定用户,用于角色鉴权)
+  try {
+    d.exec('ALTER TABLE sessions ADD COLUMN user_id TEXT')
+  } catch (e) {
+    // 仅容忍"列已存在";磁盘/锁等真实迁移失败需立即暴露
+    if (!(e instanceof Error && e.message.includes('duplicate column name'))) {
+      throw e
+    }
+  }
 }
 
 export function settingGet(key: string): string | null {
@@ -193,25 +203,30 @@ export function userTouchLogin(id: string): void {
     .run(Date.now(), id)
 }
 
-export function sessionCreate(token: string, ttlMs: number): void {
+export function sessionCreate(token: string, ttlMs: number, userId: string): void {
   const now = Date.now()
   getDb()
     .prepare(
-      'INSERT INTO sessions (token, created_at, expires_at) VALUES (?, ?, ?)',
+      'INSERT INTO sessions (token, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
     )
-    .run(token, now, now + ttlMs)
+    .run(token, userId, now, now + ttlMs)
 }
 
-export function sessionValid(token: string): boolean {
+export function sessionUserId(token: string): string | null {
   const row = getDb()
-    .prepare('SELECT expires_at FROM sessions WHERE token = ?')
-    .get(token) as { expires_at: number } | undefined
-  if (!row) return false
+    .prepare('SELECT user_id, expires_at FROM sessions WHERE token = ?')
+    .get(token) as { user_id: string | null; expires_at: number } | undefined
+  if (!row) return null
   if (row.expires_at < Date.now()) {
     getDb().prepare('DELETE FROM sessions WHERE token = ?').run(token)
-    return false
+    return null
   }
-  return true
+  return row.user_id
+}
+
+/** 清理过期会话(登录/鉴权路径顺带触发,避免表无限增长) */
+export function sessionPruneExpired(): void {
+  getDb().prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now())
 }
 
 export function sessionDestroy(token: string): void {

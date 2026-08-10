@@ -4,6 +4,7 @@
  */
 import type { APIRoute } from 'astro'
 import { isServer } from '../../lib/utils'
+import { clientIp } from '../../lib/admin/auth'
 import {
   createRequest,
   countRequestsToday,
@@ -46,10 +47,8 @@ export const POST: APIRoute = async ({ request }) => {
     })
   }
 
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    'unknown'
+  // clientIp:优先 X-Real-IP(反代可信值),避免 XFF 最左值可伪造绕过限流
+  const ip = clientIp(request)
   if (countRequestsToday(ip) >= 3) {
     return new Response(
       JSON.stringify({ error: '今天提交的申请太多了,明天再来吧' }),

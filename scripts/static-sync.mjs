@@ -28,10 +28,9 @@
  *   页面因此走文件系统读取(src/content),与真实 server 运行行为一致
  */
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, cpSync, rmSync, statSync } from 'node:fs'
-import { join, dirname, basename, extname } from 'node:path'
+import { join, dirname, basename } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createHash } from 'node:crypto'
-import { parse as parseYaml } from 'yaml'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const serverDir = join(root, 'dist-server', 'server')

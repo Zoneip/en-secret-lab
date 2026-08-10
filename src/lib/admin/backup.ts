@@ -8,7 +8,7 @@ import { mkdirSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
 import { createRequire } from 'node:module'
 import { loadEnv } from '../env'
-import { settingGet, settingSet } from './db'
+import { getDb, settingGet, settingSet } from './db'
 
 const require = createRequire(import.meta.url)
 
@@ -46,6 +46,8 @@ async function tarGz(
 export async function createBackup(): Promise<BackupEntry> {
   const env = loadEnv(process.env)
   mkdirSync(backupsDir(), { recursive: true })
+  // 备份前 checkpoint:把 WAL 写回主库文件并截断 WAL,降低打包到不一致状态的概率
+  getDb().pragma('wal_checkpoint(TRUNCATE)')
   const ts = new Date().toISOString().replace(/[:.]/g, '-')
   const name = `backup-${ts}.tar.gz`
   const outFile = join(backupsDir(), name)
