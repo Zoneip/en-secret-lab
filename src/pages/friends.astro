@@ -376,4 +376,18 @@ const config = getSiteConfig()
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  /* 手机:友链墙固定双列,充分利用窄屏 */
+  @media (max-width: 640px) {
+    .friend-wall {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .friend-card {
+      padding: 18px 12px 14px;
+    }
+    .fc-icon {
+      width: 64px;
+      height: 64px;
+    }
+  }
 </style>

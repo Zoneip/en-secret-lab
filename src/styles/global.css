@@ -30,6 +30,15 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* ============ 三端断点约定(全站统一) ============
+   * media query 无法使用 CSS 变量,以下为全站唯一合法断点:
+   *   640px  — 手机(max-width: 640px)
+   *   768px  — 手机/平板分界(导航切换、壁纸竖屏构图)
+   *   1024px — 平板/桌面分界(网格列数、TOC 布局)
+   *   1200px — 大屏桌面(容器内边距)
+   * 新增响应式样式必须复用这四档,禁止引入新数值
+   */
+
   /* 兜底:gray light */
   --bg: #f4f5f7;
   --surface: #ffffff;
@@ -210,7 +219,13 @@ svg {
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 24px;
+  }
 }
 
 @media (min-width: 768px) {

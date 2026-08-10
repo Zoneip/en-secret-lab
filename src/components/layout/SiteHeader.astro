@@ -34,7 +34,7 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
       <span class="brand-name">{config.title}</span>
     </a>
 
-    <!-- 桌面端横向导航(>= 768px) -->
+    <!-- 桌面端横向导航(>= 1024px;平板及以下用汉堡全屏菜单) -->
     <nav class="nav nav-desktop" aria-label="主导航">
       <ul>
         {
@@ -107,9 +107,11 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
       </button>
     </div>
   </div>
+</header>
 
-  <!-- 移动端抽屉导航 -->
-  <div class="nav-drawer" id="nav-drawer" aria-hidden="true" aria-modal="true" role="dialog" aria-label="站点导航">
+<!-- 抽屉必须脱离 header:backdrop-filter 会成为 fixed 后代的包含块,
+     留在 header 内会被限制在顶栏盒里无法全屏 -->
+<div class="nav-drawer" id="nav-drawer" aria-hidden="true" aria-modal="true" role="dialog" aria-label="站点导航">
     <div class="nav-drawer-inner">
       <div class="drawer-header">
         <span class="drawer-title">菜单</span>
@@ -153,8 +155,7 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
       </nav>
     </div>
     <div class="nav-drawer-backdrop" aria-hidden="true"></div>
-  </div>
-</header>
+</div>
 
 <style>
   .site-header {
@@ -393,6 +394,19 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
     width: 100%;
     max-width: 420px;
   }
+  /* 平板(含横屏)抽屉:双列网格,利用宽屏空间 */
+  @media (min-width: 768px) {
+    .nav-mobile ul {
+      max-width: 640px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .nav-link--mobile {
+      font-size: 1.15rem;
+      padding: 15px 20px;
+    }
+  }
   .nav-link--mobile {
     display: flex;
     align-items: center;
@@ -425,8 +439,8 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
       color-mix(in srgb, var(--primary) 65%, #1a1a1a);
   }
 
-  /* === 桌面端(>= 768px):横向导航 + 隐藏汉堡 === */
-  @media (min-width: 768px) {
+  /* === 桌面端(>= 1024px):横向导航 + 隐藏汉堡 === */
+  @media (min-width: 1024px) {
     .nav-desktop {
       display: block;
     }
@@ -438,14 +452,18 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
     }
   }
 
-  /* === 平板/手机端(< 768px):汉堡 + 抽屉 === */
-  @media (max-width: 767px) {
+  /* === 平板/手机端(< 1024px):汉堡 + 全屏抽屉(平板横屏也避免横向滚动导航) === */
+  @media (max-width: 1023px) {
     .nav-desktop {
       display: none;
     }
     .menu-toggle {
       display: inline-flex;
     }
+  }
+
+  /* 手机收窄:隐藏搜索文字、收紧按钮 */
+  @media (max-width: 767px) {
     .search-label {
       display: none;
     }
@@ -463,6 +481,17 @@ const navItems = config.nav.map((item) => ({ ...item, active: current === item.u
   @media (max-width: 640px) {
     .brand-name {
       max-width: 28vw;
+    }
+    /* 菜单项收窄,让 10 项在常见手机高度内一屏可见 */
+    .nav-mobile {
+      padding: 16px 20px 24px;
+    }
+    .nav-mobile ul {
+      gap: 10px;
+    }
+    .nav-link--mobile {
+      padding: 13px 20px;
+      font-size: 1.2rem;
     }
   }
 

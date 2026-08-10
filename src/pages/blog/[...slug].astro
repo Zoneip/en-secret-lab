@@ -248,7 +248,7 @@ const words = content.body
     font-size: 1.02rem;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1023px) {
     .post-body {
       grid-template-columns: 1fr;
     }
@@ -257,24 +257,11 @@ const words = content.body
     }
   }
   @media (max-width: 640px) {
+    /* 系列徽章窄屏转纵向,避免与上下篇链接挤一行 */
     .series-badge {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 36px;
-      padding: 8px 16px;
-      border-radius: 12px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      font-size: 0.85rem;
-    }
-    .series-nav-links {
-      display: flex;
-      gap: 12px;
-    }
-    .series-link {
-      font-size: 0.8rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
     }
     .adjacent {
       grid-template-columns: 1fr;

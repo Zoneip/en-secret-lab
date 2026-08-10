@@ -269,7 +269,18 @@ const themeNames: Record<string, string> = {
   .screen-footer a:hover {
     color: var(--primary);
   }
-  @media (max-width: 760px) {
+  /* 平板:保持横排但收窄间距与立绘,避免文字被挤压 */
+  @media (max-width: 1023px) {
+    .oc-inner,
+    .flip .oc-inner {
+      gap: 28px;
+    }
+    .oc-art-img {
+      width: 180px;
+      height: 180px;
+    }
+  }
+  @media (max-width: 767px) {
     .oc-inner,
     .flip .oc-inner {
       flex-direction: column;

@@ -266,7 +266,8 @@ const displayThemes = themes.filter((t) => t.id !== 'friends')
   .theme-switcher {
     position: fixed;
     right: 20px;
-    bottom: 20px;
+    /* 避开移动端底部安全区(iPhone 全面屏手势条) */
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     z-index: 40;
     display: flex;
     flex-direction: column;
@@ -290,6 +291,10 @@ const displayThemes = themes.filter((t) => t.id !== 'friends')
   }
   .fab:hover {
     transform: translateY(-3px) rotate(-8deg);
+  }
+  /* 触屏设备无 hover:按压时给出即时反馈 */
+  .fab:active {
+    transform: scale(0.94);
   }
   .panel {
     width: min(320px, calc(100vw - 40px));
@@ -320,6 +325,30 @@ const displayThemes = themes.filter((t) => t.id !== 'friends')
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
+  }
+  /* 手机:三列 + 放大触控目标(单卡 ≥ 80px,符合 44px 最小触控标准) */
+  @media (max-width: 640px) {
+    .theme-switcher {
+      right: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    }
+    .panel {
+      width: min(300px, calc(100vw - 28px));
+    }
+    .theme-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .theme-card {
+      padding: 14px 4px 12px;
+    }
+    .theme-preview i {
+      width: 16px;
+      height: 16px;
+    }
+    .theme-name {
+      font-size: 0.85rem;
+    }
   }
   .theme-card {
     display: flex;

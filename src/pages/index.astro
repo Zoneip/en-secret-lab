@@ -519,13 +519,33 @@ const ocTok = (
     color: var(--fg-subtle);
   }
 
+  /* 平板(< 1024px):Hero 改纵向堆叠,避免文字与全家福争宽 */
+  @media (max-width: 1023px) {
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 28px;
+    }
+    .hero-mascots {
+      align-self: stretch;
+      justify-content: space-between;
+    }
+  }
+
+  /* 大屏桌面(≥ 1200px):OC 卡 4 列一排 */
+  @media (min-width: 1200px) {
+    .oc-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
   @media (max-width: 640px) {
     .oc-grid {
       grid-template-columns: 1fr;
     }
     .hero {
       padding: 48px 0 24px;
-      justify-content: center;
+      align-items: center;
       text-align: center;
     }
     .hero-desc {
@@ -533,12 +553,21 @@ const ocTok = (
     }
     .hero-actions {
       justify-content: center;
+      flex-wrap: wrap;
     }
     .hero h1 {
       font-size: 2rem;
     }
+    /* 全家福小屏收窄间距防溢出(不用 scale,避免占位空隙) */
     .hero-mascots {
-      transform: scale(0.85);
+      gap: 4px;
+      padding: 12px 8px;
+    }
+    .column-grid {
+      grid-template-columns: 1fr;
+    }
+    .tech-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
