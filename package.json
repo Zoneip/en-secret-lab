@@ -8,6 +8,7 @@
     "dev:static": "ASTRO_MODE=static astro dev",
     "start": "ASTRO_MODE=server astro dev",
     "gen:themes": "node scripts/gen-theme-css.mjs",
+    "export:config": "node scripts/export-site-config.mjs",
     "validate:content": "node scripts/validate-content.mjs",
     "build": "npm run gen:themes && astro build",
     "build:static": "bash scripts/build-static.sh",

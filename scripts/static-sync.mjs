@@ -292,9 +292,12 @@ function computePlan(prev, curr) {
   const otherChanged = Object.keys(curr).some(
     (k) => !k.startsWith('src/content/posts/') && prev?.[k] !== curr[k],
   )
-  // 主题预设变化 → 全量(所有页面 CSS 变量都变)
+  // 主题预设/站点配置变化 → 全量(所有页面 HTML 都内嵌 CSS 变量)
   const presetsChanged = Object.keys(curr).some(
-    (k) => k.startsWith('src/themes/presets/') && prev?.[k] !== curr[k],
+    (k) =>
+      (k.startsWith('src/themes/presets/') ||
+        k === 'public/site-config.json') &&
+      prev?.[k] !== curr[k],
   )
   const slugOf = (key) => basename(key).replace(/\.(md|mdx)$/, '')
   return {

@@ -9,6 +9,10 @@ cd "$(dirname "$0")/.."
 
 npm run gen:themes
 
+# 导出动态版 DB 的站点配置(控制台顶部栏调度/主题覆盖),
+# 静态构建以此为 L2 配置源,保证静态顶栏与动态版一致
+node scripts/export-site-config.mjs
+
 if [ -d src/pages/admin ]; then
   mv src/pages/admin .admin-build-tmp
   trap 'mv .admin-build-tmp src/pages/admin 2>/dev/null || true' EXIT

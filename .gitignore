@@ -40,3 +40,6 @@ test-results/
 *.log
 npm-debug.log*
 data/backups/
+
+# npm 缓存重定向目录(磁盘空间紧张时的临时缓存)
+.npm-cache/
